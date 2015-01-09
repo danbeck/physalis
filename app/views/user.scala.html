@@ -11,8 +11,21 @@
    
    <ul>
    @for(u <- user.projects){
-   	<li>@u.projectName - @u.description
-   	</li>
+   	
+   	<div class="row">
+  	  <div class="col-sm-3 col-md-4">
+        <div class="thumbnail">
+      	<!--  <img data-src="holder.js/300x300" alt="...">-->
+     	  <div class="caption">
+        	<h3>@u.projectName</h3>
+        	<p>@u.description</p>
+        	<p><a href="#" class="btn btn-primary" role="button">Pull and Build</a>
+<!-- 	<a href="#" class="btn btn-default" role="button">Button</a></p>-->        
+      	  </div>
+        </div>
+      </div>
+    </div>
+
    }
    </ul>
 }
