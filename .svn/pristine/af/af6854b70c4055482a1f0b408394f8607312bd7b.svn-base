@@ -1,0 +1,94 @@
+@(user: User)(implicit flash: Flash) 
+
+@scripts = {
+    <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
+}
+
+@main(user, scripts) {
+    <div class="row hidden-xs">
+        <div class="col-xs-8 col-sm-4 border">
+            <img src="@routes.Assets.at("images/banner_big.png")">
+        </div>
+        <div class="col-xs-4 col-sm-8	">
+            <h2>Physalis is incredible!</h2>
+            <h3>1. It's Opensource</h3>
+            <h3>2. For FirefoxOS, Ubuntu and Android</h3>
+            <h3>3. Connects with Launchpad and GIThub</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="infobox col-sm-4 orange">
+            <h2>SIMPLE</h2>
+            <h3>simply provide your Github account</h3>
+            <p>Choose the right project from the github account and give it a name</p>
+        </div>
+        <div class="infobox col-sm-4 black">
+            <h2>OPEN SOURCE</h2>
+            <h3>No cloud lock in</h3>
+            <p>Physalis is opensource. Everything. EvenChoose the right project from the github account and give it a name</p>
+        </div>
+        <div class="infobox col-sm-4 orange">
+            <h2>NEW MOBILE OS</h2>
+            <h3>Ubuntu, Firefox</h3>
+            <p>Physalis is opensource. Everything. EvenChoose the right project from the github account and give it a name</p>
+        </div>
+    </div> 
+    <div class="row">
+        <div class="infobox col-sm-4 black">
+            <h2>SIMPLE</h2>
+            <h3>simply provide your Github account</h3>
+            <p>Choose the right project from the github account and give it a name</p>
+        </div>
+        <div class="infobox col-sm-4 orange">
+            <h2>OPEN SOURCE</h2>
+            <h3>No cloud lock in</h3>
+            <p>Physalis is opensource. Everything. EvenChoose the right project from the github account and give it a name</p>
+        </div>
+        <div class="infobox col-sm-4 black">
+            <h2>NEW MOBILE OS</h2>
+            <h3>Ubuntu, Firefox</h3>
+            <p>Physalis is opensource. Everything. EvenChoose the right project from the github account and give it a name</p>
+        </div>
+    </div>
+     <div class="row">	
+        <div class="infobox col-sm-4 orange">
+            <h2>SIMPLE</h2>
+            <h3>simply provide your Github account</h3>
+            <p>Choose the right project from the github account and give it a name</p>
+        </div>
+        <div class="infobox col-sm-4 black">
+            <h2>OPEN SOURCE</h2>
+            <h3>No cloud lock in</h3>
+            <p>Physalis is opensource. Everything. EvenChoose the right project from the github account and give it a name</p>
+        </div>
+        <div class="infobox col-sm-4 orange">
+            <h2>NEW MOBILE OS</h2>
+            <h3>Ubuntu, Firefox</h3>
+            <p>Physalis is opensource. Everything. EvenChoose the right project from the github account and give it a name</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="infobox col-sm-12 black">
+            <h2>NEWS</h2>
+            <p>Added API v1 to automatize builds and integrate it in your existing <IT></IT></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2 col-sm-offset-10">
+            <a class="btn btn-default btn-block physalis-btn-black" href="#" role="button">More news</a>
+        </div>
+    </div>
+
+
+    <hr>
+    <div class="footer text-center">
+        <div>
+            <small>
+                Hello! I'm your friendly footer. If you're actually reading this, I'm impressed....
+                <a href="https://github.com/danbeck/Physalis">
+                    Fork me on Github</a> <i class="fa fa-github fa-1"></i> <a href="https://github.com/yesnault/PlayStartApp">
+                https://github.com/yesnault/PlayStartApp</a>
+            </small>
+        </div>
+    </div>
+}

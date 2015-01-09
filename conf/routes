@@ -1,0 +1,40 @@
+# Home page
+GET     /                           controllers.Application.index()
+GET     /logout                     controllers.Application.logout()
+GET 	/u/:user					controllers.Users.index(user:String)
+
+
+
+#GET     /hub	                  controllers.Application.index()
+
+#GET     /login                     controllers.account.Login.show()
+#POST    /login                      controllers.account.Login.authenticate()
+
+
+#GET     /settings                   controllers.account.settings.Index.index()
+#GET     /settings/password          controllers.account.settings.Password.index()
+#POST    /settings/password          controllers.account.settings.Password.runPassword()
+#GET     /settings/email             controllers.account.settings.Email.index()
+#POST    /settings/email             controllers.account.settings.Email.runEmail()
+
+# Registers the user, sending an email to confirm the account.
+#GET     /signup                     controllers.account.Signup.create()
+#POST    /signup                     controllers.account.Signup.save()
+#GET     /signup                     controllers.account.Signup.show()
+#POST    /signup                     controllers.account.Signup.signup()
+
+# Accessed when the user confirms the registration.
+#GET     /confirm/:confirmToken      controllers.account.Signup.confirm(confirmToken:String)
+
+# Displays a page to send a reset email given the user's email.
+#GET     /reset/ask                  controllers.account.Reset.ask()
+#POST    /reset/ask                  controllers.account.Reset.runAsk()
+
+# Resets the password using the password.
+#GET     /reset/:token               controllers.account.Reset.reset(token:String)
+#POST    /reset/:token               controllers.account.Reset.runReset(token:String)
+
+#GET     /email/:token               controllers.account.settings.Email.validateEmail(token:String)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

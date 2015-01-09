@@ -1,0 +1,17 @@
+logs
+project/project
+project/target
+target
+tmp
+.idea
+.idea_modules
+PlayStartApp.iml
+db
+.classpath
+.project
+.settings
+out
+conf/mail.conf
+conf/evolutions
+documentation/
+/bin/
