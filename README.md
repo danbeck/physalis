@@ -17,10 +17,6 @@ Physalis is a build cloud for HTML5 projects made with Apache Cordova (See http:
 * Support plugins
 * Registration and Login with Launchpad, Github, Gitlab, Ubuntu...
 
-* You can vote for this application on http://www.playmodules.net/demo/14
 
 ## Licence
 * MIT. See LICENSE file
-
-## Contact
-Twitter : @yesnault
