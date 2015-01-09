@@ -1,0 +1,18 @@
+@(user: User)(implicit flash: Flash) 
+
+@scripts = {
+    <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
+}
+
+@main(user, scripts) {
+   <h2>Hello @user.fullname</h2>
+   
+   <h3>List of projects</h3>
+   
+   <ul>
+   @for(u <- user.projects){
+   	<li>@u.projectName - @u.description
+   	</li>
+   }
+   </ul>
+}
