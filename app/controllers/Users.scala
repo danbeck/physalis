@@ -1,16 +1,20 @@
 package controllers
 
-import play.api.mvc.Controller
-import play.api.mvc.RequestHeader
-import securesocial.core.SecureSocial
-import play.api.mvc.Action
-import models.User
-import models.Project
-import models.Project
 import org.joda.time.DateTime
 
-object Users extends Controller with SecureSocial {
+import models.Project
+import models.User
+import play.api.mvc.Action
+import play.api.mvc.Controller
+import play.api.mvc.RequestHeader
+//    import models.DemoUser
 
+//class Users{
+//
+//  
+//}
+
+object Users extends Controller {
   def index(username: String) = Action { implicit requestHeader: RequestHeader =>
 
     val projects = List(
@@ -20,5 +24,4 @@ object Users extends Controller with SecureSocial {
     val user = User(email = "email@gmail.com", fullname = "Daniel Beck", username = username, projects = projects)
     Ok(views.html.user(user))
   }
-
 }
