@@ -1,68 +1,16 @@
 # Home page
 GET     /                           controllers.Application.index()
-#GET     /logout                     controllers.Application.logout()
 GET 	/u/:user					controllers.Users.index(user:String)
 
 
 # Login page
-#GET     /login                      @securesocial.controllers.LoginPage.login
-GET     /github                      controllers.SocialLogin.login
-GET     /login/github/response       controllers.SocialLogin.res
+#GET 	/link-result 				 @controllers.Application.linkResult
+#GET 	/current-user 				 @controllers.Application.currentUser
+#GET 	/only-twitter 				 @controllers.Application.onlyTwitter
 GET 	/custom/login				 @controllers.CustomLoginController.login
--> 		/auth 						 	securesocial.Routes
+GET 	/custom/logout 				 @controllers.CustomLoginController.logout
 
-#GET     /logout                     securesocial.controllers.LoginPage.logout
-
-# User Registration and password handling 
-#GET     /signup                     securesocial.controllers.Registration.startSignUp
-#POST    /signup                     securesocial.controllers.Registration.handleStartSignUp
-#GET     /signup/:token              securesocial.controllers.Registration.signUp(token)
-#POST    /signup/:token              securesocial.controllers.Registration.handleSignUp(token)
-#GET     /reset                      securesocial.controllers.Registration.startResetPassword
-#POST    /reset                      securesocial.controllers.Registration.handleStartResetPassword
-#GET     /reset/:token               securesocial.controllers.Registration.resetPassword(token)
-#POST    /reset/:token               securesocial.controllers.Registration.handleResetPassword(token)
-#GET     /password                   securesocial.controllers.PasswordChange.page
-#POST    /password                   securesocial.controllers.PasswordChange.handlePasswordChange
-
-# Providers entry points
-#GET     /authenticate/:provider     securesocial.controllers.ProviderController.authenticate(provider)
-#POST    /authenticate/:provider     securesocial.controllers.ProviderController.authenticateByPost(provider)
-#GET     /not-authorized             securesocial.controllers.ProviderController.notAuthorized
-
-
-
-
-#GET     /hub	                  controllers.Application.index()
-
-#GET     /login                     controllers.account.Login.show()
-#POST    /login                      controllers.account.Login.authenticate()
-
-
-#GET     /settings                   controllers.account.settings.Index.index()
-#GET     /settings/password          controllers.account.settings.Password.index()
-#POST    /settings/password          controllers.account.settings.Password.runPassword()
-#GET     /settings/email             controllers.account.settings.Email.index()
-#POST    /settings/email             controllers.account.settings.Email.runEmail()
-
-# Registers the user, sending an email to confirm the account.
-#GET     /signup                     controllers.account.Signup.create()
-#POST    /signup                     controllers.account.Signup.save()
-#GET     /signup                     controllers.account.Signup.show()
-#POST    /signup                     controllers.account.Signup.signup()
-
-# Accessed when the user confirms the registration.
-#GET     /confirm/:confirmToken      controllers.account.Signup.confirm(confirmToken:String)
-
-# Displays a page to send a reset email given the user's email.
-#GET     /reset/ask                  controllers.account.Reset.ask()
-#POST    /reset/ask                  controllers.account.Reset.runAsk()
-
-# Resets the password using the password.
-#GET     /reset/:token               controllers.account.Reset.reset(token:String)
-#POST    /reset/:token               controllers.account.Reset.runReset(token:String)
-
-#GET     /email/:token               controllers.account.settings.Email.validateEmail(token:String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+-> 		/auth 						 	securesocial.Routes
