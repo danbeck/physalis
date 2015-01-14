@@ -5,9 +5,6 @@ import service.DemoUser
 import play.api.mvc.{ Action, RequestHeader }
 
 class SocialApplication(override implicit val env: RuntimeEnvironment[DemoUser]) extends securesocial.core.SecureSocial[DemoUser] {
-  //  def index = SecuredAction { implicit request =>
-  //    Ok(views.html.securesocial.index(request.user.main))
-  //  }
 
   // a sample action using an authorization implementation
   def onlyTwitter = SecuredAction(WithProvider("twitter")) { implicit request =>
@@ -17,7 +14,15 @@ class SocialApplication(override implicit val env: RuntimeEnvironment[DemoUser])
   def securedURL = SecuredAction {
     Ok("Hallo Karin! Ich bin eine gesicherte Seite!")
   }
-  
+
+  def userAwareURL = UserAwareAction { implicit request =>
+    val userName = request.user match {
+      case Some(user) => "email:" + user.main.email
+      case _          => "guest"
+    }
+    Ok("Hello %s".format(userName))
+  }
+
   def linkResult = SecuredAction { implicit request =>
     Ok(views.html.securesocial.linkResult(request.user))
     //   Ok("")

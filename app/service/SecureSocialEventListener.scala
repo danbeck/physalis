@@ -23,7 +23,7 @@ import play.api.Logger
 /**
  * A sample event listener
  */
-class MyEventListener extends EventListener[DemoUser] {
+class SecureSocialEventListener extends EventListener[DemoUser] {
   def onEvent(event: Event[DemoUser], request: RequestHeader, session: Session): Option[Session] = {
     val eventName = event match {
       case LoginEvent(u) => "login"

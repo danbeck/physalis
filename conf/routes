@@ -11,6 +11,7 @@ GET 	/custom/login				 @controllers.CustomLoginController.login
 GET 	/custom/logout 				 @controllers.CustomLoginController.logout
 GET     /login                      @securesocial.controllers.LoginPage.login
 GET		/test						@controllers.SocialApplication.securedURL
+GET		/testuser					@controllers.SocialApplication.userAwareURL
 GET     /logincallback              controllers.Application.index()
 GET     /authenticate/:provider     @securesocial.controllers.ProviderController.authenticate(provider)
 POST    /authenticate/:provider     @securesocial.controllers.ProviderController.authenticateByPost(provider)

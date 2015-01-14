@@ -9,7 +9,6 @@ lazy val root = (project in file(".")).enablePlugins(play.PlayScala)
 scalaVersion := "2.11.4"
 
 libraryDependencies ++= Seq(
-  "org.brickred" % "socialauth" % "4.7",
    "ws.securesocial" %% "securesocial" % "3.0-M1"
 )
 
