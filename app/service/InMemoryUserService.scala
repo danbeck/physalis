@@ -21,6 +21,7 @@ import securesocial.core._
 import securesocial.core.providers.{ UsernamePasswordProvider, MailToken }
 import scala.concurrent.Future
 import securesocial.core.services.{ UserService, SaveMode }
+import models.DemoUser
 
 /**
  * A Sample In Memory user service in Scala
@@ -173,6 +174,4 @@ class InMemoryUserService extends UserService[DemoUser] {
   }
 }
 
-// a simple User class that can have multiple identities
-case class DemoUser(main: BasicProfile, identities: List[BasicProfile])
 

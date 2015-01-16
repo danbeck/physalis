@@ -17,11 +17,12 @@
 import controllers.CustomRoutesService
 import java.lang.reflect.Constructor
 import securesocial.core.RuntimeEnvironment
-import service.{ DemoUser, SecureSocialEventListener, InMemoryUserService }
+import service.{ SecureSocialEventListener, InMemoryUserService }
 import scala.collection.immutable.ListMap
 import securesocial.core.providers.GitHubProvider
 import service.SecureSocialEventListener
 import securesocial.controllers.ViewTemplates
+import models.DemoUser
 
 object Global extends play.api.GlobalSettings {
 

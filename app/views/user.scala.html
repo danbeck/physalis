@@ -1,31 +1,14 @@
-@(user: User)(implicit flash: Flash) 
+@(user: DemoUser)(implicit flash: Flash) 
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
 }
 
 @main(user, scripts) {
-   <h2>Hello @user.fullname</h2>
+   <h2>Hello @user.main.firstName</h2>
    
    <h3>List of projects</h3>
    
    <ul>
-   @for(u <- user.projects){
-   	
-   	<div class="row">
-  	  <div class="col-sm-3 col-md-4">
-        <div class="thumbnail">
-      	<!--  <img data-src="holder.js/300x300" alt="...">-->
-     	  <div class="caption">
-        	<h3>@u.projectName</h3>
-        	<p>@u.description</p>
-        	<p><a href="#" class="btn btn-primary" role="button">Pull and Build</a>
-<!-- 	<a href="#" class="btn btn-default" role="button">Button</a></p>-->        
-      	  </div>
-        </div>
-      </div>
-    </div>
-
-   }
-   </ul>
+    </ul>
 }

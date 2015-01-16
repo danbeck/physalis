@@ -1,8 +1,8 @@
 package controllers
 
 import securesocial.core._
-import service.DemoUser
 import play.api.mvc.{ Action, RequestHeader }
+import models.DemoUser
 
 class SocialApplication(override implicit val env: RuntimeEnvironment[DemoUser]) extends securesocial.core.SecureSocial[DemoUser] {
 
@@ -23,10 +23,10 @@ class SocialApplication(override implicit val env: RuntimeEnvironment[DemoUser])
     Ok("Hello %s".format(userName))
   }
 
-  def linkResult = SecuredAction { implicit request =>
-    Ok(views.html.securesocial.linkResult(request.user))
-    //   Ok("")
-  }
+//  def linkResult = SecuredAction { implicit request =>
+//    Ok(views.html.securesocial.linkResult(request.user))
+//    //   Ok("")
+//  }
 
   /**
    * Sample use of SecureSocial.currentUser. Access the /current-user to test it

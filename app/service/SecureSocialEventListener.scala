@@ -19,6 +19,7 @@ package service
 import securesocial.core._
 import play.api.mvc.{ Session, RequestHeader }
 import play.api.Logger
+import models.DemoUser
 
 /**
  * A sample event listener
