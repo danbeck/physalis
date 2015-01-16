@@ -32,7 +32,7 @@ object Global extends play.api.GlobalSettings {
     override lazy val routes = new CustomRoutesService()
     override lazy val userService: InMemoryUserService = new InMemoryUserService()
     override lazy val eventListeners = List(new SecureSocialEventListener())
-    override lazy val viewTemplates: ViewTemplates = new ViewTemplates.Default(this)
+//    override lazy val viewTemplates: ViewTemplates = new ViewTemplates.Default(this)
     override lazy val providers = ListMap(
       include(new GitHubProvider(routes, cacheService, oauth2ClientFor(GitHubProvider.GitHub))))
 
