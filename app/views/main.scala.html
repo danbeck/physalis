@@ -1,4 +1,4 @@
-@(user: User = null, scripts: Html = Html(""))(content: Html)
+@(user: User = null, scripts: Html = Html(""), onlyShowRegisterButton:Boolean = false)(content: Html)
 
 <!DOCTYPE html>
 
@@ -29,12 +29,13 @@
                     </ul>
                   
                   @if(user==null){  
-                    
                     <div class="navbar-right">
                             <a type="button" href="/signup" class="btn btn-primary btn-lg" style="color : white ; background : #11c400 ; font-weight : bold ;">
                                 Sign Up</a>
+                       @if(!onlyShowRegisterButton){                       	
                          <a type="button" href="/login" class="btn btn-lg" >
                                 Login</a>
+                       }         
                         
                         
                     </div>

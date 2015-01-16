@@ -30,13 +30,13 @@ object Application extends Controller {
     }
   }
 
-  def logout = Action {
+  def logout = Action { 
     Redirect(routes.Application.index).flashing("success" -> Messages("youve.been.logged.out"))
 
   }
 
-  def login = Action { implicit Request =>
-    Ok(views.html.index(null))
+  def login = Action { implicit request =>
+    Ok(views.html.login(null))
   }
 
   case class Login(val email: String,
