@@ -9,7 +9,8 @@ GET 	/u/:user					controllers.Users.index(user:String)
 #GET 	/only-twitter 				 @controllers.Application.onlyTwitter
 GET 	/custom/login				 @controllers.CustomLoginController.login
 GET 	/custom/logout 				 @controllers.CustomLoginController.logout
-GET     /login                      @securesocial.controllers.LoginPage.login
+#GET     /login                      @securesocial.controllers.LoginPage.login
+GET     /login                      controllers.Application.login
 GET		/test						@controllers.SocialApplication.securedURL
 GET		/testuser					@controllers.SocialApplication.userAwareURL
 GET     /logincallback              controllers.Application.index()
