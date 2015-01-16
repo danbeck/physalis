@@ -4,18 +4,16 @@ GET 	/u/:user					controllers.Users.index(user:String)
 
 
 # Login page
-#GET 	/link-result 				 @controllers.Application.linkResult
-#GET 	/current-user 				 @controllers.Application.currentUser
-#GET 	/only-twitter 				 @controllers.Application.onlyTwitter
 GET 	/custom/login				 @controllers.CustomLoginController.login
 GET 	/custom/logout 				 @controllers.CustomLoginController.logout
-#GET     /login                      @securesocial.controllers.LoginPage.login
 GET     /login                      @controllers.Application.login
+GET     /signup                      @controllers.Application.signup
+GET     /logout                      @controllers.Application.logout
 GET		/test						@controllers.SocialApplication.securedURL
 GET		/testuser					@controllers.SocialApplication.userAwareURL
-GET     /logincallback              @controllers.Application.index()
 GET     /authenticate/:provider     @securesocial.controllers.ProviderController.authenticate(provider)
 POST    /authenticate/:provider     @securesocial.controllers.ProviderController.authenticateByPost(provider)
+
     
 
 
