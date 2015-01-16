@@ -18,36 +18,37 @@
     <body>
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
-                    <!-- Brand and toggle get grouped for better mobile display -->
-                    <!-- Collect the nav links, forms, and other content for toggling -->
-                <div id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav" >
-                        <li><a href="/" ><h1 style="display : inline">Physalis
-                            <img src="@routes.Assets.at("images/physalis33.png")">
-                        </h1></a></li>
-                        <li></li>
-                    </ul>
-                  
-                  @if(user==null){  
-                    <div class="navbar-right">
-                            <a type="button" href="/signup" class="btn btn-primary btn-lg" style="color : white ; background : #11c400 ; font-weight : bold ;">
+				<div class="row">    
+        			<div class="col-sm-4">
+        				<a href="/" ><h1 style="display : inline">Physalis<img src="@routes.Assets.at("images/physalis33.png")"></h1>
+        				</a>
+        			</div>
+        			
+        			@if(user==null){  
+                    <div class="col-sm-2 col-sm-offset-4">
+                            <a type="button" href="/signup" class="btn btn-primary btn-lg btn-block" style="color : white ; background : #11c400 ; font-weight : bold ;">
                                 Sign Up</a>
+                    </div>
                        @if(!onlyShowRegisterButton){                       	
+                    <div class="col-sm-2">
                          <a type="button" href="/login" class="btn btn-lg" >
                                 Login</a>
+                                </div>
                        }         
                         
                         
                     </div>
                     } else {
                     
-                    <ul class="nav navbar-nav navbar-right">
-                        <li >
+                    <div class="col-sm-4">
                             <a type="button" href="/logout" class="btn btn-primary btn-lg" style="color : white ; background : #11c400 ; font-weight : bold ;">
                                 Logout</a>	
-                        </li>
-                        </ul>
+                    </div>
                     }
+        		</div>
+        	</div>
+                  
+                  
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->
         </nav>
