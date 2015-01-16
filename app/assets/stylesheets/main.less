@@ -2,10 +2,26 @@
 @base-orange: #ff802b;
 @base-black: #363b40;
 @base-background: #f3f3f3;
+@base-primary: #11c400;
 //@base-box-background: #ffffff;
 
 body, .navbar-default .navbar-nav > li > a {
     color: @base-black;
+}
+
+h1,.btn {
+	color:@base-black;
+	text-decoration:none;
+}
+
+h4 a[href], p a[href]{
+	color:@base-orange;
+	text-decoration:underline;
+}
+
+.btn-primary {
+	background-color:@base-primary;
+	color: white;
 }
 
 section {
@@ -18,7 +34,7 @@ section {
     margin-bottom: 0;
 }
 
-.infobox h2 {
+.infobox h2,.infobox h3,.infobox h4 {
     color: white;
     text-align: right;
     padding: 4px 8px;
@@ -30,11 +46,11 @@ section {
 //    margin: 8px;
 //    border-radius: 10px;
 //}
-.infobox.orange h2 {
+.infobox.orange h3, .infobox.orange h4 {
     background: @base-orange;
 }
 
-.infobox.black h2 {
+.infobox.black h3,.infobox.black h4 {
     background: @base-black;
 }
 

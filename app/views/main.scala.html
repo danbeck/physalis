@@ -26,7 +26,7 @@
         			
         			@if(user==null){  
                     <div class="col-sm-2 col-sm-offset-4">
-                            <a type="button" href="/signup" class="btn btn-primary btn-lg btn-block" style="color : white ; background : #11c400 ; font-weight : bold ;">
+                            <a type="button" href="/signup" class="btn btn-primary btn-lg btn-block" >
                                 Sign Up</a>
                     </div>
                        @if(!onlyShowRegisterButton){                       	
@@ -56,5 +56,15 @@
         <div class="container">
         @content
         </div>
+        
+        
+    <hr>
+    <div class="footer text-center">
+        <div>
+            <small>
+                Impressum: <a href="/impressum">Contact/Impressum</a>
+            </small>
+        </div>
+    </div>
     </body>
 </html>
