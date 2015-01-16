@@ -20,7 +20,6 @@ class Application(override implicit val env: RuntimeEnvironment[DemoUser]) exten
   //  }
 
   def index = UserAwareAction { implicit request =>
-
     request.user match {
       case Some(u) => Ok(views.html.index(u))
       case None    => Ok(views.html.index(null))
