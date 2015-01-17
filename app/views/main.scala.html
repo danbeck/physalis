@@ -20,17 +20,17 @@
             <div class="container">
 				<div class="row">    
         			<div class="col-sm-4">
-        				<a href="/" ><h1 style="display : inline">Physalis<img src="@routes.Assets.at("images/physalis33.png")"></h1>
+        				<a href="/" class="title"><h1 style="display : inline">Physalis<img src="@routes.Assets.at("images/physalis33.png")"></h1>
         				</a>
         			</div>
         			
         			@if(user==null){  
-                    <div class="col-sm-2 col-sm-offset-4">
+                    <div class="col-sm-2 col-sm-offset-5">
                             <a type="button" href="/signup" class="btn btn-primary btn-lg btn-block" >
-                                Sign Up</a>
+                                Join now</a>
                     </div>
                        @if(!onlyShowRegisterButton){                       	
-                    <div class="col-sm-2">
+                    <div class="col-sm-1 text-center">
                          <a type="button" href="@routes.Application.login()" class="btn btn-lg" >
                                 Login</a>
                                 </div>
@@ -38,8 +38,8 @@
                     </div>
                     } else {
                     
-                    <div class="col-sm-4">
-                            <a type="button" href="/logout" class="btn btn-primary btn-lg" style="color : white ; background : #11c400 ; font-weight : bold ;">
+                    <div class="col-sm-2 col-sm-offset-6">
+                            <a type="button" href="/logout" class="btn btn-primary btn-lg">
                                 Logout</a>	
                     </div>
                     }

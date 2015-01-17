@@ -4,13 +4,13 @@ GET     /                           @controllers.Application.index()
 
 
 # Login page
-GET 	/custom/login				 @controllers.CustomLoginController.login
-GET 	/custom/logout 				 @controllers.CustomLoginController.logout
+GET 	/custom/login				@controllers.CustomLoginController.login
+GET 	/custom/logout 				@controllers.CustomLoginController.logout
 GET     /login                      @controllers.Application.login
-GET     /signup                      @controllers.Application.signup
-GET     /logout                      @controllers.Application.logout
-GET     /u                      @controllers.Application.user(null)
-GET     /u/:username                      @controllers.Application.user(username:String)
+GET     /signup                     @controllers.Application.signup
+GET     /logout                     @controllers.Application.logout
+GET     /accounts                   @controllers.accounts.Index.index
+GET     /accounts/:username         @controllers.accounts.Index.user(username:String)
 GET		/test						@controllers.SocialApplication.securedURL
 GET		/testuser					@controllers.SocialApplication.userAwareURL
 GET     /authenticate/:provider     @securesocial.controllers.ProviderController.authenticate(provider)

@@ -29,10 +29,6 @@ class Application(override implicit val env: RuntimeEnvironment[DemoUser]) exten
   def signup = UserAwareAction { implicit request =>
     Ok(views.html.login(null))
   }
- 
- def user(username:String) = UserAwareAction { implicit request =>
-    Ok(views.html.index(null))
-  }
 
   def logout = Action {
     Redirect(routes.CustomLoginController.logout).flashing("success" -> Messages("youve.been.logged.out"))
