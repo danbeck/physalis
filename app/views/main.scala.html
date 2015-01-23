@@ -20,20 +20,21 @@
             <div class="container">
 				<div class="row">    
         			<div class="col-sm-4">
-        				<a href="/" class="title"><h1 style="display : inline">Physalis<img src="@routes.Assets.at("images/physalis33.png")"></h1>
+        				<a href="/" class="title"><h1><span class="title">Physalis</span><img src="@routes.Assets.at("images/physalis33.png")"></h1>
         				</a>
         			</div>
         			
+        			<div class="titleButton">
         			@if(user==null){  
+                    
                     <div class="col-sm-2 col-sm-offset-5">
-                            <a type="button" href="/signup" class="btn btn-primary btn-lg btn-block" >
+                            <a type="button" href="/signup" class="btn btn-primary  btn-block" >
                                 Join now</a>
                     </div>
                        @if(!onlyShowRegisterButton){                       	
                     <div class="col-sm-1 text-center">
-                         <a type="button" href="@routes.Application.login()" class="btn btn-lg" >
-                                Login</a>
-                                </div>
+                         <a type="button" href="@routes.Application.login()" class="btn" >Login</a>
+                    </div>
                        }         
                     </div>
                     } else {
@@ -43,6 +44,7 @@
                                 Logout</a>	
                     </div>
                     }
+                    </div>
         		</div>
         	</div>
                   
