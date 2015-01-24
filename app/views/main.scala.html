@@ -24,26 +24,29 @@
         				</a>
         			</div>
         			
-        			<div class="titleButton">
+        			<div class="col-sm-3 col-sm-offset-5 titleButton">
+        			
+				<div class="row">    
         			@if(user==null){  
                     
-                    <div class="col-sm-2 col-sm-offset-4">
-                            <a type="button" href="/signup" class="btn btn-primary  btn-block" >
+                    <div class="col-sm-6 text-center col-with-little-padding">
+                            <a type="button" href="/signup" class="btn btn-primary  btn-block btn-lg" >
                                 Join now</a>
                     </div>
                        @if(!onlyShowRegisterButton){                       	
-                    <div class="col-sm-2 text-center">
-                         <a type="button" href="@routes.Application.login()" class="btn" >Login</a>
+                    <div class="col-sm-6 text-center col-with-little-padding">
+                         <a type="button" href="@routes.Application.login()" class="btn  btn-block btn-lg" >Login</a>
                     </div>
                        }         
                     </div>
                     } else {
                     
-                    <div class="col-sm-2 col-sm-offset-6">
-                            <a type="button" href="/logout" class="btn btn-primary btn-lg">
-                                Logout</a>	
+                    <div class="col-sm-2 col-sm-offset-8 col-with-little-padding">
+                            <a type="button" href="/logout" class="btn btn-primary">
+                                Logoust</a>	
                     </div>
                     }
+                    </div>
                     </div>
         		</div>
         	</div>
