@@ -31,7 +31,7 @@ a.btn.btn-lg {
 }
 
 a.btn-primary, a.btn-primary {
-	background-color:@base-primary;
+	background-color:none;
 	color: white;
 	text-decoration:none;
 	font-weight:normal;
@@ -58,17 +58,20 @@ section {
 }
 
 .infobox h2,.infobox h3,.infobox h4 {
-    color: white;
-    text-align: right;
+    color: @base-black;
     padding: 4px 8px;
 }
 
-.infobox.orange h3, .infobox.orange h4 {
+.infobox h3.orange, .infobox h4.orange {
     background: @base-orange;
+    text-align: right;
+    color: white;
 }
 
-.infobox.black h3,.infobox.black h4 {
+.infobox h3.black ,.infobox h4.black {
     background: @base-black;
+    text-align: right;
+    color: white;
 }
 
 .physalis-btn-black {
