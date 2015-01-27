@@ -1,4 +1,4 @@
-@(user: DemoUser)(implicit flash: Flash) 
+@(user: DemoUser)(implicit flash: Flash)
 
 
 @scripts = {
@@ -7,32 +7,78 @@
 
 @main(user, scripts) {
     <div class="row hidden-xs">
-        <div class="col-xs-8 col-sm-4 border">
-            <img src="@routes.Assets.at("images/banner_big.png")">
-        </div>
-        <div class="col-xs-4 col-sm-8">
-            <h4>Physalis is a build cloud for HTML5 apps</h4>
-            <h4>+ It uses Apache Cordova</h4>
-            <h4>+ It's Opensource</h4>
-            <h4>+ For FirefoxOS, Ubuntu and Android</h4>
-            <h4>+ Start at not costs!</h4>
+        <div class="col-sm-6">
+            <h3>Physalis is a build cloud for HTML5 apps</h3>
+            <p>It uses Apache Cordova</p>
+            <p>It's Opensource (commercial friendly MIT license)</p>
+            <p>For FirefoxOS, Ubuntu and Android</p>
+            <p>Start using the cloud at not costs!</p>
         </div>
     </div>
+
+    <div class="row registerbox" >
+        <div class="col-sm-4"><h4>    Register now with your github account:</h4>
+        </div>
+         <div class="col-sm-1">
+            <a type="button" href="/signup" class="btn btn-lg" style="color:white">
+                Join now</a>
+        </div>
+    </div>
+
+
     <div class="row">
-        <div class="infobox col-sm-6">
-            <h4 class="black">Why use Physalis?</h4>
-            <ul>
-            <li>Physalis is open source. It's licensed under the MIT license. Simply fork <a href="https://github.com/danbeck/physalis">fork me on GitHub</a>.</li>
-            <li>It's completly free for public projects!</li>
-            <li>Supports Android, FirefoxOS and Ubuntu Touch</li>
-            <li>No complicated Apache Cordova Setup needed. Build HTML5 apps with just one click</li>
-           </ul>
-           </div>
-        <div class="infobox col-sm-6">
-            <h4 class="orange">News</h4>
-            <ul>
-            <li>24.01.2015: Physalis lives! <a href="#">>>></a></li>
-            </ul>
+        <div class="infobox physalis-infobox col-sm-4" >
+            <div class="text-center">
+                <i class="fa fa-paper-plane fa-3x"></i>
+            </div>
+            <div>
+                <h4 class="black">Easily build cross platform HTML5 apps</h4>
+                Login with your github account and click "build". No setup needed for each platform (e.g. OSX, microsoft, Android).
+            </div>
+        </div>
+        <div class="infobox physalis-infobox col-sm-4">
+            <div class="text-center">
+                <img src="@routes.Assets.at("images/osi.png")" type="image/png"/>
+            </div>
+            <h4 class="orange">Completly Opensource</h4>
+            <p>
+                Physalis is open source. It's licensed under the MIT license. Simply fork <a href="https://github.com/danbeck/physalis">
+                fork me on GitHub</a>
+            <p>
+
+        </div>
+
+
+        <div class="infobox physalis-infobox col-sm-4">
+            <div class="text-center">
+                <i class="fa fa-html5 fa-3x"></i>
+            </div>
+            <h4 class="orange">Embrace HTML5 standards!</h4>
+            <p>
+                Uses HTML5 standards or existing HTML UI frameworks like jquery mobile or Ubuntu HTML5
+            <p>
+
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="infobox physalis-infobox col-sm-4">
+            <div class="text-center">
+                <img src="@routes.Assets.at("images/cordova.png")" type="image/png"/>
+            </div>
+            <h4 class="black">Native mobile application</h4>
+            Access the camera, read and write files, access the user's contacts or geolocation data.
+        </div>
+
+        <div class="infobox physalis-infobox col-sm-4">
+            <div class="text-center">
+                <i class="fa fa-globe fa-3x"></i>
+            </div>
+            <h4 class="orange">Many platforms</h4>
+            <p>
+                For FirefoxOS, Ubuntu Touch and Android<p>
+
         </div>
     </div>
 }

@@ -19,6 +19,14 @@ class Application(override implicit val env: RuntimeEnvironment[DemoUser]) exten
   //    Ok("Hello %s".format(userName))
   //  }
 
+  def loginRedirectURI = UserAwareAction { implicit request =>
+    request.user match{
+      case Some(u) => Redirect(accounts.routes.Index.user(u.main.userId))
+      case None => BadRequest(views.html.index(null))
+    }
+  }
+  
+  
   def index = UserAwareAction { implicit request =>
     request.user match {
       case Some(u) => Ok(views.html.index(u))

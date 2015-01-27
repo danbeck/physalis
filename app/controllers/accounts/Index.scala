@@ -19,13 +19,16 @@ class Index(override implicit val env: RuntimeEnvironment[DemoUser]) extends sec
   }
 
   def user(username: String) = UserAwareAction { implicit request =>
-    Ok(views.html.index(null))
-    //    Ok(views.html.hub(DemoUser(BasicProfile())))
+    request.user match {
+      case Some(u) if u == username => Ok("Show me my private data")
+      case Some(u)                  => Ok("Only show me public data")
+      case _                        => Ok("No username given!")
+    }
   }
 
-//  def logout = Action {
-//    Redirect("/logout").flashing("success" -> Messages("youve.been.logged.out"))
-//  }
+  //  def logout = Action {
+  //    Redirect("/logout").flashing("success" -> Messages("youve.been.logged.out"))
+  //  }
 
   def login = Action { implicit request =>
     Ok(views.html.login(null))
