@@ -1,4 +1,4 @@
-@(user: DemoUser = null, scripts: Html = Html(""), onlyShowRegisterButton:Boolean = false)(content: Html)
+@(user: DemoUser = null, scripts: Html = Html(""), doNotShowLoginButton:Boolean = false)(content: Html)
 
 <!DOCTYPE html>
 
@@ -27,25 +27,18 @@
         			<div class="col-sm-3 col-sm-offset-5 titleButton">
         			
 				<div class="row">    
-        			@if(user==null){  
-                    
-                    <div class="col-sm-6 text-center col-with-little-padding">
-                            <a type="button" href="/signup" class="btn btn-primary  btn-block btn-lg" >
-                                Join now</a>
-                    </div>
-                       @if(!onlyShowRegisterButton){                       	
-                    <div class="col-sm-6 text-center col-with-little-padding">
-                         <a type="button" href="@routes.Application.login()" class="btn  btn-block btn-lg" >Login</a>
-                    </div>
-                       }         
-                    </div>
-                    } else {
-                    
-                    <div class="col-sm-2 col-sm-offset-8 col-with-little-padding">
-                            <a type="button" href="/logout" class="btn btn-primary">
-                                Logout</a>	
-                    </div>
-                    }
+                    @if(!doNotShowLoginButton){                       	
+	        			@if(user==null){  
+	                    <div class="col-sm-offset-6 col-sm-6 text-center col-with-little-padding">
+	                         <a type="button" href="@routes.Application.login()" class="btn  btn-primary  btn-block btn-lg" >Login</a>
+	                    </div>
+	                    </div>
+	                    } else {    
+	                    <div class="col-sm-2 col-sm-offset-8 col-with-little-padding">
+	                            <a type="button" href="/logout" class="btn btn-primary">Logout</a>	
+	                    </div>
+	                    }
+                    }         
                     </div>
                     </div>
         		</div>
