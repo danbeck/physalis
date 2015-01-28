@@ -13,17 +13,33 @@
 @base-background: #f3f3f3;
 @base-green: #11b400;
 @base-primary: @base-green;
+@base-primary-border: #22cc00;
 
 //@base-box-background: #ffffff;
 .registerbox{
 	background-color: @base-grey-foreground;
 	color: white;
-	padding: 8px 0;
+	padding: 7px 60px;
+	margin:0px;
 	a.btn {
 	 	vertical-align: middle;
 /*	 	color: black; */
 	}
 }
+
+.btn-primary{
+    border: 1px solid #29691d;
+}
+
+.jumbotron h1, .jumbotron .h1 {
+    font-size: 45px;
+}
+
+.jumbotron.jumbotron-no-bottom{
+	padding-bottom:0;
+	margin-bottom:0;
+}
+
 body, .navbar-default .navbar-nav > li > a {
     color: @base-black;
 }
@@ -53,11 +69,22 @@ a.btn.btn-lg {
 	font-weight:normal;
 }
 
-a.btn-primary, a.btn-primary {
+a.btn-primary{
 	background-color:@base-primary;
 	color: white;
 	text-decoration:none;
 	font-weight:normal;
+}
+
+a.btn-primary{
+	background-color:@base-primary;
+	color: white;
+	text-decoration:none;
+	font-weight:normal;
+}
+
+a.btn-primary:hover,a.btn-primary:active {
+	background-color:@base-primary-border;
 }
 
 section {
@@ -71,8 +98,7 @@ section {
 }
 
 .titleButton{
-	margin-top: 20px;
-	margin-bottom: 10px;
+	margin-top: 10px;
 }
 
 .col-with-little-padding {
@@ -105,8 +131,11 @@ section {
     font-weight: bold;
 }
 
-h1 span.title{
+#titleheader {
 	margin-right:12px;
+} 
+h1 span.title, h2 span.title, h3 span.title{
+	#titleheader();
 }
 hr.nomargin {
     margin-top:0px;

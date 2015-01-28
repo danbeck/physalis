@@ -10,8 +10,9 @@ GET     /login                      @controllers.Application.login
 GET     /signup                     @controllers.Application.signup
 GET     /logout                     @controllers.Application.logout
 GET     /accounts                   @controllers.accounts.Index.index
-GET     /accounts/:username         @controllers.accounts.Index.user(username:String)
 GET 	/authenticate/:provider 	@securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
+GET 	/loginredirecturi 			@controllers.Application.loginRedirectURI
+GET     /:username         			@controllers.accounts.Index.user(username:String)
 #GET     /authenticate/:provider     @securesocial.controllers.ProviderController.authenticate(provider)
 #POST    /authenticate/:provider     @securesocial.controllers.ProviderController.authenticateByPost(provider)
 
