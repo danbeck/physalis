@@ -22,14 +22,14 @@ import scala.collection.immutable.ListMap
 import securesocial.core.providers.GitHubProvider
 import service.SecureSocialEventListener
 import securesocial.controllers.ViewTemplates
-import models.DemoUser
+import models.User
 
 object Global extends play.api.GlobalSettings {
 
   /**
    * The runtime environment for this sample app.
    */
-  object MyRuntimeEnvironment extends RuntimeEnvironment.Default[DemoUser] {
+  object MyRuntimeEnvironment extends RuntimeEnvironment.Default[User] {
     override lazy val routes = new CustomRoutesService()
     override lazy val userService: InMemoryUserService = new InMemoryUserService()
     override lazy val eventListeners = List(new SecureSocialEventListener())
@@ -54,7 +54,7 @@ object Global extends play.api.GlobalSettings {
   override def getControllerInstance[A](controllerClass: Class[A]): A = {
     val instance = controllerClass.getConstructors.find { c =>
       val params = c.getParameterTypes
-      params.length == 1 && params(0) == classOf[RuntimeEnvironment[DemoUser]]
+      params.length == 1 && params(0) == classOf[RuntimeEnvironment[User]]
     }.map {
       _.asInstanceOf[Constructor[A]].newInstance(MyRuntimeEnvironment)
     }

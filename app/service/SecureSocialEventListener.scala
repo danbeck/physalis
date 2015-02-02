@@ -19,13 +19,13 @@ package service
 import securesocial.core._
 import play.api.mvc.{ Session, RequestHeader }
 import play.api.Logger
-import models.DemoUser
+import models.User
 
 /**
  * A sample event listener
  */
-class SecureSocialEventListener extends EventListener[DemoUser] {
-  def onEvent(event: Event[DemoUser], request: RequestHeader, session: Session): Option[Session] = {
+class SecureSocialEventListener extends EventListener[User] {
+  def onEvent(event: Event[User], request: RequestHeader, session: Session): Option[Session] = {
     val eventName = event match {
       case LoginEvent(u) => "login"
       case LogoutEvent(u) => "logout"

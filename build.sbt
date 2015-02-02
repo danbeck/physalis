@@ -25,4 +25,4 @@ maintainer in Docker := "Daniel Beck <d.danielbeck@googlemail.com>"
 
 dockerExposedPorts in Docker := Seq(9000, 9443)
 
-dockerBaseImage := "dockerfile/java:oracle-java8"
+dockerBaseImage := "williamyeh/java8"

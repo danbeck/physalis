@@ -7,9 +7,9 @@ import play.api.i18n.Messages
 import play.api.mvc.Flash
 import securesocial.core.java.UserAwareAction
 import securesocial.core.RuntimeEnvironment
-import models.DemoUser
+import models.User
 
-class Index(override implicit val env: RuntimeEnvironment[DemoUser]) extends securesocial.core.SecureSocial[DemoUser] {
+class Index(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
 
   def index = UserAwareAction { implicit request =>
     request.user match {
@@ -20,7 +20,7 @@ class Index(override implicit val env: RuntimeEnvironment[DemoUser]) extends sec
 
   def user(username: String) = UserAwareAction { implicit request =>
     request.user match {
-      case Some(u) if u == username => Ok("Show me my private data")
+      case Some(u) if u.main.fullName == username => Ok("Show me my private data")
       case Some(u)                  => Ok("Only show me public data")
       case _                        => Ok("No username given!")
     }

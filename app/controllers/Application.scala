@@ -7,9 +7,9 @@ import play.api.i18n.Messages
 import play.api.mvc.Flash
 import securesocial.core.java.UserAwareAction
 import securesocial.core.RuntimeEnvironment
-import models.DemoUser
+import models.User
 
-class Application(override implicit val env: RuntimeEnvironment[DemoUser]) extends securesocial.core.SecureSocial[DemoUser] {
+class Application(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
 
   //  def userAwareURL = UserAwareAction { implicit request =>
   //    val userName = request.user match {
@@ -21,7 +21,7 @@ class Application(override implicit val env: RuntimeEnvironment[DemoUser]) exten
 
   def loginRedirectURI = UserAwareAction { implicit request =>
     request.user match{
-      case Some(u) => Redirect(accounts.routes.Index.user(u.main.userId))
+      case Some(u) => Redirect(accounts.routes.Index.user(u.main.fullName.get))
       case None => BadRequest(views.html.index(null))
     }
   }
