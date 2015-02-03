@@ -8,6 +8,8 @@ import play.api.mvc.Flash
 import securesocial.core.java.UserAwareAction
 import securesocial.core.RuntimeEnvironment
 import models.User
+import com.amazonaws.auth.EnvironmentVariableCredentialsProvider
+import com.amazonaws.services.simpledb.AmazonSimpleDBClient
 
 class Application(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
 
@@ -19,14 +21,19 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
   //    Ok("Hello %s".format(userName))
   //  }
 
-  def loginRedirectURI = UserAwareAction { implicit request =>
-    request.user match{
-      case Some(u) => Redirect(accounts.routes.Index.user(u.main.fullName.get))
-      case None => BadRequest(views.html.index(null))
-    }
+  def testSimpleDB = Action { implicit request =>
+    val awsCreditential = new EnvironmentVariableCredentialsProvider().getCredentials()
+    val client = new AmazonSimpleDBClient(awsCreditential);
+    Ok("connection was ok")
   }
   
-  
+  def loginRedirectURI = UserAwareAction { implicit request =>
+    request.user match {
+      case Some(u) => Redirect(accounts.routes.Index.user(u.main.fullName.get))
+      case None    => BadRequest(views.html.index(null))
+    }
+  }
+
   def index = UserAwareAction { implicit request =>
     request.user match {
       case Some(u) => Ok(views.html.index(u))

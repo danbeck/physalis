@@ -12,13 +12,16 @@ lazy val root = (project in file(".")).enablePlugins(play.PlayScala)
 scalaVersion := "2.11.4"
 
 libraryDependencies ++= Seq(
-   "ws.securesocial" %% "securesocial" % "3.0-M1"
+   "ws.securesocial" %% "securesocial" % "3.0-M1",
+   "com.bizo" % "fakesdb-testing_2.10" % "2.7.1",
+   "com.amazonaws" % "aws-java-sdk" % "1.9.17"
 )
 
 resolvers ++= Seq(
     "Apache" at "http://repo1.maven.org/maven2/",
     "jBCrypt Repository" at "http://repo1.maven.org/maven2/org/",
-    "Sonatype OSS Snasphots" at "http://oss.sonatype.org/content/repositories/snapshots"
+    "Sonatype OSS Snasphots" at "http://oss.sonatype.org/content/repositories/snapshots",
+    "FakesDB" at "http://repo.joist.ws"    
 )
 
 maintainer in Docker := "Daniel Beck <d.danielbeck@googlemail.com>"
