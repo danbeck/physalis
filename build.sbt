@@ -14,7 +14,7 @@ scalaVersion := "2.11.4"
 libraryDependencies ++= Seq(
    "ws.securesocial" %% "securesocial" % "3.0-M1",
    "com.bizo" % "fakesdb-testing_2.10" % "2.7.1",
-   "com.amazonaws" % "aws-java-sdk" % "1.9.17"
+   "com.github.seratch" %% "awscala" % "0.4.+"
 )
 
 resolvers ++= Seq(
