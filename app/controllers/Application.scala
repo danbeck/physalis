@@ -10,6 +10,9 @@ import securesocial.core.RuntimeEnvironment
 import models.User
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider
 import com.amazonaws.services.simpledb.AmazonSimpleDBClient
+import com.amazonaws.services.simpledb.model.CreateDomainRequest
+import com.amazonaws.services.simpledb.model.ReplaceableItem
+import service.SimpleDBRepository
 
 class Application(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
 
@@ -22,11 +25,10 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
   //  }
 
   def testSimpleDB = Action { implicit request =>
-    val awsCreditential = new EnvironmentVariableCredentialsProvider().getCredentials()
-    val client = new AmazonSimpleDBClient(awsCreditential);
-    Ok("connection was ok")
+    SimpleDBRepository.saveUser(null)
+    Ok("done")
   }
-  
+
   def loginRedirectURI = UserAwareAction { implicit request =>
     request.user match {
       case Some(u) => Redirect(accounts.routes.Index.user(u.main.fullName.get))
