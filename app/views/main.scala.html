@@ -1,4 +1,4 @@
-@(user: User = null, scripts: Html = Html(""), doNotShowLoginButton:Boolean = false)(content: Html)
+@(user: User = null, scripts: Html = Html(""), doNotShowLoginButton: Boolean = false)(content: Html)
 
 <!DOCTYPE html>
 
@@ -19,45 +19,47 @@
     <body>
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
-				<div class="row">    
-        			<div class="col-sm-4 text-center-xs">
-        				<a href="/" class="title"><h3><span class="title">Physalis</span><img src="@routes.Assets.at("images/physalis33.png")" alt="Logo"></h3>
-        				</a>
-        			</div>
-        			
-        			<div class="col-sm-3 col-sm-offset-5 titleButton">
-        			
-				<div class="row">    
-                    @if(!doNotShowLoginButton){                       	
-	        			@if(user==null){  
-	                    <div class="col-sm-offset-6 col-sm-6 text-center col-with-little-padding">
-	                         <a href="@routes.Application.login()" class="btn  btn-primary  btn-block btn-lg" >Login</a>
-	                    </div>
-	                    </div>
-	                    } else {    
-	                    <div class="col-sm-2 col-sm-offset-8 col-with-little-padding">
-	                            <a href="/logout" class="btn btn-primary">Logout</a>	
-	                    </div>
-	                    }
-                    }         
+                <div class="row">
+                    <div class="col-sm-4 text-center-xs">
+                        <a href="/" class="title"><h3><span class="title">
+                            Physalis</span><img src="@routes.Assets.at("images/physalis33.png")" alt="Logo"></h3>
+                        </a>
                     </div>
+
+                    <div class="col-sm-3 col-sm-offset-5 titleButton">
+
+                        <div class="row">
+                        @if(!doNotShowLoginButton) {
+                            @if(user == null) {
+                                <div class="col-sm-offset-6 col-sm-6 text-center col-with-little-padding">
+                                    <a href="@routes.Application.login()" class="btn  btn-primary  btn-block btn-lg" >
+                                        Login</a>
+                                </div>
+                            </div>
+                        } else {
+                        <div class="col-sm-2 col-sm-offset-8 col-with-little-padding">
+                            <a href="/logout" class="btn btn-primary">Logout</a>
+                        </div>
+                    }
+                        }
                     </div>
-        		</div>
+                </div>
+            </div>
         </nav>
-        
+
         <hr class="nomargin"/>
         <div class="container">
         @content
         </div>
-        
-        
-    <hr>
-    <div class="footer text-center">
-        <div>
-            <small>
-                Impressum: <a href="/impressum">Contact/Impressum</a>
-            </small>
+
+
+        <hr>
+        <div class="footer text-center">
+            <div>
+                <small>
+                    Impressum: <a href="/impressum">Contact/Impressum</a>
+                </small>
+            </div>
         </div>
-    </div>
     </body>
 </html>

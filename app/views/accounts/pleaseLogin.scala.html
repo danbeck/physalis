@@ -1,49 +1,49 @@
-@()(implicit flash: Flash) 
+@()(implicit flash: Flash)
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
 }
 
-@main(null, scripts) {  
-    <div class="well"> <div class="row">    
+@main(null, scripts) {
+    <div class="well"> <div class="row">
         <div class="col-sm-12"><h4>
-     Use Physalis to compile your HTML5 app!
+            Use Physalis to compile your HTML5 app!
         </h4>
         </div>
+    </div>
+
+        <div class="row">
+            <div class="col-sm-6"><h4>
+                Login using any of the following services:
+            </h4>
+            </div>
+            <div class="col-sm-6">
+                <a type="button" href="authenticate/github" class="btn btn-primary btn-lg" style="color : white ; background : #11c400 ; font-weight : bold ;">
+                    Login with GitHub</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="well">
+        <div class="row">
+            <div class="col-sm-12"><h4>
+                You still have no Physalis account? When signup:
+            </h4>
+            </div>
         </div>
 
-    <div class="row">    
-        <div class="col-sm-6"><h4>
-     Login using any of the following services:
-        </h4>
+        <div class="row">
+            <div class="col-sm-6"><h4>
+                Signup using any of the following services:
+            </h4>
+            </div>
+            <div class="col-sm-6">
+                <a type="button" href="authenticate/github" class="btn btn-primary btn-lg" style="color : white ; background : #11c400 ; font-weight : bold ;">
+                    Signup with GitHub</a>
+            </div>
         </div>
-        <div class="col-sm-6">
-        	<a type="button" href="authenticate/github" class="btn btn-primary btn-lg" style="color : white ; background : #11c400 ; font-weight : bold ;">
-              Login with GitHub</a>
-        </div>
-     </div> 
-     </div>
 
-<div class="well">
-    <div class="row">    
-        <div class="col-sm-12"><h4>
-     You still have no Physalis account? When signup:
-        </h4>
-        </div>
-        </div>
-   
-    <div class="row">    
-        <div class="col-sm-6"><h4>
-     Signup using any of the following services:
-        </h4>
-        </div>
-        <div class="col-sm-6">
-        	<a type="button" href="authenticate/github" class="btn btn-primary btn-lg" style="color : white ; background : #11c400 ; font-weight : bold ;">
-              Signup with GitHub</a>
-        </div>
-     </div>
-   
-</div>     
-     
-     
+    </div>
+
+
 }

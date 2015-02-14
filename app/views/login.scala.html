@@ -1,20 +1,20 @@
-@(user: User)(implicit flash: Flash) 
+@(user: User)(implicit flash: Flash)
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
 }
 
 @main(user, scripts, true) {
-   
-    <div class="row">    
+
+    <div class="row">
         <div class="col-sm-4"><h4>
-     Login using any of the following services:
+            Login using any of the following services:
         </h4>
         </div>
         <div class="col-sm-4">
-        	<a type="button" href="auth/authenticate/github" class="btn btn-primary">
-              Login with GitHub</a>
+            <a type="button" href="auth/authenticate/github" class="btn btn-primary">
+                Login with GitHub</a>
         </div>
-     </div> 
-     
+    </div>
+
 }

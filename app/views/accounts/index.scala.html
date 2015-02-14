@@ -1,71 +1,71 @@
-@(user: User)(implicit flash: Flash) 
+@(user: User)(implicit flash: Flash)
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
 }
 
-@main(user, scripts) {  
-   
-    <div class="row">    
-        <div class="col-sm-4">
-        	<a type="button" href="authenticate/github" class="btn btn-primary">+ Create a new project</a>
-        </div>
-     </div>
+@main(user, scripts) {
 
-    <div class="row">    
+    <div class="row">
         <div class="col-sm-4">
-        <h4>
-     Projects:
-        </h4>
+            <a type="button" href="authenticate/github" class="btn btn-primary">+ Create a new project</a>
         </div>
     </div>
-   
-	
-	<div class="row">
-  <div class="col-sm-6 col-md-4">
-    <div class="thumbnail">
-      <div class="caption">
-        <h3>Green Mahjong</h3>
-        <p>Last build: 12.03.2012</p>
-        <p><a href="#" class="btn " role="button">Pull & Build</a> 
-        <!--  <a href="#" class="btn btn-default" role="button">Button</a></p>-->
-      </div>
+
+    <div class="row">
+        <div class="col-sm-4">
+            <h4>
+                Projects:
+            </h4>
+        </div>
     </div>
-  </div>
-  <div class="col-sm-6 col-md-4">
-    <div class="thumbnail">
-      <div class="caption">
-        <h3>Green Mahjong</h3>
-        <p>Last build: 12.03.2012</p>
-        <p><a href="#" class="btn" role="button">Pull & Build</a> 
-        <!--  <a href="#" class="btn btn-default" role="button">Button</a></p>-->
-      </div>
+
+
+    <div class="row">
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <div class="caption">
+                    <h3>Green Mahjong</h3>
+                    <p>Last build: 12.03.2012</p>
+                    <p><a href="#" class="btn " role="button">Pull & Build</a>
+                            <!--  <a href="#" class="btn btn-default" role="button">Button</a></p>-->
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <div class="caption">
+                    <h3>Green Mahjong</h3>
+                    <p>Last build: 12.03.2012</p>
+                    <p><a href="#" class="btn" role="button">Pull & Build</a>
+                            <!--  <a href="#" class="btn btn-default" role="button">Button</a></p>-->
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <div class="caption">
+                    <h3>Cupcake Factory</h3>
+                    <p>Last build: 12.03.2012</p>
+                    <p><a href="#" class="btn" role="button">Pull & Build</a>
+                            <!--  <a href="#" class="btn btn-default" role="button">Button</a></p>-->
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="col-sm-6 col-md-4">
-    <div class="thumbnail">
-      <div class="caption">
-        <h3>Cupcake Factory</h3>
-        <p>Last build: 12.03.2012</p>
-        <p><a href="#" class="btn" role="button">Pull & Build</a> 
-        <!--  <a href="#" class="btn btn-default" role="button">Button</a></p>-->
-      </div>
-    </div>
-  </div>
-</div>
 
 
 
-	<div class="row">
-  <div class="col-sm-6 col-md-4">
-    <div class="thumbnail">
-      <div class="caption">
-        <h3>Green RSS</h3>
-        <p>Last build: 12.03.2012</p>
-        <p><a href="#" class="btn" role="button">Pull & Build</a> 
-        <!--  <a href="#" class="btn btn-default" role="button">Button</a></p>-->
-      </div>
+    <div class="row">
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <div class="caption">
+                    <h3>Green RSS</h3>
+                    <p>Last build: 12.03.2012</p>
+                    <p><a href="#" class="btn" role="button">Pull & Build</a>
+                            <!--  <a href="#" class="btn btn-default" role="button">Button</a></p>-->
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 }
