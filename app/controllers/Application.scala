@@ -31,7 +31,10 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
 
   def loginRedirectURI = UserAwareAction { implicit request =>
     request.user match {
-      case Some(u) => Redirect(accounts.routes.Index.user(u.main.fullName.get))
+      case Some(u) => 
+//        env.userService.find(u.main, userId)
+//        Ok("")
+        Redirect(accounts.routes.Index.user(u.main.fullName.get))
       case None    => BadRequest(views.html.index(null))
     }
   }
