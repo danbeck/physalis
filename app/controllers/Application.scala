@@ -47,7 +47,7 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
   }
 
   def signup = UserAwareAction { implicit request =>
-    Ok(views.html.login(null))
+    Ok(views.html.signup(null))
   }
 
   def logout = Action {
