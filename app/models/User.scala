@@ -6,9 +6,9 @@ import securesocial.core.BasicProfile
 case class Project(id: String, name: String, icon: String, gitUrl: String, version: String)
 
 case class User(id: String,
-                login: String,
-                fullname: String,
-                email: String,
+                username: Some[String],
+                fullname: Some[String],
+                email: Some[String],
                 wantNewsletter: Boolean,
                 projects: List[Project],
                 main: BasicProfile,

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,10 +19,10 @@ package service
 import java.util.UUID
 import play.api.Logger
 import securesocial.core._
-import securesocial.core.providers.{ UsernamePasswordProvider, MailToken }
+import securesocial.core.providers.{UsernamePasswordProvider, MailToken}
 import scala.concurrent.Future
-import securesocial.core.services.{ UserService, SaveMode }
-import models.{ User, Project }
+import securesocial.core.services.{UserService, SaveMode}
+import models.{User, Project}
 
 /**
  * A Sample In Memory user service in Scala
@@ -37,6 +37,7 @@ class InMemoryUserService extends UserService[User] {
   var users = Map[(String, String), User]()
   //private var identities = Map[String, BasicProfile]()
   private var tokens = Map[String, MailToken]()
+
 
   def find(providerId: String, userId: String): Future[Option[BasicProfile]] = {
     if (logger.isDebugEnabled) {
@@ -83,9 +84,17 @@ class InMemoryUserService extends UserService[User] {
   def save(user: BasicProfile, mode: SaveMode): Future[User] = {
     mode match {
       case SaveMode.SignUp =>
-        val uuid: String = UUID.randomUUID().toString()
-        val newUser = User(uuid, null, null, null, false, List[Project](), user, List(user))
+        val newUser = User(id = UUID.randomUUID().toString,
+          username = null,
+          fullname = null,
+          email = null,
+          wantNewsletter = false,
+          projects = List[Project](),
+          main = user,
+          identities = List(user))
+
         users = users + ((user.providerId, user.userId) -> newUser)
+
         Future.successful(newUser)
       case SaveMode.LoggedIn =>
         // first see if there is a user with this BasicProfile already.
@@ -94,14 +103,20 @@ class InMemoryUserService extends UserService[User] {
             updateProfile(user, existingUser)
 
           case None =>
-            val uuid: String = UUID.randomUUID().toString()
-            val newUser = User(uuid, null, null, null, false, List[Project](), user, List(user))
+            val newUser = User(id = UUID.randomUUID().toString,
+              username = null,
+              fullname = null,
+              email = null,
+              wantNewsletter = false,
+              projects = List[Project](),
+              main = user,
+              identities = List(user))
             users = users + ((user.providerId, user.userId) -> newUser)
             Future.successful(newUser)
         }
 
       case SaveMode.PasswordChange =>
-        findProfile(user).map { entry => updateProfile(user, entry) }.getOrElse(
+        findProfile(user).map { entry => updateProfile(user, entry)}.getOrElse(
           // this should not happen as the profile will be there
           throw new Exception("missing profile)"))
     }
@@ -126,7 +141,9 @@ class InMemoryUserService extends UserService[User] {
   }
 
   def findToken(token: String): Future[Option[MailToken]] = {
-    Future.successful { tokens.get(token) }
+    Future.successful {
+      tokens.get(token)
+    }
   }
 
   def deleteToken(uuid: String): Future[Option[MailToken]] = {
