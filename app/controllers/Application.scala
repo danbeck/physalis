@@ -68,7 +68,7 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
   def showEnterUserDataForm = UserAwareAction { implicit request =>
     request.user match {
       // case Some(u) => Ok(views.html.signupEnterUserData(u,))
-      Ok("")
+      case Some (u) => Ok("")
     }
   }
 
