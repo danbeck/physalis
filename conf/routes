@@ -1,20 +1,21 @@
 # Home page
 GET        /                              @controllers.Application.index()
-#GET 	/u/:user					controllers.Users.index(user:String)
 
-
-# Login page
+# Login pages
 GET        /custom/login                  @controllers.CustomLoginController.login
 GET        /custom/logout                 @controllers.CustomLoginController.logout
 GET        /login                         @controllers.accounts.Login.login
+GET        /logout                        @controllers.accounts.Login.logout
+GET        /loginredirecturi              @controllers.accounts.Login.loginRedirectURI
+
+# Signup pages
 GET        /signup                        @controllers.accounts.Signup.signup
 GET        /signup/userdata               @controllers.accounts.Signup.showEnterUserDataForm
 POST       /signup/userdata               @controllers.accounts.Signup.postUserData
-GET        /logout                        @controllers.accounts.Login.logout
+GET        /signupredirecturi             @controllers.Application.signupRedirectURI
+
 GET        /accounts                      @controllers.accounts.Index.index
 GET        /authenticate/:provider        @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
-GET        /loginredirecturi              @controllers.accounts.Login.loginRedirectURI
-GET        /signupredirecturi             @controllers.Application.signupRedirectURI
 GET        /test/simpledb                 @controllers.Application.testSimpleDB
 GET        /:username                     @controllers.accounts.Index.user(username:String)
 
