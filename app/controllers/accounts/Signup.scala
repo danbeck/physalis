@@ -9,11 +9,19 @@ class Signup(override implicit val env: RuntimeEnvironment[User]) extends secure
     Ok(views.html.accounts.signup(null))
   }
 
+  def signupRedirectURI = UserAwareAction { implicit request =>
+    request.user match {
+      case Some(u) if u.newUser  => Redirect(routes.Signup.showEnterUserDataForm)
+      case Some(u) if !u.newUser => Redirect(routes.Index.user(u.username.get))
+      case None                  => Redirect(controllers.routes.Application.index)
+    }
+  }
+
   def showEnterUserDataForm = UserAwareAction { implicit request =>
     request.user match {
       // case Some(u) => Ok(views.html.signupEnterUserData(u,))
       case Some(u) => Ok("")
-      case None => Ok("None")
+      case None    => Ok("None")
     }
   }
 

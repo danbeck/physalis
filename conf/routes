@@ -12,7 +12,7 @@ GET        /loginredirecturi              @controllers.accounts.Login.loginRedir
 GET        /signup                        @controllers.accounts.Signup.signup
 GET        /signup/userdata               @controllers.accounts.Signup.showEnterUserDataForm
 POST       /signup/userdata               @controllers.accounts.Signup.postUserData
-GET        /signupredirecturi             @controllers.Application.signupRedirectURI
+GET        /signupredirecturi             @controllers.accounts.Signup.signupRedirectURI
 
 GET        /accounts                      @controllers.accounts.Index.index
 GET        /authenticate/:provider        @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
