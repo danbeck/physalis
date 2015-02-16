@@ -30,10 +30,11 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
   }
 
   def signupRedirectURI = UserAwareAction { implicit request =>
-
-    //    val user = request.user.get;
-    //    if(user.newUser)
-    Ok("")
+    request.user match {
+      case Some(u) if u.newUser  => Redirect(accounts.routes.Signup.showEnterUserDataForm)
+      case Some(u) if !u.newUser => Redirect(accounts.routes.Index.user(u.username.get))
+      case None                  => Redirect(routes.Application.index)
+    }
   }
 
 }
