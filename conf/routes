@@ -7,9 +7,9 @@ GET        /                              @controllers.Application.index()
 GET        /custom/login                  @controllers.CustomLoginController.login
 GET        /custom/logout                 @controllers.CustomLoginController.logout
 GET        /login                         @controllers.Application.login
-GET        /signup                        @controllers.Application.signup
-GET        /signup/userdata               @controllers.Application.showEnterUserDataForm
-POST       /signup/userdata               @controllers.Application.postUserData
+GET        /signup                        @controllers.Signup.signup
+GET        /signup/userdata               @controllers.Signup.showEnterUserDataForm
+POST       /signup/userdata               @controllers.Signup.postUserData
 GET        /logout                        @controllers.Application.logout
 GET        /accounts                      @controllers.accounts.Index.index
 GET        /authenticate/:provider        @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
@@ -17,6 +17,7 @@ GET        /loginredirecturi              @controllers.Application.loginRedirect
 GET        /signupredirecturi             @controllers.Application.signupRedirectURI
 GET        /test/simpledb                 @controllers.Application.testSimpleDB
 GET        /:username                     @controllers.accounts.Index.user(username:String)
+
 #GET     /authenticate/:provider     @securesocial.controllers.ProviderController.authenticate(provider)
 #POST    /authenticate/:provider     @securesocial.controllers.ProviderController.authenticateByPost(provider)
 

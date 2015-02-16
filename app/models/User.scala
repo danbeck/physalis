@@ -12,4 +12,6 @@ case class User(id: String,
                 wantNewsletter: Boolean,
                 projects: List[Project],
                 main: BasicProfile,
-                identities: List[BasicProfile])
+                identities: List[BasicProfile]) {
+  val newUser: Boolean = !username.isDefined
+}
