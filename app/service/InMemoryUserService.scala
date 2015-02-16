@@ -38,7 +38,6 @@ class InMemoryUserService extends UserService[User] {
   //private var identities = Map[String, BasicProfile]()
   private var tokens = Map[String, MailToken]()
 
-
   def find(providerId: String, userId: String): Future[Option[BasicProfile]] = {
     if (logger.isDebugEnabled) {
       logger.debug("users = %s".format(users))
@@ -85,11 +84,6 @@ class InMemoryUserService extends UserService[User] {
     mode match {
       case SaveMode.SignUp =>
         val newUser = User(id = UUID.randomUUID().toString,
-          username = null,
-          fullname = null,
-          email = null,
-          wantNewsletter = false,
-          projects = List[Project](),
           main = user,
           identities = List(user))
 
@@ -104,11 +98,6 @@ class InMemoryUserService extends UserService[User] {
 
           case None =>
             val newUser = User(id = UUID.randomUUID().toString,
-              username = null,
-              fullname = null,
-              email = null,
-              wantNewsletter = false,
-              projects = List[Project](),
               main = user,
               identities = List(user))
             users = users + ((user.providerId, user.userId) -> newUser)
