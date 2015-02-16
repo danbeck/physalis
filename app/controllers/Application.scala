@@ -22,17 +22,6 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
     Ok("done")
   }
 
-  def loginRedirectURI = UserAwareAction { implicit request =>
-    request.user match {
-      case Some(u) if !u.newUser => Redirect(accounts.routes.Index.user(u.username.get))
-      case Some(u) if u.newUser  => Ok("This is a new user who must enter his username and password")
-      //        env.userService.find(u.main, userId)
-      //        Ok("")
-      case None                  => BadRequest(views.html.index(null))
-    }
-  }
-
-
   def index = UserAwareAction { implicit request =>
     request.user match {
       case Some(u) => Ok(views.html.index(u))
@@ -40,20 +29,11 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
     }
   }
 
-  def logout = Action {
-    Redirect(routes.CustomLoginController.logout).flashing("success" -> Messages("youve.been.logged.out"))
-  }
-
-  def login = Action { implicit request =>
-    Ok(views.html.login(null))
-  }
-  
-    def signupRedirectURI = UserAwareAction { implicit request =>
+  def signupRedirectURI = UserAwareAction { implicit request =>
 
     //    val user = request.user.get;
     //    if(user.newUser)
     Ok("")
   }
-
 
 }
