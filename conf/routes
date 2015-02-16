@@ -7,9 +7,9 @@ GET        /                              @controllers.Application.index()
 GET        /custom/login                  @controllers.CustomLoginController.login
 GET        /custom/logout                 @controllers.CustomLoginController.logout
 GET        /login                         @controllers.Application.login
-GET        /signup                        @controllers.Signup.signup
-GET        /signup/userdata               @controllers.Signup.showEnterUserDataForm
-POST       /signup/userdata               @controllers.Signup.postUserData
+GET        /signup                        @controllers.accounts.Signup.signup
+GET        /signup/userdata               @controllers.accounts.Signup.showEnterUserDataForm
+POST       /signup/userdata               @controllers.accounts.Signup.postUserData
 GET        /logout                        @controllers.Application.logout
 GET        /accounts                      @controllers.accounts.Index.index
 GET        /authenticate/:provider        @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])

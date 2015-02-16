@@ -12,7 +12,7 @@
         </h4>
         </div>
         <div class="col-sm-4">
-        @helper.form(action = routes.Signup.postUserData) {
+        @helper.form(action = controllers.accounts.routes.Signup.postUserData) {
 
             @helper.inputText(myForm("username"))
             @helper.inputText(myForm("fullname"))
