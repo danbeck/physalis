@@ -12,7 +12,7 @@ lazy val root = (project in file(".")).enablePlugins(play.PlayScala)
 scalaVersion := "2.11.5"
 
 libraryDependencies ++= Seq(
-   "ws.securesocial" %% "securesocial" % "3.0-M1",
+   "ws.securesocial" %% "securesocial" % "3.0-M3",
    "com.github.seratch" %% "awscala" % "0.4.+"
 )
 
