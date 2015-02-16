@@ -20,7 +20,7 @@ class Signup(override implicit val env: RuntimeEnvironment[User]) extends secure
   def showEnterUserDataForm = UserAwareAction { implicit request =>
     request.user match {
       // case Some(u) => Ok(views.html.signupEnterUserData(u,))
-      case Some(u) => Ok("")
+      case Some(u) => Ok("This is the first time you log in. Please enter your contact information")
       case None    => Ok("None")
     }
   }
