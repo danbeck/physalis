@@ -4,10 +4,13 @@ import securesocial.core.RuntimeEnvironment
 import models.User
 import play.api.mvc.Action
 import play.api.i18n.Messages
+import play.api.data.Forms._
+import play.api.data.Form
 
 /**
- * Login and Signup are controlled by the same workflow: if a user logs in for his first time ever in physalis,
- * a new account is created. If a user tries to signup with an actually existing account, he is logged in.
+ * Login and Signup are controlled by the same workflow:
+ * - if a user logs in for his first time ever in physalis, a new account is created.
+ * - If a user tries to signup with an actually existing account, he is logged in.
  */
 class Login(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
   def login = Action { implicit request =>
@@ -39,9 +42,15 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
   }
 
   def showEnterUserDataForm = UserAwareAction { implicit request =>
+    case class UserData(username: String, fullname: String, email: String, wantsNewsletter: Boolean)
+    val userForm = Form(mapping("username" -> text,
+      "fullname" -> text,
+      "email" -> email,
+      "wantNewsletter" -> checked("wantNewsletter"))(UserData.apply)(UserData.unapply))
+
     request.user match {
-      // case Some(u) => Ok(views.html.signupEnterUserData(u,))
-      case Some(u) => Ok("This is the first time you log in. Please enter your contact information")
+      //       case Some(u) => Ok(views.html.signupEnterUserData(u,))
+      case Some(u) => Ok(views.html.accounts.signupEnterUserData(u, userForm))
       case None    => Ok("None")
     }
   }
