@@ -9,9 +9,9 @@ GET        /logout                        @controllers.accounts.Login.logout
 GET        /loginredirecturi              @controllers.accounts.Login.loginRedirectURI
 
 # Signup pages
-GET        /signup                        @controllers.accounts.Signup.signup
-GET        /signup/userdata               @controllers.accounts.Signup.showEnterUserDataForm
-POST       /signup/userdata               @controllers.accounts.Signup.postUserData
+GET        /signup                        @controllers.accounts.Login.signup
+GET        /signup/userdata               @controllers.accounts.Login.showEnterUserDataForm
+POST       /signup/userdata               @controllers.accounts.Login.postUserData
 #GET        /signupredirecturi             @controllers.accounts.Signup.signupRedirectURI
 
 GET        /accounts                      @controllers.accounts.Index.index
