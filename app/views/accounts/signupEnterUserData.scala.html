@@ -1,4 +1,4 @@
-@(user: User, userForm: Form[_])(implicit flash: Flash)
+@(user:User, userForm: Form[_])(implicit flash: Flash)
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
@@ -7,23 +7,22 @@
 @main(user, scripts, true) {
 
     <div class="row">
-        <div class="col-sm-5"><h4>
-            This is the first time you use Physalis. Please enter some information so that we can setup your account.
-        </h4>
-        </div>
-        <div class="col-sm-4">
+     <h4>This is the first time you use Physalis. Please enter some information so that we can setup your account.</h4>
+    </div>
+    <div class="row">
+        <div>
         @helper.form(action = controllers.accounts.routes.Login.postUserData) {
+            @helper.inputText(userForm("username"), '_label -> "Username")
+            @helper.inputText(userForm("email"),  '_label -> "E-mail", '_help->"")
 
-            @helper.inputText(userForm("username"))
-            @helper.inputText(userForm("fullname"))
-            @helper.inputText(userForm("email"))
-            @helper.checkbox(userForm("wantNewsletter"))
+<div class="panel panel-default">
+  <div class="panel-body">
+            @helper.checkbox(userForm("wantNewsletter") , '_label -> "Register newsletter",  '_help -> "We send updates about the latest new features build into physalis. We won't spam you.")
+  </div>
+</div>
 
         }
 
         </div>
-    </div>
-    <div class="row">
-        <a type="button" href="authenticate/github" class="btn btn-primary btn-lg">Sign up with Github</a>
     </div>
 }
