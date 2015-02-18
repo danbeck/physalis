@@ -41,23 +41,24 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
     }
   }
 
+  case class UserData(username: String, email: String, wantsNewsletter: Option[Boolean])
+
+  val userForm = Form(mapping("username" -> text,
+    "email" -> email,
+    "wantNewsletter" -> optional(boolean))(UserData.apply)(UserData.unapply))
+
   def showEnterUserDataForm = UserAwareAction { implicit request =>
-    case class UserData(username: String, fullname: String, email: String, wantsNewsletter: Boolean)
-    val userForm = Form(mapping("username" -> text,
-      "fullname" -> text,
-      "email" -> email,
-      "wantNewsletter" -> checked("wantNewsletter"))(UserData.apply)(UserData.unapply))
 
     request.user match {
-      //       case Some(u) => Ok(views.html.signupEnterUserData(u,))
       case Some(u) => Ok(views.html.accounts.signupEnterUserData(u, userForm))
-      case None    => Ok("None")
+      case None    => Ok("Not logged in")
     }
   }
 
   def postUserData = UserAwareAction {
     implicit request =>
-      System.out.println("posted data!")
-      Ok("Data posted")
+      userForm.bindFromRequest.fold(
+        formWithErrors => BadRequest("Oh no!: " + formWithErrors.errors),
+        value => Redirect(routes.Index.user(value.username)))
   }
 }
