@@ -6,6 +6,11 @@ import play.api.mvc.Action
 import play.api.i18n.Messages
 import play.api.data.Forms._
 import play.api.data.Form
+import securesocial.core.services.UserService
+import service.UpdatableUserService
+import service.UpdatableUserService
+import service.UpdatableUserService
+import service.UpdatableUserService
 
 /**
  * Login and Signup are controlled by the same workflow:
@@ -48,7 +53,6 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
     "wantNewsletter" -> optional(boolean))(UserData.apply)(UserData.unapply))
 
   def showEnterUserDataForm = UserAwareAction { implicit request =>
-
     request.user match {
       case Some(u) => Ok(views.html.accounts.signupEnterUserData(u, userForm))
       case None    => Ok("Not logged in")
@@ -57,8 +61,25 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
 
   def postUserData = UserAwareAction {
     implicit request =>
-      userForm.bindFromRequest.fold(
-        formWithErrors => BadRequest("Oh no!: " + formWithErrors.errors),
-        value => Redirect(routes.Index.user(value.username)))
+      request.user match {
+        case Some(u) =>
+          userForm.bindFromRequest.fold(
+            formWithErrors => BadRequest("Oh no!: " + formWithErrors.errors),
+            value => {
+              updateUser(value, u)
+              Redirect(routes.Index.user(value.username))
+//              request.user = None;
+//              request.
+            })
+
+        case None => Redirect(controllers.accounts.routes.Login.login())
+      }
   }
+
+  private def updateUser(data: UserData, user: User) = {
+    val userservice: UpdatableUserService = env.userService.asInstanceOf[UpdatableUserService]
+    val newuser = user.copy(email = Some(data.email), username = Some(data.username))
+    userservice.update(user)
+  }
+
 }

@@ -1,23 +1,25 @@
 # Home page
-GET        /                              @controllers.Application.index()
+GET    /                         @controllers.Application.index()
 
 # Login pages
-GET        /custom/login                  @controllers.CustomLoginController.login
-GET        /custom/logout                 @controllers.CustomLoginController.logout
-GET        /login                         @controllers.accounts.Login.login
-GET        /logout                        @controllers.accounts.Login.logout
-GET        /loginredirecturi              @controllers.accounts.Login.loginRedirectURI
+GET    /custom/login             @controllers.CustomLoginController.login
+GET    /custom/logout            @controllers.CustomLoginController.logout
+GET    /login                    @controllers.accounts.Login.login
+GET    /logout                   @controllers.accounts.Login.logout
+GET    /loginredirecturi         @controllers.accounts.Login.loginRedirectURI
+
+GET    /test                     @controllers.SocialApplication.securedURL
 
 # Signup pages
-GET        /signup                        @controllers.accounts.Login.signup
-GET        /signup/userdata               @controllers.accounts.Login.showEnterUserDataForm
-POST       /signup/userdata               @controllers.accounts.Login.postUserData
+GET    /signup                   @controllers.accounts.Login.signup
+GET    /signup/userdata          @controllers.accounts.Login.showEnterUserDataForm
+POST   /signup/userdata          @controllers.accounts.Login.postUserData
 #GET        /signupredirecturi             @controllers.accounts.Signup.signupRedirectURI
 
-GET        /accounts                      @controllers.accounts.Index.index
-GET        /authenticate/:provider        @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
-GET        /test/simpledb                 @controllers.Application.testSimpleDB
-GET        /:username                     @controllers.accounts.Index.user(username:String)
+GET    /accounts                 @controllers.accounts.Index.index
+GET    /authenticate/:provider   @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
+GET    /test/simpledb            @controllers.Application.testSimpleDB
+GET    /:username                @controllers.accounts.Index.user(username:String)
 
 #GET     /authenticate/:provider     @securesocial.controllers.ProviderController.authenticate(provider)
 #POST    /authenticate/:provider     @securesocial.controllers.ProviderController.authenticateByPost(provider)
@@ -26,6 +28,6 @@ GET        /:username                     @controllers.accounts.Index.user(usern
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET        /public/*file                  controllers.Assets.at(path="/public", file)
-GET        /assets/*file                  securesocial.controllers.Assets.at(path = "/public/securesocial", file)
-->         /auth                          securesocial.Routes
+GET    /public/*file             controllers.Assets.at(path="/public", file)
+GET    /assets/*file             securesocial.controllers.Assets.at(path = "/public/securesocial", file)
+->     /auth                     securesocial.Routes

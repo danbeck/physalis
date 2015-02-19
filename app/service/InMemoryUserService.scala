@@ -19,10 +19,10 @@ package service
 import java.util.UUID
 import play.api.Logger
 import securesocial.core._
-import securesocial.core.providers.{UsernamePasswordProvider, MailToken}
+import securesocial.core.providers.{ UsernamePasswordProvider, MailToken }
 import scala.concurrent.Future
-import securesocial.core.services.{UserService, SaveMode}
-import models.{User, Project}
+import securesocial.core.services.{ UserService, SaveMode }
+import models.{ User, Project }
 
 /**
  * A Sample In Memory user service in Scala
@@ -30,13 +30,18 @@ import models.{User, Project}
  * IMPORTANT: This is just a sample and not suitable for a production environment since
  * it stores everything in memory.
  */
-class InMemoryUserService extends UserService[User] {
+class InMemoryUserService extends UpdatableUserService {
   val logger = Logger("application.controllers.InMemoryUserService")
 
   //
   var users = Map[(String, String), User]()
   //private var identities = Map[String, BasicProfile]()
   private var tokens = Map[String, MailToken]()
+
+  override def update(user: User): User = {
+    users = users + ((user.main.providerId, user.main.userId) -> user)
+    user
+  }
 
   def find(providerId: String, userId: String): Future[Option[BasicProfile]] = {
     if (logger.isDebugEnabled) {
@@ -105,7 +110,7 @@ class InMemoryUserService extends UserService[User] {
         }
 
       case SaveMode.PasswordChange =>
-        findProfile(user).map { entry => updateProfile(user, entry)}.getOrElse(
+        findProfile(user).map { entry => updateProfile(user, entry) }.getOrElse(
           // this should not happen as the profile will be there
           throw new Exception("missing profile)"))
     }
