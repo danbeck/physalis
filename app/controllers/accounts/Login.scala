@@ -82,7 +82,7 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
   private def updateUser(data: UserData, user: User): User = {
     val userservice: UpdatableUserService = env.userService.asInstanceOf[UpdatableUserService]
     val newuser = user.copy(email = Some(data.email), username = Some(data.username))
-    userservice.update(user)
+    userservice.update(newuser)
   }
 
   def postUserData = UserAwareAction.async { implicit request =>
