@@ -19,9 +19,10 @@ class Index(override implicit val env: RuntimeEnvironment[User]) extends secures
   }
 
   def user(username: String) = UserAwareAction { implicit request =>
-    request.user match {
-      case Some(u) if u.main.fullName == username => Ok("Show me my private data")
-      case _                                      => Ok("Only show public data")
+    request.user match { //
+      //       case Some(u) if u.main.username.get == username => Ok(views.html.accounts.index(u))
+      case Some(u) if u.username.get == username => Ok(views.html.accounts.index(u))
+      case _                                     => Ok("Only show public data")
     }
   }
 
