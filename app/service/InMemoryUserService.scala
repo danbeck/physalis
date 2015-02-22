@@ -47,6 +47,16 @@ class InMemoryUserService extends UpdatableUserService {
     user
   }
 
+  def find(username: String): Future[Option[User]] = {
+    Future.successful({
+      val optionalUserMappingTupple = users.find(_._2.username == Some(username))
+      optionalUserMappingTupple match {
+        case Some(tupple) => Some(tupple._2)
+        case _            => None
+      }
+    })
+  }
+
   def find(providerId: String, userId: String): Future[Option[BasicProfile]] = {
     if (logger.isDebugEnabled) {
       logger.debug("users = %s".format(users))
