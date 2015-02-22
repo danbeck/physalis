@@ -66,50 +66,21 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
     }
   }
 
-  //  def postUserData = UserAwareAction {
-  //    implicit request =>
-  //      request.user match {
-  //        case Some(u) =>
-  //          userForm.bindFromRequest.fold(
-  //            formWithErrors => BadRequest("Oh no!: " + formWithErrors.errors),
-  //            value => {
-  //              val updated = updateUser(value, u)
-  //              val updatedAuthenticator = request.authenticator.get.updateUser(updated)
-  //              //              request.authenticator.get.updateUser(updated)
-  //              //              val updatedAuthenticator = request.authenticator.get.updateUser(updated)
-  //              Redirect(routes.Index.user(value.username)).touchingAuthenticator(updatedAuthenticator)
-  //              //              Redirect(routes.Index.user(value.username))
-  //              //              request.user = None;
-  //              //              request.
-  //            })
-  //
-  //        case None => Redirect(controllers.accounts.routes.Login.login())
-  //      }
-  //  }
-
   private def updateUser(data: UserData, user: User): User = {
     val userservice: UpdatableUserService = env.userService.asInstanceOf[UpdatableUserService]
     val newuser = user.copy(email = Some(data.email), username = Some(data.username))
     userservice.update(newuser)
   }
 
-  def postUserData = UserAwareAction.async { implicit request =>
-    request.user match {
-      case Some(u) =>
-        userForm.bindFromRequest.fold(
-          formWithErrors => Future.successful(BadRequest("Oh no!: " + formWithErrors.errors)),
-          value => {
-
-            val updated = updateUser(value, u)
-            request.authenticator.get.updateUser(updated).flatMap { authenticator =>
-              Redirect(routes.Index.user(value.username)).touchingAuthenticator(authenticator)
-            }
-            // request.user = None;
-            // request.
-          })
-
-      case None => Future.successful(Redirect(controllers.routes.CustomLoginController.login()))
-    }
+  def postUserData = SecuredAction.async { implicit request =>
+    userForm.bindFromRequest.fold(
+      formWithErrors => Future.successful(BadRequest("Oh no!: " + formWithErrors.errors)),
+      value => {
+        val updated = updateUser(value, request.user)
+        request.authenticator.updateUser(updated).flatMap { authenticator =>
+          Redirect(routes.Index.user(value.username)).touchingAuthenticator(authenticator)
+        }
+      })
   }
 
 }
