@@ -8,6 +8,11 @@ import play.api.mvc.Flash
 import securesocial.core.java.UserAwareAction
 import securesocial.core.RuntimeEnvironment
 import models.User
+import service.InMemoryUserService
+import service.UpdatableUserService
+import scala.concurrent.Future
+import scala.util.Success
+import scala.util.Failure
 
 class Index(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
 
@@ -18,11 +23,20 @@ class Index(override implicit val env: RuntimeEnvironment[User]) extends secures
     }
   }
 
-  def user(username: String) = UserAwareAction { implicit request =>
+  def findUser(username: String): Future[Option[User]] = {
+    env.userService.asInstanceOf[UpdatableUserService].find(username)
+  }
+
+  def user(username: String) = UserAwareAction.async { implicit request =>
     request.user match { //
-      //       case Some(u) if u.main.username.get == username => Ok(views.html.accounts.index(u))
-      case Some(u) if u.username.get == username => Ok(views.html.accounts.index(u))
-      case _                                     => Ok("Only show public data")
+      case Some(u) if u.username.get == username => Future { Ok(views.html.accounts.index(u)) }
+      case _ => {
+        val futureUser = findUser(username)
+        futureUser.map {
+          case Some(user) => Ok(views.html.accounts.index(user))
+          case None       => Ok("This user doesn't exist")
+        }
+      }
     }
   }
 
