@@ -1,5 +1,9 @@
 /**
+ * Original work: SecureSocial (https://github.com/jaliss/securesocial)
  * Copyright 2014 Jorge Aliss (jaliss at gmail dot com) - twitter: @jaliss
+ *
+ * Derivative work: Physalis (https://github.com/danbeck/physalis)
+ * Modifications Copyright 2014-2015 Daniel Beck (d.danielbeck at googlemail dot com)- twitter:  @ddanieltwitt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +45,6 @@ object Global extends play.api.GlobalSettings {
       override def getLoginPage(form: Form[(String, String)],
                                 msg: Option[String] = None)(implicit request: RequestHeader, lang: Lang): Html = {
         views.html.login(null)
-//        Html("Login Page")
       }
       override def getSignUpPage(form: Form[RegistrationInfo], token: String)(implicit request: RequestHeader, lang: Lang): Html = {
         securesocial.views.html.Registration.signUp(form, token)
@@ -59,7 +62,6 @@ object Global extends play.api.GlobalSettings {
         securesocial.views.html.passwordChange(form)
       }
       def getNotAuthorizedPage(implicit request: RequestHeader, lang: Lang): Html = {
-//        views.html.login(null)
         Html("no authorized")
       }
     }
@@ -71,7 +73,7 @@ object Global extends play.api.GlobalSettings {
     override lazy val routes = new CustomRoutesService()
     override lazy val userService: InMemoryUserService = new InMemoryUserService()
     override lazy val eventListeners = List(new SecureSocialEventListener())
-//    override lazy val viewTemplates: ViewTemplates = new ViewTemplates.Default(this)
+    //    override lazy val viewTemplates: ViewTemplates = new ViewTemplates.Default(this)
     override lazy val viewTemplates: ViewTemplates = new MyViewTemplates.Default(this)
     override lazy val providers = ListMap(
       include(new GitHubProvider(routes, cacheService, oauth2ClientFor(GitHubProvider.GitHub))))
