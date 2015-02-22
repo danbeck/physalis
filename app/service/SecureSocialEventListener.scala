@@ -1,5 +1,9 @@
 /**
- * Copyright 2013-2014 Jorge Aliss (jaliss at gmail dot com) - twitter: @jaliss
+ * Original work: SecureSocial (https://github.com/jaliss/securesocial)
+ * Copyright 2014 Jorge Aliss (jaliss at gmail dot com) - twitter: @jaliss
+ *
+ * Derivative work: Physalis (https://github.com/danbeck/physalis)
+ * Modifications Copyright 2014-2015 Daniel Beck (d.danielbeck at googlemail dot com)- twitter:  @ddanieltwitt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
