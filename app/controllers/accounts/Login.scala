@@ -17,17 +17,6 @@ import scala.concurrent.Future
  * - If a user tries to signup with an actually existing account, he is logged in.
  */
 class Login(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
-  def login = Action { implicit request =>
-    Ok(views.html.login(null))
-  }
-
-  def securedRequest = SecuredAction() {
-    implicit request =>
-      request.user match {
-        case user: User => Ok("")
-        case _          => Ok("")
-      }
-  }
 
   def loginRedirectURI = UserAwareAction { implicit request =>
     request.user match {
