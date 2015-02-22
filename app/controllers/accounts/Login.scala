@@ -21,6 +21,14 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
     Ok(views.html.login(null))
   }
 
+  def securedRequest = SecuredAction() {
+    implicit request =>
+      request.user match {
+        case user: User => Ok("")
+        case _          => Ok("")
+      }
+  }
+
   def loginRedirectURI = UserAwareAction { implicit request =>
     request.user match {
       case Some(u) if !u.newUser => Redirect(routes.Index.user(u.username.get))
@@ -58,26 +66,26 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
     }
   }
 
-//  def postUserData = UserAwareAction {
-//    implicit request =>
-//      request.user match {
-//        case Some(u) =>
-//          userForm.bindFromRequest.fold(
-//            formWithErrors => BadRequest("Oh no!: " + formWithErrors.errors),
-//            value => {
-//              val updated = updateUser(value, u)
-//              val updatedAuthenticator = request.authenticator.get.updateUser(updated)
-//              //              request.authenticator.get.updateUser(updated)
-//              //              val updatedAuthenticator = request.authenticator.get.updateUser(updated)
-//              Redirect(routes.Index.user(value.username)).touchingAuthenticator(updatedAuthenticator)
-//              //              Redirect(routes.Index.user(value.username))
-//              //              request.user = None;
-//              //              request.
-//            })
-//
-//        case None => Redirect(controllers.accounts.routes.Login.login())
-//      }
-//  }
+  //  def postUserData = UserAwareAction {
+  //    implicit request =>
+  //      request.user match {
+  //        case Some(u) =>
+  //          userForm.bindFromRequest.fold(
+  //            formWithErrors => BadRequest("Oh no!: " + formWithErrors.errors),
+  //            value => {
+  //              val updated = updateUser(value, u)
+  //              val updatedAuthenticator = request.authenticator.get.updateUser(updated)
+  //              //              request.authenticator.get.updateUser(updated)
+  //              //              val updatedAuthenticator = request.authenticator.get.updateUser(updated)
+  //              Redirect(routes.Index.user(value.username)).touchingAuthenticator(updatedAuthenticator)
+  //              //              Redirect(routes.Index.user(value.username))
+  //              //              request.user = None;
+  //              //              request.
+  //            })
+  //
+  //        case None => Redirect(controllers.accounts.routes.Login.login())
+  //      }
+  //  }
 
   private def updateUser(data: UserData, user: User): User = {
     val userservice: UpdatableUserService = env.userService.asInstanceOf[UpdatableUserService]
@@ -100,7 +108,7 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
             // request.
           })
 
-      case None => Future.successful(Redirect(controllers.accounts.routes.Login.login()))
+      case None => Future.successful(Redirect(controllers.routes.CustomLoginController.login()))
     }
   }
 

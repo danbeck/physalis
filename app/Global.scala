@@ -23,9 +23,47 @@ import securesocial.core.providers.GitHubProvider
 import service.SecureSocialEventListener
 import securesocial.controllers.ViewTemplates
 import models.User
+import play.api.data.Form
+import play.api.mvc.RequestHeader
+import play.api.i18n.Lang
+import play.twirl.api.Html
+import play.api.mvc.Flash
+import securesocial.controllers.RegistrationInfo
+import securesocial.controllers.ChangeInfo
 
 object Global extends play.api.GlobalSettings {
-
+  object MyViewTemplates {
+    /**
+     * The default views.
+     */
+    class Default(env: RuntimeEnvironment[_]) extends ViewTemplates {
+      implicit val implicitEnv = env
+      override def getLoginPage(form: Form[(String, String)],
+                                msg: Option[String] = None)(implicit request: RequestHeader, lang: Lang): Html = {
+        views.html.login(null)
+//        Html("Login Page")
+      }
+      override def getSignUpPage(form: Form[RegistrationInfo], token: String)(implicit request: RequestHeader, lang: Lang): Html = {
+        securesocial.views.html.Registration.signUp(form, token)
+      }
+      override def getStartSignUpPage(form: Form[String])(implicit request: RequestHeader, lang: Lang): Html = {
+        securesocial.views.html.Registration.startSignUp(form)
+      }
+      override def getStartResetPasswordPage(form: Form[String])(implicit request: RequestHeader, lang: Lang): Html = {
+        securesocial.views.html.Registration.startResetPassword(form)
+      }
+      override def getResetPasswordPage(form: Form[(String, String)], token: String)(implicit request: RequestHeader, lang: Lang): Html = {
+        securesocial.views.html.Registration.resetPasswordPage(form, token)
+      }
+      override def getPasswordChangePage(form: Form[ChangeInfo])(implicit request: RequestHeader, lang: Lang): Html = {
+        securesocial.views.html.passwordChange(form)
+      }
+      def getNotAuthorizedPage(implicit request: RequestHeader, lang: Lang): Html = {
+//        views.html.login(null)
+        Html("no authorized")
+      }
+    }
+  }
   /**
    * The runtime environment for this sample app.
    */
@@ -34,9 +72,9 @@ object Global extends play.api.GlobalSettings {
     override lazy val userService: InMemoryUserService = new InMemoryUserService()
     override lazy val eventListeners = List(new SecureSocialEventListener())
 //    override lazy val viewTemplates: ViewTemplates = new ViewTemplates.Default(this)
+    override lazy val viewTemplates: ViewTemplates = new MyViewTemplates.Default(this)
     override lazy val providers = ListMap(
       include(new GitHubProvider(routes, cacheService, oauth2ClientFor(GitHubProvider.GitHub))))
-
     //      ,include(new GoogleProvider(routes, cacheService, oauth2ClientFor(GoogleProvider.Google))),
     //      include(new UsernamePasswordProvider[DemoUser](userService, avatarService, viewTemplates, passwordHashers)))
   }

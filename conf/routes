@@ -2,9 +2,9 @@
 GET    /                         @controllers.Application.index()
 
 # Login pages
-GET    /custom/login             @controllers.CustomLoginController.login
+GET    /login             		 @controllers.CustomLoginController.login
 GET    /custom/logout            @controllers.CustomLoginController.logout
-GET    /login                    @controllers.accounts.Login.login
+#GET    /login                    @controllers.accounts.Login.login
 GET    /logout                   @controllers.accounts.Login.logout
 GET    /loginredirecturi         @controllers.accounts.Login.loginRedirectURI
 
