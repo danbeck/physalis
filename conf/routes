@@ -4,7 +4,6 @@ GET    /                         @controllers.Application.index()
 # Login pages
 GET    /login             		 @controllers.CustomLoginController.login
 GET    /custom/logout            @controllers.CustomLoginController.logout
-#GET    /login                    @controllers.accounts.Login.login
 GET    /logout                   @controllers.accounts.Login.logout
 GET    /loginredirecturi         @controllers.accounts.Login.loginRedirectURI
 
@@ -14,7 +13,6 @@ GET    /test                     @controllers.SocialApplication.securedURL
 GET    /signup                   @controllers.accounts.Login.signup
 GET    /signup/userdata          @controllers.accounts.Login.showEnterUserDataForm
 POST   /signup/userdata          @controllers.accounts.Login.postUserData
-#GET        /signupredirecturi             @controllers.accounts.Signup.signupRedirectURI
 
 GET    /accounts                 @controllers.accounts.Index.index
 GET    /authenticate/:provider   @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
@@ -23,9 +21,6 @@ GET    /:username                @controllers.accounts.Index.user(username:Strin
 
 #GET     /authenticate/:provider     @securesocial.controllers.ProviderController.authenticate(provider)
 #POST    /authenticate/:provider     @securesocial.controllers.ProviderController.authenticateByPost(provider)
-
-    
-
 
 # Map static resources from the /public folder to the /assets URL path
 GET    /public/*file             controllers.Assets.at(path="/public", file)
