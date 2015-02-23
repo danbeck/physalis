@@ -34,25 +34,14 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
     Ok(views.html.accounts.signup(null))
   }
 
-  def signupRedirectURI = UserAwareAction { implicit request =>
-    request.user match {
-      case Some(u) if u.newUser  => Redirect(routes.Login.showEnterUserDataForm)
-      case Some(u) if !u.newUser => Redirect(routes.Index.user(u.username.get))
-      case None                  => Redirect(controllers.routes.Application.index)
-    }
-  }
-
   case class UserData(username: String, email: String, wantsNewsletter: Option[Boolean])
 
   val userForm = Form(mapping("username" -> text,
     "email" -> email,
     "wantNewsletter" -> optional(boolean))(UserData.apply)(UserData.unapply))
 
-  def showEnterUserDataForm = UserAwareAction { implicit request =>
-    request.user match {
-      case Some(u) => Ok(views.html.accounts.signupEnterUserData(u, userForm))
-      case None    => Ok("Not logged in")
-    }
+  def showEnterUserDataForm = SecuredAction { implicit request =>
+    Ok(views.html.accounts.signupEnterUserData(request.user, userForm))
   }
 
   private def updateUser(data: UserData, user: User): User = {
