@@ -7,6 +7,7 @@ GET    /custom/logout            @controllers.CustomLoginController.logout
 GET    /logout                   @controllers.accounts.Login.logout
 GET    /loginredirecturi         @controllers.accounts.Login.loginRedirectURI
 
+GET    /newproject				@controllers.accounts.Workspace.newProjectPage
 GET    /test                     @controllers.SocialApplication.securedURL
 
 # Signup pages
@@ -16,7 +17,7 @@ POST   /signup/userdata          @controllers.accounts.Login.postUserData
 
 GET    /authenticate/:provider   @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
 GET    /test/simpledb            @controllers.Application.testSimpleDB
-GET    /:username                @controllers.accounts.Index.user(username:String)
+GET    /:username                @controllers.accounts.Workspace.user(username:String)
 
 #GET     /authenticate/:provider     @securesocial.controllers.ProviderController.authenticate(provider)
 #POST    /authenticate/:provider     @securesocial.controllers.ProviderController.authenticateByPost(provider)

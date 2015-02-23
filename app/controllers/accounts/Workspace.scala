@@ -14,7 +14,7 @@ import scala.concurrent.Future
 import scala.util.Success
 import scala.util.Failure
 
-class Index(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
+class Workspace(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
 
   val USER_SERVICE = env.userService.asInstanceOf[UpdatableUserService]
 
@@ -35,5 +35,9 @@ class Index(override implicit val env: RuntimeEnvironment[User]) extends secures
       case Some(u)                               => showPublicAccount(username)
       case None                                  => showPublicAccount(username)
     }
+  }
+
+  def newProjectPage = SecuredAction {
+    Ok("Create a new project here.")
   }
 }
