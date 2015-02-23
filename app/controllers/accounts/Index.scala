@@ -36,8 +36,4 @@ class Index(override implicit val env: RuntimeEnvironment[User]) extends secures
       case None                                  => showPublicAccount(username)
     }
   }
-
-  def login = Action { implicit request =>
-    Ok(views.html.login(null))
-  }
 }
