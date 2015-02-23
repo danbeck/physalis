@@ -14,7 +14,6 @@ GET    /signup                   @controllers.accounts.Login.signup
 GET    /signup/userdata          @controllers.accounts.Login.showEnterUserDataForm
 POST   /signup/userdata          @controllers.accounts.Login.postUserData
 
-GET    /accounts                 @controllers.accounts.Index.index
 GET    /authenticate/:provider   @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
 GET    /test/simpledb            @controllers.Application.testSimpleDB
 GET    /:username                @controllers.accounts.Index.user(username:String)

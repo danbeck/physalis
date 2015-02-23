@@ -20,11 +20,11 @@ class Index(override implicit val env: RuntimeEnvironment[User]) extends secures
 
   def user(username: String) = UserAwareAction.async { implicit request =>
     def findUser(username: String) = USER_SERVICE.find(username)
-    def showMyAccount(user: User) = Future { Ok(views.html.accounts.index(user)) }
+    def showMyAccount(user: User) = Future { Ok(views.html.workspace.index(user)) }
     def showPublicAccount(username: String) = {
       val userFuture = findUser(username)
       userFuture.map {
-        case Some(user) => Ok(views.html.accounts.index(user))
+        case Some(user) => Ok(views.html.workspace.index(user))
         case None       => Ok("This user doesn't exist")
       }
     }
