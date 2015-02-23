@@ -13,6 +13,8 @@ import service.UpdatableUserService
 import scala.concurrent.Future
 import scala.util.Success
 import scala.util.Failure
+import play.api.data.Forms._
+import play.api.data.Form
 
 class Workspace(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
 
@@ -30,14 +32,24 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends sec
       }
     }
 
-    request.user match { //
+    request.user match {
       case Some(u) if u.username.get == username => showMyAccount(u)
       case Some(u)                               => showPublicAccount(username)
       case None                                  => showPublicAccount(username)
     }
   }
 
-  def newProjectPage = SecuredAction {
-    Ok("Create a new project here.")
+  case class ProjectData(username: String, email: String, wantsNewsletter: Option[Boolean])
+
+  val projectForm = Form(single("gitUrl" -> text))
+
+  def newProjectPage = SecuredAction { implicit request =>
+    Ok(views.html.workspace.newProject(request.user, projectForm))
+  }
+
+  def createNewProject = SecuredAction { implicit request =>
+    projectForm.bindFromRequest.fold(
+      formWithErrors => BadRequest("Oh no!: " + formWithErrors.errors),
+      value => Redirect(routes.Workspace.user(request.user.username.get)))
   }
 }

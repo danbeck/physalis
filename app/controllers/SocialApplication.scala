@@ -10,24 +10,6 @@ class SocialApplication(override implicit val env: RuntimeEnvironment[User]) ext
   def onlyTwitter = SecuredAction(WithProvider("twitter")) { implicit request =>
     Ok("You can see this because you logged in using Twitter")
   }
-
-  def securedURL = SecuredAction {
-    Ok("Hallo Karin! Ich bin eine gesicherte Seite!")
-  }
-
-  def userAwareURL = UserAwareAction { implicit request =>
-    val userName = request.user match {
-      case Some(user) => "email:" + user.main.email
-      case _          => "guest"
-    }
-    Ok("Hello %s".format(userName))
-  }
-
-  //  def linkResult = SecuredAction { implicit request =>
-  //    Ok(views.html.securesocial.linkResult(request.user))
-  //    //   Ok("")
-  //  }
-
 //  /**
 //   * Sample use of SecureSocial.currentUser. Access the /current-user to test it
 //   */

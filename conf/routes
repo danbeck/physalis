@@ -8,7 +8,7 @@ GET    /logout                   @controllers.accounts.Login.logout
 GET    /loginredirecturi         @controllers.accounts.Login.loginRedirectURI
 
 GET    /newproject				@controllers.accounts.Workspace.newProjectPage
-GET    /test                     @controllers.SocialApplication.securedURL
+POST    /newproject				@controllers.accounts.Workspace.createNewProject
 
 # Signup pages
 GET    /signup                   @controllers.accounts.Login.signup
