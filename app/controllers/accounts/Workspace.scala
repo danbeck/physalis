@@ -44,7 +44,7 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends sec
   val projectForm = Form(single("gitUrl" -> text))
 
   def newProjectPage = SecuredAction { implicit request =>
-    Ok(views.html.workspace.newProject(request.user, projectForm))
+    Ok(views.html.workspace.index(request.user,Some(projectForm)))
   }
 
   def createNewProject = SecuredAction { implicit request =>

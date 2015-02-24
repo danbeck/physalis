@@ -1,4 +1,4 @@
-@(user: User)(implicit flash: Flash)
+@(user: User, projectForm: Option[Form[String]]= None )(implicit flash: Flash)
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
@@ -6,17 +6,29 @@
 
 @main(user, scripts) {
 
+	@if(projectForm.isDefined){
+		   <div class="row">
+	        @helper.form(action = controllers.accounts.routes.Workspace.createNewProject, 'class -> "form-inline") {
+				<div class="form-group">
+					<input class="col-md-5 form-control" type="text" placeholder="Git HTTPS clone URL"></input>
+				</div>
+			    <button type="submit" class="btn btn-primary">Pull & build app!</button>
+	        }
+	      	</div>
+	} else {
     <div class="row">
         <div class="col-sm-4">
             <a type="button" href="@controllers.accounts.routes.Workspace.newProjectPage" class="btn btn-primary">+ Create a new project</a>
         </div>
     </div>
-
+	}
+	
+	<hr>
     <div class="row">
         <div class="col-sm-4">
-            <h4>
-                Projects:
-            </h4>
+            <h2>
+                My projects
+            </h2>
         </div>
     </div>
 
