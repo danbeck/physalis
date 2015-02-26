@@ -18,6 +18,8 @@ import scala.concurrent.Future
  */
 class Login(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
 
+	private val userservice = env.userService.asInstanceOf[UpdatableUserService]
+
   def loginRedirectURI = UserAwareAction { implicit request =>
     request.user match {
       case Some(u) if !u.newUser => Redirect(routes.Workspace.user(u.username.get))
@@ -45,7 +47,6 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
   }
 
   private def updateUser(data: UserData, user: User): User = {
-    val userservice: UpdatableUserService = env.userService.asInstanceOf[UpdatableUserService]
     val newuser = user.copy(email = Some(data.email), username = Some(data.username))
     userservice.update(newuser)
   }

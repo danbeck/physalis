@@ -15,6 +15,10 @@ import scala.util.Success
 import scala.util.Failure
 import play.api.data.Forms._
 import play.api.data.Form
+import models.Project
+import java.util.UUID
+
+import securesocial.core.utils._
 
 class Workspace(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
 
@@ -44,12 +48,23 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends sec
   val projectForm = Form(single("gitUrl" -> text))
 
   def newProjectPage = SecuredAction { implicit request =>
-    Ok(views.html.workspace.index(request.user,Some(projectForm)))
+    Ok(views.html.workspace.index(request.user, Some(projectForm)))
   }
 
-  def createNewProject = SecuredAction { implicit request =>
+  def createNewProject = SecuredAction.async { implicit request =>
     projectForm.bindFromRequest.fold(
-      formWithErrors => BadRequest("Oh no!: " + formWithErrors.errors),
-      value => Redirect(routes.Workspace.user(request.user.username.get)))
+      formWithErrors => Future.successful(BadRequest("Oh no!: " + formWithErrors.errors)),
+      value => {
+        val project = Project(id = UUID.randomUUID().toString(),
+          name = value,
+          icon = "noicon",
+          gitUrl = value,
+          version = "1")
+
+        val updatedUser = request.user.copy(projects = project :: request.user.projects)
+        request.authenticator.updateUser(updatedUser).flatMap { authenticator =>
+          Redirect(routes.Workspace.user(request.user.username.get)).touchingAuthenticator(authenticator)
+        }
+      })
   }
 }
