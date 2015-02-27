@@ -1,11 +1,6 @@
 @(user: User)(implicit flash: Flash)
 
-
-@scripts = {
-    <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
-}
-
-@main(user, scripts) {
+@main(user) {
     <div class="jumbotron jumbotron-no-bottom">
         <h1>Physalis builds HTML5 apps with Apache Cordova</h1>
         <ul><li><p>It's free</p></li>

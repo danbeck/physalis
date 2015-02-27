@@ -1,10 +1,7 @@
 @(user:User, userForm: Form[_])(implicit flash: Flash)
 
-@scripts = {
-    <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
-}
 
-@main(user, scripts, true) {
+@main(user, doNotShowLoginButton= true) {
 
     <div class="row">
      <h4>This is the first time you use Physalis. Please enter some information so that we can setup your account.</h4>
