@@ -1,4 +1,4 @@
-@(user: User, projectForm: Option[Form[String]]= None )(implicit flash: Flash)
+@(user: User, projectForm: Option[Form[(String,String)]]= None )(implicit flash: Flash)
 
 @scripts = {
     <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
@@ -9,7 +9,7 @@
 	@if(projectForm.isDefined){
 		   <div class="row">
 	        @helper.form(action = controllers.accounts.routes.Workspace.createNewProject, 'class -> "form-inline") {
-<!-- 		<input class="col-md-5 form-control" type="text" name="appName" placeholder="App name"></input>  -->
+	 		<input class="col-md-6 form-control" type="text" name="appName" placeholder="App name"></input>
 				<div class="form-group">
 					<input class="col-md-5 form-control" type="text" name="gitUrl" placeholder="Git HTTPS clone URL"></input>
 				</div>
@@ -33,52 +33,17 @@
         </div>
     </div>
 
-
-    <div class="row">
-        <div class="col-sm-6 col-md-4">
+<div class="row">
+@for(p <- user.projects){
+        <div class="col-md-4">
             <div class="thumbnail">
                 <div class="caption">
-                    <h3>Green Mahjong</h3>
-                    <p>Last build: 12.03.2012</p>
+                    <h3>@p.name</h3>
+                    <p>Last build: n.a.</p>
                     <p><a href="#" class="btn " role="button">Pull & Build</a>
-                            <!--  <a href="#" class="btn btn-default" role="button">Button</a></p>-->
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-4">
-            <div class="thumbnail">
-                <div class="caption">
-                    <h3>Green Mahjong</h3>
-                    <p>Last build: 12.03.2012</p>
-                    <p><a href="#" class="btn" role="button">Pull & Build</a>
-                            <!--  <a href="#" class="btn btn-default" role="button">Button</a></p>-->
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-4">
-            <div class="thumbnail">
-                <div class="caption">
-                    <h3>Cupcake Factory</h3>
-                    <p>Last build: 12.03.2012</p>
-                    <p><a href="#" class="btn" role="button">Pull & Build</a>
-                            <!--  <a href="#" class="btn btn-default" role="button">Button</a></p>-->
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-    <div class="row">
-        <div class="col-sm-6 col-md-4">
-            <div class="thumbnail">
-                <div class="caption">
-                    <h3>Green RSS</h3>
-                    <p>Last build: 12.03.2012</p>
-                    <p><a href="#" class="btn" role="button">Pull & Build</a>
-                            <!--  <a href="#" class="btn btn-default" role="button">Button</a></p>-->
-                </div>
-            </div>
-        </div>
-    </div>
+} 
+</div>
 }

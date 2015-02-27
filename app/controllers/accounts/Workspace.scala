@@ -14,6 +14,7 @@ import scala.concurrent.Future
 import scala.util.Success
 import scala.util.Failure
 import play.api.data.Forms._
+import play.api.data._
 import play.api.data.Form
 import models.Project
 import java.util.UUID
@@ -45,7 +46,7 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends sec
 
   case class ProjectData(username: String, email: String, wantsNewsletter: Option[Boolean])
 
-  val projectForm = Form(single("gitUrl" -> text))
+  val projectForm = Form(tuple("gitUrl" -> text, "appName" -> text))
 
   def newProjectPage = SecuredAction { implicit request =>
     Ok(views.html.workspace.index(request.user, Some(projectForm)))
@@ -54,11 +55,11 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends sec
   def createNewProject = SecuredAction.async { implicit request =>
     projectForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest("Oh no!: " + formWithErrors.errors)),
-      value => {
+      tuple => {
         val project = Project(id = UUID.randomUUID().toString(),
-          name = value,
+          name = tuple._2,
           icon = "noicon",
-          gitUrl = value,
+          gitUrl = tuple._1,
           version = "1")
 
         val updatedUser = request.user.copy(projects = project :: request.user.projects)
