@@ -20,13 +20,23 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-4 text-center-xs">
-                        <a href="/" class="title"><h3><span class="title">
+                    <div class="col-sm-2 text-center-xs">
+                        <a href="@routes.Application.index" class="title"><h3><span class="title">
                             Physalis</span><img src="@routes.Assets.at("images/physalis33.png")" alt="Logo"></h3>
                         </a>
                     </div>
+                    <div class="col-sm-1 ">
+                        <a href="@routes.Application.projects" class="title"><p>
+                            Explore</p>
+                        </a>
+                    </div>
+                    <div class="col-sm-2">
+                        <a href="@routes.Application.training" class="title"><p>
+                            Training Center</p>
+                        </a>
+                    </div>
 
-                    <div class="col-sm-3 col-sm-offset-5 titleButton">
+                    <div class="col-sm-3 col-sm-offset-4 titleButton">
 
                         <div class="row">
                         @if(!doNotShowLoginButton) {

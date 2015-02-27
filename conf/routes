@@ -7,6 +7,9 @@ GET    /custom/logout            @controllers.CustomLoginController.logout
 GET    /logout                   @controllers.accounts.Login.logout
 GET    /loginredirecturi         @controllers.accounts.Login.loginRedirectURI
 
+# Explore pages 
+GET    /projects                 @controllers.Application.projects
+GET    /training                 @controllers.Application.training
 
 # Signup pages
 GET    /signup                   @controllers.accounts.Login.signup

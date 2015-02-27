@@ -29,4 +29,12 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
     }
   }
 
+  def projects = UserAwareAction { implicit request =>
+    Ok("Here comes the projects")
+  }
+  
+  def training = UserAwareAction { implicit request =>
+    Ok("Here comes the training center")
+  }
+
 }
