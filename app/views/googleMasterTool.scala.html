@@ -1,4 +1,4 @@
 @()
-@if(System.getProperties().getProperty("GOOGLE_MASTER_TOOL_VERIFICATION")!=null){
-<meta name="google-site-verification" content='@System.getProperties().getProperty("GOOGLE_MASTER_TOOL_VERIFICATION")' />
+@if(play.Play.application().configuration().getString("GOOGLE_MASTER_TOOL_VERIFICATION")!=null){
+<meta name="google-site-verification" content='@play.Play.application().configuration().getString("GOOGLE_MASTER_TOOL_VERIFICATION")' />
 }
