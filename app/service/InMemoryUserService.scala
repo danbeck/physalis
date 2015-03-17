@@ -42,6 +42,27 @@ class InMemoryUserService extends UpdatableUserService {
   //private var identities = Map[String, BasicProfile]()
   private var tokens = Map[String, MailToken]()
 
+  def projects: List[Project] = {
+
+    logger.info("get Projects")
+    var result = List[Project]()
+    for (
+      u <- users
+    ) {
+      logger.info("user: " + u)
+      logger.info("user projects" + u._2.projects)
+    }
+
+    val allProjs = for (
+      u <- users;
+      proj <- u._2.projects
+    ) {
+      logger.info("project: " + proj)
+      result = proj :: result;
+    }
+    result
+    //    allProjs.toList
+  }
   override def update(user: User): User = {
     users = users + ((user.main.providerId, user.main.userId) -> user)
     user

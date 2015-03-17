@@ -2,7 +2,7 @@ package models
 
 import securesocial.core.BasicProfile
 
-case class Project(id: String, name: String, icon: String, gitUrl: String, version: String)
+case class Project(id: String, name: String, icon: String, gitUrl: String, version: String, user: User)
 
 case class User(id: String,
                 username: Option[String] = None,

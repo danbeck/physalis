@@ -14,9 +14,12 @@ import com.amazonaws.services.simpledb.AmazonSimpleDBClient
 import com.amazonaws.services.simpledb.model.CreateDomainRequest
 import com.amazonaws.services.simpledb.model.ReplaceableItem
 import service.SimpleDBRepository
+import service.UpdatableUserService
 
 class Application(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
 
+  val userService = env.userService.asInstanceOf[UpdatableUserService]
+  
   def testSimpleDB = Action { implicit request =>
     SimpleDBRepository.saveUser(null)
     Ok("done")
@@ -30,7 +33,12 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
   }
 
   def projects = UserAwareAction { implicit request =>
-    Ok("Here comes the projects")
+    request.user match {
+      case Some(u) =>
+      Ok(views.html.projects(u, userService.projects))
+      case None => Ok(views.html.projects(null, userService.projects))
+      
+    }
   }
   
   def training = UserAwareAction { implicit request =>
