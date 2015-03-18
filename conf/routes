@@ -22,6 +22,7 @@ GET    /test/simpledb            @controllers.Application.testSimpleDB
 #workspace
 GET    /newproject               @controllers.accounts.Workspace.newProjectPage
 POST   /newproject               @controllers.accounts.Workspace.createNewProject
+GET    /:username/:project       @controllers.accounts.Workspace.project(username:String,project:String)
 GET    /:username                @controllers.accounts.Workspace.user(username:String)
 
 #GET     /authenticate/:provider     @securesocial.controllers.ProviderController.authenticate(provider)

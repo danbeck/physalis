@@ -28,6 +28,10 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends sec
 
   val USER_SERVICE = env.userService.asInstanceOf[UpdatableUserService]
 
+  def project(username: String, project: String) = UserAwareAction { implicit request =>
+    Ok("Show project")
+  }
+  
   def user(username: String) = UserAwareAction.async { implicit request =>
     def findUser(username: String) = USER_SERVICE.find(username)
     def showMyAccount(user: User) = Future { Ok(views.html.workspace.index(user)) }
