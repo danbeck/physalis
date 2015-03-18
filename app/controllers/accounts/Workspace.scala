@@ -49,7 +49,10 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends sec
 
   case class ProjectData(username: String, email: String, wantsNewsletter: Option[Boolean])
 
-  val projectForm = Form(tuple("gitUrl" -> text, "appName" -> text))
+  val projectForm = Form(
+    tuple(
+      "gitUrl" -> nonEmptyText(7, 200).verifying { text => text.matches(s"http://.*.git") },
+      "appName" -> nonEmptyText(2, 70)))
 
   def newProjectPage = SecuredAction { implicit request =>
     Ok(views.html.workspace.index(request.user, Some(projectForm)))
