@@ -55,20 +55,6 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends sec
     Ok(views.html.workspace.index(request.user, Some(projectForm)))
   }
 
-  private def persistProject(project: Project) = {
-    Logger.info("SimpleDB: creating buildtasks Domain")
-    implicit val simpleDB = new SimpleDBClient()
-    val domain: Domain = simpleDB.createDomain("buildTasks")
-    Logger.info(s"SimpleDB: Adding project '${project.id}' '${project.name}' '${project.gitUrl}'")
-
-    domain.put(project.id,
-      "gitUrl" -> project.gitUrl,
-      "user" -> project.user.username.get,
-      "project" -> project.name,
-      "state" -> "NEW",
-      "s3Url" -> "")
-  }
-
   def createNewProject = SecuredAction.async { implicit request =>
     projectForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest("Oh no!: " + formWithErrors.errors)),
@@ -78,9 +64,7 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends sec
           icon = "noicon",
           gitUrl = tuple._1,
           version = "1",
-          user = request.user)
-
-        persistProject(project)
+          user = request.user).save()
 
         val updatedUser = request.user.copy(projects = project :: request.user.projects)
         request.authenticator.updateUser(updatedUser).flatMap { authenticator =>

@@ -1,8 +1,14 @@
 package models
 
 import securesocial.core.BasicProfile
+import service.SimpleDBRepository
 
-case class Project(id: String, name: String, icon: String, gitUrl: String, version: String, user: User)
+case class Project(id: String, name: String, icon: String, gitUrl: String, version: String, user: User) {
+  def save() = {
+    SimpleDBRepository.save(this)
+    this
+  }
+}
 
 case class User(id: String,
                 username: Option[String] = None,

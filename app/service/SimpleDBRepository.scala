@@ -1,28 +1,43 @@
 package service
 
 import models.User
-import awscala._, simpledb._
-
+import awscala._
 import org.slf4j.LoggerFactory
+import play.api.Logger
+import models.Project
+import awscala.simpledb.SimpleDBClient
+import awscala.simpledb.Domain
+import awscala.simpledb.Item
 //_, simpledb._
 
 object SimpleDBRepository {
 
-  val log = LoggerFactory.getLogger(this.getClass)
+  implicit val simpleDB = new SimpleDBClient()
+  val domain: Domain = simpleDB.createDomain("buildTasks")
 
+  def save(project: Project) = {
+    Logger.info(s"SimpleDB: Adding project '${project.id}' '${project.name}' '${project.gitUrl}'")
+    domain.put(project.id,
+      "gitUrl" -> project.gitUrl,
+      "user" -> project.user.username.get,
+      "project" -> project.name,
+      "state" -> "NEW",
+      "s3Url" -> "")
+
+  }
   def saveUser(user: User) = {
-    log.info("creating simpledb")
+    Logger.info("creating simpledb")
     implicit val simpleDB = new SimpleDBClient()
     //    val region: Region = new Region()
-    log.info("creating domain")
+    Logger.info("creating domain")
     val domain: Domain = simpleDB.createDomain("users")
     domain.put("daniel", "name" -> "Daniel Beck", "email" -> "d.danielbeck@googlemail.com")
     domain.put("karin", "name" -> "Karin Beck", "email" -> "kbeck@googlemail.com")
 
     val items: Seq[Item] = domain.select(s"select * from users where name = 'Daniel Beck'")
 
-    log.info("items: " + items)
-    log.error("items: " +items )
+    Logger.info("items: " + items)
+    Logger.error("items: " + items)
     simpleDB.domains.foreach(_.destroy())
 
     //    val awsCreditential = new EnvironmentVariableCredentialsProvider().getCredentials()
