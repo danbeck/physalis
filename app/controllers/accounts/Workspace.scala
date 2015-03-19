@@ -23,16 +23,17 @@ import org.slf4j.LoggerFactory
 import awscala.simpledb.SimpleDBClient
 import awscala.simpledb.Domain
 import awscala.simpledb.Item
+import controllers.PhysalisSecureSocial
 
-class Workspace(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
+class Workspace(override implicit val env: RuntimeEnvironment[User]) extends PhysalisSecureSocial {
 
   val USER_SERVICE = env.userService.asInstanceOf[UpdatableUserService]
 
   def project(username: String, project: String) = UserAwareAction { implicit request =>
     Ok("Show project")
   }
-  
-  def user(username: String) = UserAwareAction.async { implicit request =>
+
+  def user(username: String) = PhysalisUserAwareAction.async { implicit request =>
     def findUser(username: String) = USER_SERVICE.find(username)
     def showMyAccount(user: User) = Future { Ok(views.html.workspace.index(user)) }
 
@@ -55,7 +56,7 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends sec
 
   val projectForm = Form(
     tuple(
-      "gitUrl" -> nonEmptyText(7, 200).verifying { text => text.matches(s"http://.*.git") },
+      "gitUrl" -> nonEmptyText(7, 200).verifying { text => text.matches(s"https?://.*.git") },
       "appName" -> nonEmptyText(2, 70)))
 
   def newProjectPage = SecuredAction { implicit request =>
