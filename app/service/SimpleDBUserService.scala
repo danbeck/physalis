@@ -92,8 +92,13 @@ class SimpleDBUserService extends UpdatableUserService {
       //        
       //        
 
-      basicProfileDomain.put(profileid, "providerId" -> profile.providerId)
-
+      basicProfileDomain.put(profileid,
+        "providerId" -> profile.providerId,
+        "userId" -> profile.userId,
+        "firstName" -> profile.firstName.getOrElse(null),
+        "lastName" -> profile.lastName.getOrElse(null),
+        "email" -> profile.email.getOrElse(null),
+        "avatarUrl" -> profile.avatarUrl.getOrElse(null))
     }
     //    usersDomain.put(newUser.id, "username" -> newUser.username, "fullname" -> newUser.fullname, "email" -> newUser.email)
     Future.successful(newUser)
