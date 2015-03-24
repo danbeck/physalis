@@ -24,6 +24,8 @@ import awscala.simpledb.SimpleDBClient
 import awscala.simpledb.Domain
 import awscala.simpledb.Item
 import controllers.PhysalisSecureSocial
+import securesocial.core.BasicProfile
+import securesocial.core.services.SaveMode
 
 class Workspace(override implicit val env: RuntimeEnvironment[User]) extends PhysalisSecureSocial {
 
@@ -31,6 +33,25 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
 
   def project(username: String, project: String) = UserAwareAction { implicit request =>
     Ok("Show project")
+  }
+
+  def savedata() = UserAwareAction {
+    implicit request =>
+      val profile = BasicProfile(
+        providerId = "github",
+        userId = "karin",
+        firstName = Some("Karin"),
+        lastName = Some("Beck"),
+        fullName = Some("Karin Beck"),
+        email = Some("karin@freen.et"),
+        avatarUrl = Some("www"),
+        authMethod = null,
+        oAuth1Info = None,
+        oAuth2Info = None,
+        passwordInfo = None)
+
+      USER_SERVICE.save(profile, SaveMode.SignUp)
+      Ok("alles ok")
   }
 
   def user(username: String) = PhysalisUserAwareAction.async { implicit request =>

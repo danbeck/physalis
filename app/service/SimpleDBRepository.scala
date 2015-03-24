@@ -13,7 +13,7 @@ import awscala.simpledb.Item
 object SimpleDBRepository {
 
   implicit val simpleDB = new SimpleDBClient()
-  val domain: Domain = simpleDB.createDomain("buildTasks")
+  val domain: Domain = simpleDB.createDomain("buildTask")
 
   def save(project: Project) = {
     Logger.info(s"SimpleDB: Adding project '${project.id}' '${project.name}' '${project.gitUrl}'")
