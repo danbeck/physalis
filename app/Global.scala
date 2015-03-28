@@ -84,7 +84,7 @@ object Global extends play.api.GlobalSettings {
     //      include(new UsernamePasswordProvider[DemoUser](userService, avatarService, viewTemplates, passwordHashers)))
 
     private def createUserService() = {
-      val inMemoryDB: Boolean = Play.application.configuration.getBoolean("IN_MEMORY_DB", false)
+      val inMemoryDB: Boolean =  Play.application.configuration.getBoolean("IN_MEMORY_DB", false)
 
       inMemoryDB match {
         case true  => new InMemoryUserService

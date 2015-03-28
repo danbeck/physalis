@@ -5,6 +5,7 @@ import awscala.simpledb.SimpleDBClient
 import awscala.simpledb.Domain
 import models.User
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 import securesocial.core.providers.MailToken
 import securesocial.core.BasicProfile
 import securesocial.core.PasswordInfo
@@ -17,21 +18,9 @@ import securesocial.core.BasicProfile
 
 class SimpleDBUserService extends UpdatableUserService {
 
-  implicit val simpleDB = new SimpleDBClient()
-  val usersDomain = simpleDB.createDomain("user")
-  val projectsDomain = simpleDB.createDomain("project")
-  val basicProfileDomain = simpleDB.createDomain("basicProfile")
-
-  def save(project: Project) = {
-    Logger.info(s"SimpleDB: Adding project '${project.id}' '${project.name}' '${project.gitUrl}'")
-    projectsDomain.put(project.id,
-      "gitUrl" -> project.gitUrl,
-      "user" -> project.user.username.get,
-      "project" -> project.name,
-      "state" -> "NEW",
-      "s3Url" -> "")
-
-  }
+//  def save(project: Project) = {
+//   
+//  }
 
   def find(username: String): Future[Option[User]] = {
     Logger.info(s"find '$username")
@@ -48,29 +37,55 @@ class SimpleDBUserService extends UpdatableUserService {
 
   def find(providerId: String, profileId: String): Future[Option[BasicProfile]] = {
     Logger.info(s"find '$providerId' '$profileId")
-
-    //    val items: Seq[Item] = basicProfileDomain.select(s"select * from basicProfile where providerId = ${providerId} and profileId = ${profileId}")
-    val items: Seq[Item] = basicProfileDomain.select(s"select id, providerId, profileId, userId from basicProfile where providerId = '${providerId}' and profileId = '${profileId}'")
+    val items = findProfile(providerId, profileId)
     items.headOption match {
       case Some(item) =>
-        val providerId = item.attributes(0).value
-        val profileId = item.attributes(1).value
-        Logger.info(s"found: providerId: ${providerId}, profileId: ${profileId}")
-        val profile = BasicProfile(providerId = providerId,
-          userId = profileId,
-          firstName = None,
-          lastName = None,
-          fullName = None,
-          email = None,
-          avatarUrl = None,
-          authMethod = null,
-          oAuth1Info = None,
-          oAuth2Info = None,
-          passwordInfo = None)
-
+        val profile = basicProfile(item)
         Future.successful(Some(profile))
       case None => Future.successful(None)
     }
+  }
+
+  def findUser(providerId: String, profileId: String) = {
+    val itemOption = basicProfile_User_Domain.select(
+      s"select userId from BasicProfile_User where providerId = '${providerId}' and profileId = '${profileId}'").headOption
+
+    val userId = itemOption.get.attributes(0).value
+
+  }
+
+  def findUser(userId: String): User = {
+    val itemOption = users_Domain.select(
+      s"select fullname, email, wantsnewsletter from User where userId = '${userId}'").headOption
+
+//      case class User(id: String,
+//                username: Option[String] = None,
+//                fullname: Option[String] = None,
+//                email: Option[String] = None,
+//                wantNewsletter: Boolean = false,
+//                projects: List[Project] = List(),
+//                main: BasicProfile,
+//                identities: List[BasicProfile]) {
+//      
+    }
+      itemOption match {
+      case Some(item) => User(id= userId,
+          username = Some(item.attributes(0).value), 
+          fullname = Some(item.attributes(1).value),
+          email = Some(item.attributes(2).value),
+          wantNewsletter = false,
+          projects= List(),
+          main= null,
+          identities = null)
+          item.attributes(0).value
+    }
+    
+  }
+
+  private def findProfile(providerId: String, profileId: String): Seq[Item] = {
+    basicProfile_Domain.select(
+      s"""select id, providerId, profileId, userId from BasicProfile where 
+        providerId = '${providerId}' and profileId = '${profileId}'""")
   }
 
   def findByEmailAndProvider(email: String, providerId: String): Future[Option[BasicProfile]] = {
@@ -85,17 +100,25 @@ class SimpleDBUserService extends UpdatableUserService {
   def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = { null }
 
   def save(profile: BasicProfile, mode: SaveMode): Future[models.User] = {
+    val futureProfileIdOption = SimpleDBService.findProfile(profile)
+    
+    futureProfileIdOption.map {
+      case Some(id) => SimpleDBService.updateProfile(id, profile)
+      case None => 
+        val id = SimpleDBService.saveProfile(profile)
+      SimpleDBService.createUser(id, profile)
+    }
+    
+    val futureProfile = find(profile.providerId, profile.userId)
+    
+    futureProfile.map {
+      case Some(profile) => profile
+      case None          => None
+    }
     val newUser = User(id = UUID.randomUUID().toString, main = profile, identities = List(profile))
 
-    val profileid = UUID.randomUUID().toString()
-    basicProfileDomain.put(profileid,
-      "providerId" -> profile.providerId,
-      "profileId" -> profile.userId,
-      "firstName" -> profile.firstName.getOrElse(null),
-      "lastName" -> profile.lastName.getOrElse(null),
-      "email" -> profile.email.getOrElse(null),
-      "avatarUrl" -> profile.avatarUrl.getOrElse(null))
-
+    val profileId = UUID.randomUUID().toString()
+   
     find(profile.providerId, profile.userId)
     Future.successful(newUser)
   }
