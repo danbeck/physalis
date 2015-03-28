@@ -1,0 +1,44 @@
+@startuml 
+object BasicProfile{
+	providerid
+	profileId
+	firstName:Option[String]
+	lastName:Option[String]
+	fullName:Option[String]
+	email: Option[String]
+	avatarUrl: Option[String]
+	userId:Option[String]
+	// oAuth2Info?
+}
+
+object User {
+	id: String
+	username: String
+	fullname: String
+	email: String
+	wantsnewsletter: boolean
+}
+
+object Project {
+	id: String
+	userId: String
+	name: String
+	icon: Option(String)
+	giturl: String
+}
+
+object BuildTask{
+	projectId:String
+	platform: String
+	version: String
+	tag: String
+	state: String
+}
+
+
+BasicProfile "n" -- "1" User : BasicProfile.userId = User.id
+
+User "1" -- "n" Project: Project.userId = User.id
+
+Project "0" -- "n" BuildTask: Project.id = BuildTask.projectId
+@enduml 
