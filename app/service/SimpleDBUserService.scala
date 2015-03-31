@@ -18,35 +18,33 @@ import securesocial.core.BasicProfile
 
 class SimpleDBUserService extends UpdatableUserService {
 
-  //  def save(project: Project) = {
-  //   
-  //  }
-
   def find(username: String): Future[Option[User]] = {
     Logger.info(s"find '$username")
     null
   }
 
-  def projects: List[models.Project] = { List() }
+  //  def projects: List[models.Project] = { List() }
 
-  def update(user: models.User): models.User = { null }
+  //  def update(user: models.User): models.User = { null }
 
-  def deleteExpiredTokens(): Unit = {}
+  // not needed
+  def deleteExpiredTokens() = {}
 
+  // not needed
   def deleteToken(uuid: String): Future[Option[MailToken]] = { null }
 
   def find(providerId: String, profileId: String): Future[Option[BasicProfile]] = Future.successful {
     SimpleDBService.findProfile(providerId, profileId)
   }
 
-  def findUser(providerId: String, profileId: String) = {
-  null
-//  val itemOption = basicProfile_User_Domain.select(
-//      s"select userId from BasicProfile_User where providerId = '${providerId}' and profileId = '${profileId}'").headOption
+//  def findUser(providerId: String, profileId: String) = {
+//    null
+//    //  val itemOption = basicProfile_User_Domain.select(
+//    //      s"select userId from BasicProfile_User where providerId = '${providerId}' and profileId = '${profileId}'").headOption
+//    //
+//    //    val userId = itemOption.get.attributes(0).value
 //
-//    val userId = itemOption.get.attributes(0).value
-
-  }
+//  }
 
   //  def findUser(userId: String): User = {
   //    val itemOption = users_Domain.select(
@@ -76,15 +74,19 @@ class SimpleDBUserService extends UpdatableUserService {
   //    
   //  }
 
+  // not needed?
   def findByEmailAndProvider(email: String, providerId: String): Future[Option[BasicProfile]] = {
     Logger.info(s"findByEmail '$providerId' '$email")
     null
   }
 
+  //not needed
   def findToken(token: String): Future[Option[MailToken]] = { null }
 
+  //not needed
   def link(current: User, to: BasicProfile): Future[User] = { null }
 
+  //not needed
   def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = { null }
 
   def save(profile: BasicProfile, mode: SaveMode): Future[models.User] = {
@@ -103,7 +105,9 @@ class SimpleDBUserService extends UpdatableUserService {
     }
   }
 
+  //not needed
   def saveToken(token: MailToken): Future[MailToken] = { null }
 
+  // not needed
   def updatePasswordInfo(user: models.User, info: PasswordInfo): Future[Option[BasicProfile]] = { null }
 }

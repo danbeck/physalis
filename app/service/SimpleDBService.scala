@@ -10,6 +10,7 @@ import java.util.UUID
 import models.User
 import awscala.simpledb.Domain
 import securesocial.core.BasicProfile
+import models.PhysalisProfile
 
 object SimpleDBService {
   implicit val simpleDB = new SimpleDBClient()
@@ -96,31 +97,44 @@ object SimpleDBService {
     }
   }
 
-  def updateProfile(id: String, profile: BasicProfile) = {
-    val userId = basicProfiles.select(s"select userId from BasicProfile where itemName() = '${id}'").head.attributes(0).value
-    saveProfileDataRow(id, profile, userId)
-  }
+  //  def updateProfile(id: String, profile: BasicProfile) = {
+  //    val userId = basicProfiles.select(s"select userId from BasicProfile where itemName() = '${id}'").head.attributes(0).value
+  //    saveProfileDataRow(id, profile, userId)
+  //  }
 
-  def saveProfile(profile: BasicProfile) = {
-    val id = UUID.randomUUID().toString();
-    saveProfileDataRow(id, profile)
-  }
-
-  def saveProfileDataRow(id: String, profile: BasicProfile, userId: String = null) = {
-    basicProfiles.put(id,
+  def saveProfile(profile: PhysalisProfile) = {
+    basicProfiles.put(profile.id,
       "providerId" -> profile.providerId,
-      "profileId" -> profile.userId,
-      "firstName" -> profile.firstName.getOrElse(null),
-      "lastName" -> profile.lastName.getOrElse(null),
-      "fullName" -> profile.fullName.getOrElse(null),
-      "email" -> profile.email.getOrElse(null),
-      "avatarUrl" -> profile.avatarUrl.getOrElse(null),
-      "userId" -> userId)
-    id
+      "profileId" -> profile.profileId,
+      "firstName" -> profile.firstName.orNull,
+      "lastName" -> profile.lastName.orNull,
+      "fullName" -> profile.fullName.orNull,
+      "email" -> profile.email.orNull,
+      "avatarUrl" -> profile.avatarUrl.orNull,
+      "userId" -> profile.userId)
   }
 
-  private def basicProfile(item: Item) = {
+  //  def saveProfile(profile: BasicProfile) = {
+  //    val id = UUID.randomUUID().toString();
+  //    saveProfileDataRow(id, profile)
+  //  }
 
+//  def saveProfileDataRow(id: String, profile: BasicProfile, userId: String = null) = {
+//    basicProfiles.put(id,
+//      "providerId" -> profile.providerId,
+//      "profileId" -> profile.userId,
+//      "firstName" -> profile.firstName.getOrElse(null),
+//      "lastName" -> profile.lastName.getOrElse(null),
+//      "fullName" -> profile.fullName.getOrElse(null),
+//      "email" -> profile.email.getOrElse(null),
+//      "avatarUrl" -> profile.avatarUrl.getOrElse(null),
+//      "userId" -> userId)
+//    id
+//  }
+
+  private def physalisProfile(item: Item) = {
+
+    val id = item.name
     val providerId = item.attributes(0).value
     val profileId = item.attributes(1).value
     val firstName = item.attributes(2).value
@@ -128,19 +142,17 @@ object SimpleDBService {
     val fullName = item.attributes(4).value
     val email = item.attributes(5).value
     val avatarUrl = item.attributes(6).value
-    //    val userId = item.attributes(7).value
+    val userId = item.attributes(7).value
 
-    BasicProfile(providerId = providerId,
-      userId = profileId,
+    PhysalisProfile(id = id,
+      providerId = providerId,
+      profileId = profileId,
       firstName = Option(firstName),
       lastName = Option(lastName),
       fullName = Option(fullName),
       email = Option(fullName),
       avatarUrl = Option(avatarUrl),
-      authMethod = null,
-      oAuth1Info = None,
-      oAuth2Info = None,
-      passwordInfo = None)
+      userId = userId)
   }
 
   private def project(item: Item) = {
