@@ -15,7 +15,15 @@
 	} else {
     <div class="row">
         <div class="col-sm-4">
-            <a type="button" href="@controllers.accounts.routes.Workspace.newProjectPage" class="btn btn-primary">+ Create a new project</a>
+         	<div class="btn-group">
+				<a type="button" href="@controllers.accounts.routes.Workspace.newProjectPage" 
+						class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false"
+						>Create a new project <span class="caret"></span></a>
+				<ul>
+					<li><a href="@controllers.accounts.routes.Workspace.newProjectPage">Public project</a></li>
+					<li><a href="#" disabled>Private project</a></li>
+				</ul>
+			</div>
         </div>
     </div>
 	}
