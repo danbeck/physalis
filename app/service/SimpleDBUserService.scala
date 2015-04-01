@@ -12,7 +12,7 @@ import securesocial.core.PasswordInfo
 import securesocial.core.services.SaveMode
 import play.api.Logger
 import java.util.UUID
-import models.Project
+import models.{Project,User}
 import awscala.simpledb.Item
 import securesocial.core.BasicProfile
 
@@ -22,10 +22,6 @@ class SimpleDBUserService extends UpdatableUserService {
     Logger.info(s"find '$username")
     null
   }
-
-  //  def projects: List[models.Project] = { List() }
-
-  //  def update(user: models.User): models.User = { null }
 
   // not needed
   def deleteExpiredTokens() = {}
@@ -37,42 +33,6 @@ class SimpleDBUserService extends UpdatableUserService {
     SimpleDBService.findProfile(providerId, profileId)
   }
 
-//  def findUser(providerId: String, profileId: String) = {
-//    null
-//    //  val itemOption = basicProfile_User_Domain.select(
-//    //      s"select userId from BasicProfile_User where providerId = '${providerId}' and profileId = '${profileId}'").headOption
-//    //
-//    //    val userId = itemOption.get.attributes(0).value
-//
-//  }
-
-  //  def findUser(userId: String): User = {
-  //    val itemOption = users_Domain.select(
-  //      s"select fullname, email, wantsnewsletter from User where userId = '${userId}'").headOption
-  //
-  ////      case class User(id: String,
-  ////                username: Option[String] = None,
-  ////                fullname: Option[String] = None,
-  ////                email: Option[String] = None,
-  ////                wantNewsletter: Boolean = false,
-  ////                projects: List[Project] = List(),
-  ////                main: BasicProfile,
-  ////                identities: List[BasicProfile]) {
-  ////      
-  //    }
-  //      itemOption match {
-  //      case Some(item) => User(id= userId,
-  //          username = Some(item.attributes(0).value), 
-  //          fullname = Some(item.attributes(1).value),
-  //          email = Some(item.attributes(2).value),
-  //          wantNewsletter = false,
-  //          projects= List(),
-  //          main= null,
-  //          identities = null)
-  //          item.attributes(0).value
-  //    }
-  //    
-  //  }
 
   // not needed?
   def findByEmailAndProvider(email: String, providerId: String): Future[Option[BasicProfile]] = {
@@ -89,20 +49,31 @@ class SimpleDBUserService extends UpdatableUserService {
   //not needed
   def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = { null }
 
-  def save(profile: BasicProfile, mode: SaveMode): Future[models.User] = {
-    Future.successful {
-      val foundProfile = SimpleDBService.findUserIdByProfile(profile)
+  def save(profile: BasicProfile, mode: SaveMode): Future[User] = 
+    Future.successful (saveProfileAndSearchUser(profile, mode))
+    
 
-      foundProfile match {
-        case Some(id) =>
-          SimpleDBService.updateProfile(id, profile)
-          SimpleDBService.findUser(id)
+  private def saveProfileAndSearchUser(profile:BasicProfile, mode: SaveMode):User = {
+      val physalisProfileOption = SimpleDBService.findPhysalisProfile(profile.providerId, profile.profileId)
+
+      physalisProfileOption match {
+        case Some(physalisProfile) =>
+            SimpleDBService.saveProfile(profile)
+            SimpleDBService.findUser(profile)
 
         case None =>
-          val id = SimpleDBService.saveProfile(profile)
-          SimpleDBService.createUser(id, profile)
+            val physalisProfile = PhysalisProfile(providerId = profile.providerId,
+                profileId = profileId, 
+                firstName = profile.firstName,
+                lastName = profile.lastName,
+                fullname = profile.fullName,
+                email = profile.email,
+                avatarUrl = profile.avatarUrl,
+                userId = profile.userId)
+
+            SimpleDBService.saveProfile(profile)
+            SimpleDBService.createEmptyUser(profile)
       }
-    }
   }
 
   //not needed
