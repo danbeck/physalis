@@ -62,6 +62,7 @@ class SimpleDBUserService extends UpdatableUserService {
     Future.successful(saveProfileAndSearchUser(profile, mode))
 
   private def saveProfileAndSearchUser(p: BasicProfile, mode: SaveMode): User = {
+    Logger.info(s"search ${p}")
     val physalisProfileOption = SimpleDBService.findPhysalisProfile(p.providerId, p.userId)
 
     physalisProfileOption match {

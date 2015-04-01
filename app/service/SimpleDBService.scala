@@ -42,6 +42,8 @@ object SimpleDBService {
       main = profile,
       identities = List(profile))
 
+    Logger.info(s"save user: ${user}")
+    
     usersDomain.put(user.id,
       "username" -> user.username.orNull,
       "fullname" -> user.fullname.orNull,
@@ -87,7 +89,7 @@ object SimpleDBService {
   }
 
   def findPhysalisProfile(providerId: String, profileId: String): Option[PhysalisProfile] = {
-    Logger.info(s"search physalisProfile: '${providerId}' '${profileId}")
+    Logger.info(s"search physalisProfile: '${providerId}/${profileId}'")
     val itemOption = profileDomain.select(
       s"""select 
             providerId, 
@@ -101,7 +103,9 @@ object SimpleDBService {
           where 
           providerId = '${providerId}' and profileId = '${profileId}'""").headOption
 
-    itemOption.map(physalisProfile(_))
+    val result = itemOption.map(physalisProfile(_))
+    Logger.info(s"found ${result}")
+    result
   }
 
   def findUserIdByProfile(profile: BasicProfile): Option[String] = {
@@ -121,12 +125,8 @@ object SimpleDBService {
     }
   }
 
-  //  def updateProfile(id: String, profile: BasicProfile) = {
-  //    val userId = profileDomain.select(s"select userId from BasicProfile where itemName() = '${id}'").head.attributes(0).value
-  //    saveProfileDataRow(id, profile, userId)
-  //  }
-
   def saveProfile(profile: PhysalisProfile) = {
+    Logger.info(s"save profile ${profile}")
     profileDomain.put(profile.id,
       "providerId" -> profile.providerId,
       "profileId" -> profile.profileId,
@@ -137,24 +137,6 @@ object SimpleDBService {
       "avatarUrl" -> profile.avatarUrl.orNull,
       "userId" -> profile.userId)
   }
-
-  //  def saveProfile(profile: BasicProfile) = {
-  //    val id = UUID.randomUUID().toString();
-  //    saveProfileDataRow(id, profile)
-  //  }
-
-  //  def saveProfileDataRow(id: String, profile: BasicProfile, userId: String = null) = {
-  //    profileDomain.put(id,
-  //      "providerId" -> profile.providerId,
-  //      "profileId" -> profile.userId,
-  //      "firstName" -> profile.firstName.getOrElse(null),
-  //      "lastName" -> profile.lastName.getOrElse(null),
-  //      "fullName" -> profile.fullName.getOrElse(null),
-  //      "email" -> profile.email.getOrElse(null),
-  //      "avatarUrl" -> profile.avatarUrl.getOrElse(null),
-  //      "userId" -> userId)
-  //    id
-  //  }
 
   private def physalisProfile(item: Item) = {
 
@@ -185,7 +167,7 @@ object SimpleDBService {
     val icon = item.attributes(2).value
     val gitUrl = item.attributes(3).value
     val username = item.attributes(4).value
-    
+
     Project(id = item.name,
       name = name,
       icon = icon,
