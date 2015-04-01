@@ -40,7 +40,7 @@ case class PhysalisProfile(id: String = UUID.randomUUID().toString(),
 
 }
 
-case class Project(id: String, name: String, icon: String, gitUrl: String, user: User) {
+case class Project(id: String, name: String, icon: String, gitUrl: String) {
   def save() = {
     SimpleDBRepository.save(this)
     this
