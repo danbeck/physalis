@@ -88,12 +88,10 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
     projectForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest("Oh no!: " + formWithErrors.errors)),
       tuple => {
-        val project = Project(id = UUID.randomUUID().toString(),
-          name = tuple._2,
+        val project = Project(name = tuple._2,
           icon = "noicon",
           gitUrl = tuple._1,
-          version = "1",
-          user = request.user).save()
+          username = request.user.username.orNull).save()
 
         val updatedUser = request.user.copy(projects = project :: request.user.projects)
         request.authenticator.updateUser(updatedUser).flatMap { authenticator =>

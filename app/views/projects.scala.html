@@ -4,7 +4,7 @@
 
 <ul>
 @for(project <- projects){
-<li><a href="@controllers.accounts.routes.Workspace.user(project.user.username.get)">@project.user.username / @project.name</a></li>
+<li><a href="@controllers.accounts.routes.Workspace.user(project.username)">@project.username / @project.name</a></li>
 }
 </ul>
 

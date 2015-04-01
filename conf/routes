@@ -17,7 +17,7 @@ GET    /signup/userdata          @controllers.accounts.Login.showEnterUserDataFo
 POST   /signup/userdata          @controllers.accounts.Login.postUserData
 
 GET    /authenticate/:provider   @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
-GET    /test/simpledb            @controllers.Application.testSimpleDB
+#GET    /test/simpledb            @controllers.Application.testSimpleDB
 
 #workspace
 GET    /newproject               @controllers.accounts.Workspace.newProjectPage

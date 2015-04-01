@@ -27,6 +27,7 @@ import securesocial.core.providers.{ UsernamePasswordProvider, MailToken }
 import scala.concurrent.Future
 import securesocial.core.services.{ UserService, SaveMode }
 import models.{ User, Project }
+import models.PhysalisProfile
 
 /**
  * A Sample In Memory user service in Scala
@@ -63,7 +64,9 @@ class InMemoryUserService extends UpdatableUserService {
     result
     //    allProjs.toList
   }
-  override def update(user: User): User = {
+  
+  
+  def update(user: User): User = {
     users = users + ((user.main.providerId, user.main.userId) -> user)
     user
   }
@@ -88,7 +91,7 @@ class InMemoryUserService extends UpdatableUserService {
     ) yield {
       basicProfile
     }
-    Future.successful(result.headOption)
+    Future.successful(result.headOption.map { _.toBasicProfile })
   }
 
   def findByEmailAndProvider(email: String, providerId: String): Future[Option[BasicProfile]] = {
@@ -102,17 +105,17 @@ class InMemoryUserService extends UpdatableUserService {
     ) yield {
       basicProfile
     }
-    Future.successful(result.headOption)
+    Future.successful(result.headOption.map(_.toBasicProfile))
   }
 
-  private def findProfile(p: BasicProfile) = {
+  private def findProfile(p: PhysalisProfile) = {
     users.find {
       case (key, value) if value.identities.exists(su => su.providerId == p.providerId && su.userId == p.userId) => true
       case _ => false
     }
   }
 
-  private def updateProfile(user: BasicProfile, entry: ((String, String), User)): Future[User] = {
+  private def updateProfile(user: PhysalisProfile, entry: ((String, String), User)): Future[User] = {
     val identities = entry._2.identities
     val updatedList = identities.patch(identities.indexWhere(i => i.providerId == user.providerId && i.userId == user.userId), Seq(user), 1)
     val updatedUser = entry._2.copy(identities = updatedList)
@@ -120,7 +123,8 @@ class InMemoryUserService extends UpdatableUserService {
     Future.successful(updatedUser)
   }
 
-  def save(user: BasicProfile, mode: SaveMode): Future[User] = {
+  def save(basicProfile: BasicProfile, mode: SaveMode): Future[User] = {
+    val user = PhysalisProfile.create(basicProfile)
     mode match {
       case SaveMode.SignUp =>
         val newUser = User(id = UUID.randomUUID().toString,
@@ -155,7 +159,7 @@ class InMemoryUserService extends UpdatableUserService {
     if (current.identities.exists(i => i.providerId == to.providerId && i.userId == to.userId)) {
       Future.successful(current)
     } else {
-      val added = to :: current.identities
+      val added = PhysalisProfile.create(to) :: current.identities
       val updatedUser = current.copy(identities = added)
       users = users + ((current.main.providerId, current.main.userId) -> updatedUser)
       Future.successful(updatedUser)
@@ -194,32 +198,12 @@ class InMemoryUserService extends UpdatableUserService {
     tokens = tokens.filter(!_._2.isExpired)
   }
 
-  override def updatePasswordInfo(user: User, info: PasswordInfo): Future[Option[BasicProfile]] = {
-    Future.successful {
-      for (
-        found <- users.values.find(_ == user);
-        identityWithPasswordInfo <- found.identities.find(_.providerId == UsernamePasswordProvider.UsernamePassword)
-      ) yield {
-        val idx = found.identities.indexOf(identityWithPasswordInfo)
-        val updated = identityWithPasswordInfo.copy(passwordInfo = Some(info))
-        val updatedIdentities = found.identities.patch(idx, Seq(updated), 1)
-        val updatedEntry = found.copy(identities = updatedIdentities)
-        users = users + ((updatedEntry.main.providerId, updatedEntry.main.userId) -> updatedEntry)
-        updated
-      }
-    }
-  }
+  //not needed
+  def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = { null }
 
-  override def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = {
-    Future.successful {
-      for (
-        found <- users.values.find(u => u.main.providerId == user.main.providerId && u.main.userId == user.main.userId);
-        identityWithPasswordInfo <- found.identities.find(_.providerId == UsernamePasswordProvider.UsernamePassword)
-      ) yield {
-        identityWithPasswordInfo.passwordInfo.get
-      }
-    }
-  }
+  // not needed
+  def updatePasswordInfo(user: models.User, info: PasswordInfo): Future[Option[BasicProfile]] = { null }
+
 }
 
 

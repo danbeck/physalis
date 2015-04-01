@@ -9,6 +9,6 @@ import models.Project
 trait UpdatableUserService extends UserService[User] {
 
   def find(username: String): Future[Option[User]]
-//  def update(user: User): User
-//  def projects: List[Project]
+  def update(user: User): User
+  def projects: List[Project]
 }

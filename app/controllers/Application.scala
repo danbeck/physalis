@@ -13,17 +13,16 @@ import com.amazonaws.auth.EnvironmentVariableCredentialsProvider
 import com.amazonaws.services.simpledb.AmazonSimpleDBClient
 import com.amazonaws.services.simpledb.model.CreateDomainRequest
 import com.amazonaws.services.simpledb.model.ReplaceableItem
-import service.SimpleDBRepository
 import service.UpdatableUserService
 
 class Application(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
 
   val userService = env.userService.asInstanceOf[UpdatableUserService]
   
-  def testSimpleDB = Action { implicit request =>
-    SimpleDBRepository.saveUser(null)
-    Ok("done")
-  }
+//  def testSimpleDB = Action { implicit request =>
+//    SimpleDBRepository.saveUser(null)
+//    Ok("done")
+//  }
 
   def index = UserAwareAction { implicit request =>
     request.user match {
