@@ -73,6 +73,7 @@ class SimpleDBUserService extends UpdatableUserService {
       case None =>
         val profile = PhysalisProfile.create(p)
         SimpleDBService.saveProfile(profile)
+        Logger.info("saveEmptyUser")
         SimpleDBService.saveEmptyUser(profile)
     }
   }

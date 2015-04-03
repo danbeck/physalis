@@ -33,6 +33,9 @@ object SimpleDBService {
   }
 
   def saveEmptyUser(profile: PhysalisProfile): User = {
+
+	Logger.info(s"save user of profile: ${profile}")
+
     val user = User(id = profile.userId,
       username = None,
       fullname = None,
@@ -45,9 +48,9 @@ object SimpleDBService {
     Logger.info(s"save user: ${user}")
     
     usersDomain.put(user.id,
-      "username" -> user.username.orNull,
-      "fullname" -> user.fullname.orNull,
-      "email" -> user.email.orNull,
+      "username" -> user.username.getOrElse(""),
+      "fullname" -> user.fullname.getOrElse(""),
+      "email" -> user.email.getOrElse(""),
       "wantsnewsletter" -> user.wantNewsletter.toString())
 
     user
@@ -67,10 +70,10 @@ object SimpleDBService {
 
   def findUser(profile: PhysalisProfile): Option[User] = {
     val profilesItems = profileDomain.select(s"""select providerId, profileId, firstName, lastName, fullName, email, avatarUrl, userId 
-          from BasicProfile where userId = ${profile.userId}""")
+          from BasicProfile where userId = '${profile.userId}'""")
     val profiles = profilesItems.map { item => physalisProfile(item) }
 
-    val projectsItems = projectsDomain.select(s"select name, icon, gitUrl, username from Projects where userId = ${profile.userId}")
+    val projectsItems = projectsDomain.select(s"select name, icon, gitUrl, username from Project where userId = '${profile.userId}'")
     val projects = projectsItems.map { item => project(item) }
 
     val userItem = usersDomain.select(s"select username, fullname, email, wantsnewsletter from User where itemName() = '${profile.userId}'").headOption
@@ -130,12 +133,13 @@ object SimpleDBService {
     profileDomain.put(profile.id,
       "providerId" -> profile.providerId,
       "profileId" -> profile.profileId,
-      "firstName" -> profile.firstName.orNull,
-      "lastName" -> profile.lastName.orNull,
-      "fullName" -> profile.fullName.orNull,
-      "email" -> profile.email.orNull,
-      "avatarUrl" -> profile.avatarUrl.orNull,
-      "userId" -> profile.userId)
+      "firstName" -> profile.firstName.getOrElse(""),
+      "lastName" -> profile.lastName.getOrElse(""),
+      "fullName" -> profile.fullName.getOrElse(""),
+      "email" -> profile.email.getOrElse(""),
+      "avatarUrl" -> profile.avatarUrl.getOrElse(""),
+      "userId" -> profile.userId) 
+    Logger.info("done saving profile.")
   }
 
   private def physalisProfile(item: Item) = {
