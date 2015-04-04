@@ -34,7 +34,7 @@ object SimpleDBService {
 
   def saveEmptyUser(profile: PhysalisProfile): User = {
 
-	Logger.info(s"save user of profile: ${profile}")
+    Logger.info(s"save user of profile: ${profile}")
 
     val user = User(id = profile.userId,
       username = None,
@@ -46,7 +46,7 @@ object SimpleDBService {
       identities = List(profile))
 
     Logger.info(s"save user: ${user}")
-    
+
     usersDomain.put(user.id,
       "username" -> user.username.getOrElse(""),
       "fullname" -> user.fullname.getOrElse(""),
@@ -63,27 +63,58 @@ object SimpleDBService {
       "email" -> user.email.orNull,
       "wantsnewsletter" -> user.wantNewsletter.toString())
   }
+
   def findProjects(): Seq[Project] = {
     val projectsItems = projectsDomain.select(s"select userId, name, icon, gitUrl from Projects")
     projectsItems.map(project(_))
   }
 
   def findUser(profile: PhysalisProfile): Option[User] = {
-    val profilesItems = profileDomain.select(s"""select providerId, profileId, firstName, lastName, fullName, email, avatarUrl, userId 
-          from BasicProfile where userId = '${profile.userId}'""")
+    val profilesItems = profileDomain.select(s"""select 
+      providerId, 
+      providerUserId, 
+      firstName, 
+      lastName, 
+      fullName, 
+      email, 
+      avatarUrl, 
+      userId 
+          from BasicProfile 
+          where userId = '${profile.userId}'""")
     val profiles = profilesItems.map { item => physalisProfile(item) }
 
-    val projectsItems = projectsDomain.select(s"select name, icon, gitUrl, username from Project where userId = '${profile.userId}'")
+    val projectsItems = projectsDomain.select(s"""select 
+      name, 
+      icon, 
+      gitUrl, 
+      username 
+      from Project 
+      where userId = '${profile.userId}'""")
     val projects = projectsItems.map { item => project(item) }
 
-    val userItem = usersDomain.select(s"select username, fullname, email, wantsnewsletter from User where itemName() = '${profile.userId}'").headOption
+    val userItem = usersDomain.select(s"""select username, 
+      fullname, 
+      email, 
+      wantsnewsletter 
+      from User 
+      where itemName() = '${profile.userId}'""").headOption
 
     userItem.map(user(_, projects, profile, profiles))
   }
 
-  def findBasicProfile(providerId: String, profileId: String): Option[PhysalisProfile] = {
-    val profileOption = profileDomain.select(s"""select itemName(), providerId, profileId, firstName, lastName, fullName, email, avatarUrl, userId 
-          from BasicProfile where providerId = '${providerId}', profileid = '${profileId}'""").headOption
+  def findBasicProfile(providerId: String, providerUserId: String): Option[PhysalisProfile] = {
+    val profileOption = profileDomain.select(s"""select 
+      providerId, 
+      providerUserId, 
+      firstName, 
+      lastName, 
+      fullName, 
+      email, 
+      avatarUrl, 
+      userId 
+          from BasicProfile 
+          where providerId = '${providerId}', 
+            providerUserId= '${providerUserId}'""").headOption
 
     profileOption match {
       case Some(profileRecord) => Some(physalisProfile(profileRecord))
@@ -91,12 +122,12 @@ object SimpleDBService {
     }
   }
 
-  def findPhysalisProfile(providerId: String, profileId: String): Option[PhysalisProfile] = {
-    Logger.info(s"search physalisProfile: '${providerId}/${profileId}'")
+  def findPhysalisProfile(providerId: String, providerUserId: String): Option[PhysalisProfile] = {
+    Logger.info(s"search physalisProfile: '${providerId}/${providerUserId}'")
     val itemOption = profileDomain.select(
       s"""select 
             providerId, 
-            profileId, 
+            providerUserId, 
             firstName, 
             lastName, 
             fullName, 
@@ -104,7 +135,7 @@ object SimpleDBService {
             avatarUrl, 
             userId from BasicProfile 
           where 
-          providerId = '${providerId}' and profileId = '${profileId}'""").headOption
+          providerId = '${providerId}' and providerUserId = '${providerUserId}'""").headOption
 
     val result = itemOption.map(physalisProfile(_))
     Logger.info(s"found ${result}")
@@ -115,12 +146,12 @@ object SimpleDBService {
     findUserIdByProfile(profile.providerId, profile.userId)
   }
 
-  def findUserIdByProfile(providerId: String, userId: String): Option[String] = {
-    Logger.info(s"find '${providerId}' '${userId}")
+  def findUserIdByProfile(providerId: String, providerUserId: String): Option[String] = {
+    Logger.info(s"find '${providerId}' '${providerUserId}")
 
     val items = profileDomain.select(
-      s"""select itemName(), providerId, profileId, userId from BasicProfile where 
-			  providerId = '${providerId}' and profileId = '${userId}'""")
+      s"""select userId from BasicProfile where 
+			  providerId = '${providerId}' and providerUserId = '${providerUserId}'""")
 
     items.headOption match {
       case Some(item) => Some(item.attributes(0).value)
@@ -132,36 +163,35 @@ object SimpleDBService {
     Logger.info(s"save profile ${profile}")
     profileDomain.put(profile.id,
       "providerId" -> profile.providerId,
-      "profileId" -> profile.profileId,
+      "providerUserId" -> profile.providerUserId,
       "firstName" -> profile.firstName.getOrElse(""),
       "lastName" -> profile.lastName.getOrElse(""),
       "fullName" -> profile.fullName.getOrElse(""),
       "email" -> profile.email.getOrElse(""),
       "avatarUrl" -> profile.avatarUrl.getOrElse(""),
-      "userId" -> profile.userId) 
+      "userId" -> profile.userId)
     Logger.info("done saving profile.")
   }
 
   private def physalisProfile(item: Item) = {
-
     val id = item.name
-    val providerId = item.attributes(0).value
-    val profileId = item.attributes(1).value
-    val firstName = item.attributes(2).value
-    val lastName = item.attributes(3).value
-    val fullName = item.attributes(4).value
-    val email = item.attributes(5).value
-    val avatarUrl = item.attributes(6).value
-    val userId = item.attributes(7).value
+    val providerId = item.attributes.find(_.name == "providerId").get.value
+    val providerUserId = item.attributes.find(_.name == "providerUserId").get.value
+    val firstName = item.attributes.find(_.name == "firstName").map(_.value)
+    val lastName = item.attributes.find(_.name == "lastName").map(_.value)
+    val fullName = item.attributes.find(_.name == "fullName").map(_.value)
+    val email = item.attributes.find(_.name == "email").map(_.value)
+    val avatarUrl = item.attributes.find(_.name == "avatarUrl").map(_.value)
+    val userId = item.attributes.find(_.name == "userId").get.value
 
     PhysalisProfile(id = id,
       providerId = providerId,
-      profileId = profileId,
-      firstName = Option(firstName),
-      lastName = Option(lastName),
-      fullName = Option(fullName),
-      email = Option(fullName),
-      avatarUrl = Option(avatarUrl),
+      providerUserId = providerUserId,
+      firstName = firstName,
+      lastName = lastName,
+      fullName = fullName,
+      email = fullName,
+      avatarUrl = avatarUrl,
       userId = userId)
   }
 

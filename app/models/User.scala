@@ -11,7 +11,7 @@ import java.util.UUID
 
 case class PhysalisProfile(id: String = UUID.randomUUID().toString(),
                            providerId: String,
-                           profileId: String,
+                           providerUserId: String,
                            firstName: Option[String],
                            lastName: Option[String],
                            fullName: Option[String],
@@ -24,7 +24,7 @@ case class PhysalisProfile(id: String = UUID.randomUUID().toString(),
                            passwordInfo: Option[PasswordInfo] = None) extends GenericProfile {
   def toBasicProfile() =
     BasicProfile(providerId = providerId,
-      userId = profileId,
+      userId = providerUserId,
       firstName = firstName,
       lastName = lastName,
       fullName = fullName,
@@ -37,7 +37,7 @@ case class PhysalisProfile(id: String = UUID.randomUUID().toString(),
 }
 object PhysalisProfile {
   def create(p: BasicProfile) = PhysalisProfile(providerId = p.providerId,
-    profileId = p.userId,
+    providerUserId = p.userId,
     firstName = p.firstName,
     lastName = p.lastName,
     fullName = p.fullName,
@@ -46,7 +46,7 @@ object PhysalisProfile {
 
   def create(p: BasicProfile, id: String, userId: String) = PhysalisProfile(id = id,
     providerId = p.providerId,
-    profileId = p.userId,
+    providerUserId = p.userId,
     firstName = p.firstName,
     lastName = p.lastName,
     fullName = p.fullName,
