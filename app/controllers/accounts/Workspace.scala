@@ -89,7 +89,7 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
       formWithErrors => Future.successful(BadRequest("Oh no!: " + formWithErrors.errors)),
       tuple => {
         val project = Project(name = tuple._2,
-          icon = "noicon",
+          icon = None,
           gitUrl = tuple._1,
           username = request.user.username.orNull).save()
 

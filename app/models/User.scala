@@ -57,7 +57,7 @@ object PhysalisProfile {
 
 case class Project(id: String = UUID.randomUUID().toString(),
                    name: String,
-                   icon: String,
+                   icon: Option[String],
                    gitUrl: String,
                    username: String) {
   def save() = {

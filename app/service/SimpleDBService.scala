@@ -11,31 +11,30 @@ import models.User
 import awscala.simpledb.Domain
 import securesocial.core.BasicProfile
 import models.PhysalisProfile
-import models.PhysalisProfile
-import models.PhysalisProfile
-import models.PhysalisProfile
+import shapeless.syntax.std.tuple._
 import models.Project
+import scala.collection.mutable.ArrayBuffer
 
 object SimpleDBService {
   implicit val simpleDB = new SimpleDBClient()
-  private val usersDomain: Domain = simpleDB.createDomain("User")
+  private val userDomain: Domain = simpleDB.createDomain("User")
   private val projectsDomain: Domain = simpleDB.createDomain("Project")
-  private val profileDomain: Domain = simpleDB.createDomain("BasicProfile")
+  private val profileDomain: Domain = simpleDB.createDomain("Profile")
   private val buildTasks: Domain = simpleDB.createDomain("BuildTask")
 
   def saveProject(project: Project) = {
-    Logger.info(s"SimpleDB: Adding project '${project.id}' '${project.name}' '${project.gitUrl}'")
-    projectsDomain.put(project.id,
+    Logger.info(s"Save project '${project}")
+
+    val projectData = ArrayBuffer(
       "name" -> project.name,
-      "icon" -> project.icon,
       "gitUrl" -> project.gitUrl,
       "username" -> project.username)
+
+    if (project.icon.isDefined) projectData += ("icon" -> project.icon.get)
+    projectsDomain.put(project.id, projectData: _*)
   }
 
   def saveEmptyUser(profile: PhysalisProfile): User = {
-
-    Logger.info(s"save user of profile: ${profile}")
-
     val user = User(id = profile.userId,
       username = None,
       fullname = None,
@@ -45,23 +44,26 @@ object SimpleDBService {
       main = profile,
       identities = List(profile))
 
-    Logger.info(s"save user: ${user}")
+    Logger.info(s"Save user ${user}")
 
-    usersDomain.put(user.id,
-      "username" -> user.username.getOrElse(""),
-      "fullname" -> user.fullname.getOrElse(""),
-      "email" -> user.email.getOrElse(""),
-      "wantsnewsletter" -> user.wantNewsletter.toString())
+    val userData = ArrayBuffer("wantsnewsletter" -> user.wantNewsletter.toString())
+
+    if (user.username.isDefined) userData += "username" -> user.username.get
+    if (user.fullname.isDefined) userData += "fullname" -> user.fullname.get
+    if (user.email.isDefined) userData += "email" -> user.email.get
+
+    userDomain.put(user.id, userData: _*)
 
     user
   }
 
   def saveUser(user: User) = {
-    usersDomain.put(user.id,
-      "username" -> user.username.orNull,
-      "fullname" -> user.fullname.orNull,
-      "email" -> user.email.orNull,
-      "wantsnewsletter" -> user.wantNewsletter.toString())
+    
+    val userData = ArrayBuffer("wantsnewsletter" -> user.wantNewsletter.toString())
+    if (user.username.isDefined) userData += "username" -> user.username.get
+    if (user.fullname.isDefined) userData += "fullname" -> user.fullname.get
+    if (user.email.isDefined) userData += "fullname" -> user.email.get
+    userDomain.put(user.id,userData:_*)
   }
 
   def findProjects(): Seq[Project] = {
@@ -92,7 +94,7 @@ object SimpleDBService {
       where userId = '${profile.userId}'""")
     val projects = projectsItems.map { item => project(item) }
 
-    val userItem = usersDomain.select(s"""select username, 
+    val userItem = userDomain.select(s"""select username, 
       fullname, 
       email, 
       wantsnewsletter 
@@ -113,17 +115,13 @@ object SimpleDBService {
       avatarUrl, 
       userId 
           from BasicProfile 
-          where providerId = '${providerId}', 
-            providerUserId= '${providerUserId}'""").headOption
+          where providerId = '${providerId}', providerUserId= '${providerUserId}'""").headOption
 
-    profileOption match {
-      case Some(profileRecord) => Some(physalisProfile(profileRecord))
-      case None                => None
-    }
+    profileOption.map(physalisProfile(_))
   }
 
   def findPhysalisProfile(providerId: String, providerUserId: String): Option[PhysalisProfile] = {
-    Logger.info(s"search physalisProfile: '${providerId}/${providerUserId}'")
+    Logger.info(s"Search physalisProfile: '${providerId}/${providerUserId}'")
     val itemOption = profileDomain.select(
       s"""select 
             providerId, 
@@ -137,9 +135,7 @@ object SimpleDBService {
           where 
           providerId = '${providerId}' and providerUserId = '${providerUserId}'""").headOption
 
-    val result = itemOption.map(physalisProfile(_))
-    Logger.info(s"found ${result}")
-    result
+    itemOption.map(physalisProfile(_))
   }
 
   def findUserIdByProfile(profile: BasicProfile): Option[String] = {
@@ -147,30 +143,30 @@ object SimpleDBService {
   }
 
   def findUserIdByProfile(providerId: String, providerUserId: String): Option[String] = {
-    Logger.info(s"find '${providerId}' '${providerUserId}")
+    Logger.info(s"Find user: '${providerId}' '${providerUserId}")
 
-    val items = profileDomain.select(
-      s"""select userId from BasicProfile where 
-			  providerId = '${providerId}' and providerUserId = '${providerUserId}'""")
-
-    items.headOption match {
-      case Some(item) => Some(item.attributes(0).value)
-      case None       => None
-    }
+    profileDomain.select(
+      s"""select userId from BasicProfile 
+          where providerId = '${providerId}' and providerUserId = '${providerUserId}'""")
+      .headOption.map(_.attributes(0).value)
   }
 
-  def saveProfile(profile: PhysalisProfile) = {
-    Logger.info(s"save profile ${profile}")
-    profileDomain.put(profile.id,
-      "providerId" -> profile.providerId,
-      "providerUserId" -> profile.providerUserId,
-      "firstName" -> profile.firstName.getOrElse(""),
-      "lastName" -> profile.lastName.getOrElse(""),
-      "fullName" -> profile.fullName.getOrElse(""),
-      "email" -> profile.email.getOrElse(""),
-      "avatarUrl" -> profile.avatarUrl.getOrElse(""),
-      "userId" -> profile.userId)
-    Logger.info("done saving profile.")
+  def saveProfile(p: PhysalisProfile) = {
+    Logger.info(s"Save profile ${p}")
+
+    val profileData = ArrayBuffer(
+      "providerId" -> p.providerId,
+      "providerUserId" -> p.providerUserId,
+      "userId" -> p.userId)
+
+    if (p.firstName.isDefined) profileData += "firstName" -> p.firstName.get
+    if (p.lastName.isDefined) profileData += "lastName" -> p.lastName.get
+    if (p.fullName.isDefined) profileData += "fullName" -> p.fullName.get
+    if (p.email.isDefined) profileData += "email" -> p.email.get
+    if (p.avatarUrl.isDefined) profileData += "avatarUrl" -> p.avatarUrl.get
+
+    profileDomain.put(p.id, profileData: _*)
+    Logger.info(s"saved profile: ${p.id}")
   }
 
   private def physalisProfile(item: Item) = {
@@ -196,11 +192,11 @@ object SimpleDBService {
   }
 
   private def project(item: Item) = {
-    val userId = item.attributes(0).value
-    val name = item.attributes(1).value
-    val icon = item.attributes(2).value
-    val gitUrl = item.attributes(3).value
-    val username = item.attributes(4).value
+    val userId = item.attributes.collectFirst { case attr if attr.name == "userId" => attr.value }.get
+    val name = item.attributes.collectFirst { case attr if attr.name == "name" => attr.value }.get
+    val icon = item.attributes.collectFirst { case attr if attr.name == "icon" => attr.value }
+    val gitUrl = item.attributes.collectFirst { case attr if attr.name == "gitUrl" => attr.value }.get
+    val username = item.attributes.collectFirst { case attr if attr.name == "username" => attr.value }.get
 
     Project(id = item.name,
       name = name,
@@ -214,15 +210,15 @@ object SimpleDBService {
   }
 
   private def user(item: Item, projects: List[Project], main: PhysalisProfile, identities: List[PhysalisProfile]): User = {
-    val username = item.attributes(0).value
-    val fullname = item.attributes(1).value
-    val email = item.attributes(2).value
-    val wantsnewsletter = item.attributes(3).value == "true"
+    val username = item.attributes.collectFirst { case attr if attr.name == "username" => attr.value }
+    val fullname = item.attributes.collectFirst { case attr if attr.name == "fullname" => attr.value }
+    val email = item.attributes.collectFirst { case attr if attr.name == "email" => attr.value }
+    val wantsnewsletter = item.attributes.collectFirst { case attr if attr.name == "wantsNewsletter" => attr.value } == Some("true")
 
     User(id = item.name,
-      username = Option(username),
-      fullname = Option(fullname),
-      email = Option(email),
+      username = username,
+      fullname = fullname,
+      email = email,
       wantNewsletter = wantsnewsletter,
       projects = projects,
       main = main,
