@@ -11,7 +11,6 @@ import models.User
 import awscala.simpledb.Domain
 import securesocial.core.BasicProfile
 import models.PhysalisProfile
-import shapeless.syntax.std.tuple._
 import models.Project
 import scala.collection.mutable.ArrayBuffer
 
