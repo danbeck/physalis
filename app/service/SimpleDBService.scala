@@ -9,7 +9,6 @@ import scala.concurrent.Future
 import java.util.UUID
 import models.User
 import awscala.simpledb.Domain
-import securesocial.core.BasicProfile
 import models.PhysalisProfile
 import models.Project
 import scala.collection.mutable.ArrayBuffer
@@ -80,7 +79,7 @@ object SimpleDBService {
       email, 
       avatarUrl, 
       userId 
-          from BasicProfile 
+          from Profile 
           where userId = '${profile.userId}'""")
     val profiles = profilesItems.map { item => physalisProfile(item) }
 
@@ -113,7 +112,7 @@ object SimpleDBService {
       email, 
       avatarUrl, 
       userId 
-          from BasicProfile 
+          from Profile 
           where providerId = '${providerId}', providerUserId= '${providerUserId}'""").headOption
 
     profileOption.map(physalisProfile(_))
@@ -130,7 +129,7 @@ object SimpleDBService {
             fullName, 
             email, 
             avatarUrl, 
-            userId from BasicProfile 
+            userId from Profile 
           where 
           providerId = '${providerId}' and providerUserId = '${providerUserId}'""").headOption
 
@@ -145,7 +144,7 @@ object SimpleDBService {
     Logger.info(s"Find user: '${providerId}' '${providerUserId}")
 
     profileDomain.select(
-      s"""select userId from BasicProfile 
+      s"""select userId from Profile 
           where providerId = '${providerId}' and providerUserId = '${providerUserId}'""")
       .headOption.map(_.attributes(0).value)
   }
