@@ -1,4 +1,4 @@
-package service
+package service.simpledb
 
 import play.api.Logger
 import awscala.simpledb.SimpleDBClient
@@ -13,7 +13,7 @@ import models.PhysalisProfile
 import models.Project
 import scala.collection.mutable.ArrayBuffer
 
-object SimpleDBService {
+object Repository {
   val logger: Logger = Logger(this.getClass())
 
   implicit val simpleDB = new SimpleDBClient()

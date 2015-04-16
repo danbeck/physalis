@@ -1,6 +1,5 @@
-package service
+package service.simpledb
 import play.api.Logger
-
 import awscala.simpledb.SimpleDBClient
 import awscala.simpledb.Domain
 import models.User
@@ -16,6 +15,7 @@ import models.{ Project, User }
 import awscala.simpledb.Item
 import securesocial.core.BasicProfile
 import models.PhysalisProfile
+import service.UpdatableUserService
 
 class UserService extends UpdatableUserService {
   val logger: Logger = Logger(this.getClass())
@@ -26,11 +26,11 @@ class UserService extends UpdatableUserService {
   }
 
   def projects: List[Project] = {
-    SimpleDBService.findProjects().toList
+    Repository.findProjects().toList
   }
 
   def update(user: User): User = {
-    SimpleDBService.saveUser(user)
+    Repository.saveUser(user)
     user
   }
 
@@ -42,7 +42,7 @@ class UserService extends UpdatableUserService {
 
   def find(providerId: String, profileId: String): Future[Option[BasicProfile]] = Future.successful {
     logger.info(s"Find '$providerId' '$profileId")
-    SimpleDBService.findPhysalisProfile(providerId, profileId).map { _.toBasicProfile() }
+    Repository.findPhysalisProfile(providerId, profileId).map { _.toBasicProfile() }
   }
 
   // not needed?
@@ -67,18 +67,18 @@ class UserService extends UpdatableUserService {
 
   private def saveProfileAndSearchUser(p: BasicProfile, mode: SaveMode): User = {
     logger.info(s"saveProfileAndSearchUser $p")
-    val physalisProfileOption = SimpleDBService.findPhysalisProfile(p.providerId, p.userId)
+    val physalisProfileOption = Repository.findPhysalisProfile(p.providerId, p.userId)
 
     physalisProfileOption match {
       case Some(profile) =>
-        SimpleDBService.saveProfile(profile)
-        SimpleDBService.findUser(profile).get
+        Repository.saveProfile(profile)
+        Repository.findUser(profile).get
 
       case None =>
         val profile = PhysalisProfile.create(p)
-        SimpleDBService.saveProfile(profile)
+        Repository.saveProfile(profile)
         Logger.info("saveEmptyUser")
-        SimpleDBService.saveEmptyUser(profile)
+        Repository.saveEmptyUser(profile)
     }
   }
 

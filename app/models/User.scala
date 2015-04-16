@@ -6,7 +6,7 @@ import securesocial.core.AuthenticationMethod
 import securesocial.core.OAuth1Info
 import securesocial.core.OAuth2Info
 import securesocial.core.PasswordInfo
-import service.SimpleDBService
+import service.simpledb.Repository
 import java.util.UUID
 
 case class PhysalisProfile(id: String = UUID.randomUUID().toString(),
@@ -32,7 +32,7 @@ case class PhysalisProfile(id: String = UUID.randomUUID().toString(),
       avatarUrl = avatarUrl,
       authMethod = authMethod)
 
-  def save() = SimpleDBService.saveProfile(this)
+  def save() = Repository.saveProfile(this)
 
 }
 object PhysalisProfile {
@@ -61,7 +61,7 @@ case class Project(id: String = UUID.randomUUID().toString(),
                    gitUrl: String,
                    username: String) {
   def save() = {
-    SimpleDBService.saveProject(this)
+    Repository.saveProject(this)
     this
   }
 }

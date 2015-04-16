@@ -36,7 +36,7 @@ import securesocial.controllers.RegistrationInfo
 import securesocial.controllers.ChangeInfo
 import securesocial.core.services.UserService
 import play.Play
-import service.SimpleDBUserService
+import service.simpledb.{ UserService => SimpleDBUserService }
 
 object Global extends play.api.GlobalSettings {
   object MyViewTemplates {
@@ -84,7 +84,7 @@ object Global extends play.api.GlobalSettings {
     //      include(new UsernamePasswordProvider[DemoUser](userService, avatarService, viewTemplates, passwordHashers)))
 
     private def createUserService() = {
-      val inMemoryDB: Boolean =  Play.application.configuration.getBoolean("IN_MEMORY_DB", false)
+      val inMemoryDB: Boolean = Play.application.configuration.getBoolean("IN_MEMORY_DB", false)
 
       inMemoryDB match {
         case true  => new InMemoryUserService
