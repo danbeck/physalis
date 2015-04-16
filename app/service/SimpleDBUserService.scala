@@ -1,6 +1,6 @@
 package service
-
 import play.api.Logger
+
 import awscala.simpledb.SimpleDBClient
 import awscala.simpledb.Domain
 import models.User
@@ -20,7 +20,7 @@ import models.PhysalisProfile
 class SimpleDBUserService extends UpdatableUserService {
 
   def find(username: String): Future[Option[User]] = {
-    Logger.info(s"find '$username")
+    Logger.info(s"UserService: find '$username")
     null
   }
 
@@ -45,7 +45,7 @@ class SimpleDBUserService extends UpdatableUserService {
 
   // not needed?
   def findByEmailAndProvider(email: String, providerId: String): Future[Option[BasicProfile]] = {
-    Logger.info(s"findByEmail '$providerId' '$email")
+    Logger.info(s"UserService: findByEmailAndProvide '$providerId' '$email")
     null
   }
 
@@ -58,11 +58,13 @@ class SimpleDBUserService extends UpdatableUserService {
   //not needed
   def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = { null }
 
-  def save(profile: BasicProfile, mode: SaveMode): Future[User] =
-    Future.successful(saveProfileAndSearchUser(profile, mode))
+  def save(profile: BasicProfile, mode: SaveMode): Future[User] = {
+    Logger.info(s"UserService: save $profile")
+    Future.successful(saveProfileAndSearchUser(profile, mode));
+  }
 
   private def saveProfileAndSearchUser(p: BasicProfile, mode: SaveMode): User = {
-    Logger.info(s"search ${p}")
+    Logger.info(s"UserService: saveProfileAndSearchUser $p")
     val physalisProfileOption = SimpleDBService.findPhysalisProfile(p.providerId, p.userId)
 
     physalisProfileOption match {

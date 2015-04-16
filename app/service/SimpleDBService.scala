@@ -21,7 +21,7 @@ object SimpleDBService {
   private val buildTasks: Domain = simpleDB.createDomain("BuildTask")
 
   def saveProject(project: Project) = {
-    Logger.info(s"Save project '${project}")
+    Logger.info(s"Repository: Save project '${project}")
 
     val projectData = ArrayBuffer(
       "name" -> project.name,
@@ -42,7 +42,7 @@ object SimpleDBService {
       main = profile,
       identities = List(profile))
 
-    Logger.info(s"Save user ${user}")
+    Logger.info(s"Repository: Save user ${user}")
 
     val userData = ArrayBuffer("wantsnewsletter" -> user.wantNewsletter.toString())
 
@@ -119,7 +119,7 @@ object SimpleDBService {
   }
 
   def findPhysalisProfile(providerId: String, providerUserId: String): Option[PhysalisProfile] = {
-    Logger.info(s"Search physalisProfile: '${providerId}/${providerUserId}'")
+    Logger.info(s"Repository: Search Profile: '${providerId}/${providerUserId}'")
     val itemOption = profileDomain.select(
       s"""select 
             providerId, 
@@ -141,7 +141,7 @@ object SimpleDBService {
   }
 
   def findUserIdByProfile(providerId: String, providerUserId: String): Option[String] = {
-    Logger.info(s"Find user: '${providerId}' '${providerUserId}")
+    Logger.info(s"Repository: Search user '${providerId}' '${providerUserId}")
 
     profileDomain.select(
       s"""select userId from Profile 
@@ -150,7 +150,7 @@ object SimpleDBService {
   }
 
   def saveProfile(p: PhysalisProfile) = {
-    Logger.info(s"Save profile ${p}")
+    Logger.info(s"Repository: Save profile ${p}")
 
     val profileData = ArrayBuffer(
       "providerId" -> p.providerId,
