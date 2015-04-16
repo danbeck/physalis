@@ -40,6 +40,7 @@ class SimpleDBUserService extends UpdatableUserService {
   def deleteToken(uuid: String): Future[Option[MailToken]] = { null }
 
   def find(providerId: String, profileId: String): Future[Option[BasicProfile]] = Future.successful {
+    Logger.info(s"UserService: find '$providerId' '$profileId")
     SimpleDBService.findPhysalisProfile(providerId, profileId).map { _.toBasicProfile() }
   }
 
