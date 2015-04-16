@@ -14,6 +14,8 @@ import models.Project
 import scala.collection.mutable.ArrayBuffer
 
 object SimpleDBService {
+  val logger: Logger = Logger(this.getClass())
+
   implicit val simpleDB = new SimpleDBClient()
   private val userDomain: Domain = simpleDB.createDomain("User")
   private val projectsDomain: Domain = simpleDB.createDomain("Project")
@@ -21,7 +23,7 @@ object SimpleDBService {
   private val buildTasks: Domain = simpleDB.createDomain("BuildTask")
 
   def saveProject(project: Project) = {
-    Logger.info(s"Repository: Save project '${project}")
+    logger.info(s"Save project '${project}")
 
     val projectData = ArrayBuffer(
       "name" -> project.name,
@@ -42,7 +44,7 @@ object SimpleDBService {
       main = profile,
       identities = List(profile))
 
-    Logger.info(s"Repository: Save user ${user}")
+    logger.info(s"Save user ${user}")
 
     val userData = ArrayBuffer("wantsnewsletter" -> user.wantNewsletter.toString())
 
@@ -56,12 +58,12 @@ object SimpleDBService {
   }
 
   def saveUser(user: User) = {
-    
+
     val userData = ArrayBuffer("wantsnewsletter" -> user.wantNewsletter.toString())
     if (user.username.isDefined) userData += "username" -> user.username.get
     if (user.fullname.isDefined) userData += "fullname" -> user.fullname.get
     if (user.email.isDefined) userData += "fullname" -> user.email.get
-    userDomain.put(user.id,userData:_*)
+    userDomain.put(user.id, userData: _*)
   }
 
   def findProjects(): Seq[Project] = {
@@ -119,7 +121,7 @@ object SimpleDBService {
   }
 
   def findPhysalisProfile(providerId: String, providerUserId: String): Option[PhysalisProfile] = {
-    Logger.info(s"Repository: Search Profile: '${providerId}/${providerUserId}'")
+    logger.info(s"Search Profile: '${providerId}/${providerUserId}'")
     val itemOption = profileDomain.select(
       s"""select 
             providerId, 
@@ -141,7 +143,7 @@ object SimpleDBService {
   }
 
   def findUserIdByProfile(providerId: String, providerUserId: String): Option[String] = {
-    Logger.info(s"Repository: Search user '${providerId}' '${providerUserId}")
+    logger.info(s"Search user '${providerId}' '${providerUserId}")
 
     profileDomain.select(
       s"""select userId from Profile 
@@ -150,7 +152,7 @@ object SimpleDBService {
   }
 
   def saveProfile(p: PhysalisProfile) = {
-    Logger.info(s"Repository: Save profile ${p}")
+    logger.info(s"Save profile ${p}")
 
     val profileData = ArrayBuffer(
       "providerId" -> p.providerId,

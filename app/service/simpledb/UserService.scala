@@ -17,10 +17,11 @@ import awscala.simpledb.Item
 import securesocial.core.BasicProfile
 import models.PhysalisProfile
 
-class SimpleDBUserService extends UpdatableUserService {
+class UserService extends UpdatableUserService {
+  val logger: Logger = Logger(this.getClass())
 
   def find(username: String): Future[Option[User]] = {
-    Logger.info(s"UserService: find '$username")
+    logger.info(s"find '$username")
     null
   }
 
@@ -40,13 +41,13 @@ class SimpleDBUserService extends UpdatableUserService {
   def deleteToken(uuid: String): Future[Option[MailToken]] = { null }
 
   def find(providerId: String, profileId: String): Future[Option[BasicProfile]] = Future.successful {
-    Logger.info(s"UserService: find '$providerId' '$profileId")
+    logger.info(s"Find '$providerId' '$profileId")
     SimpleDBService.findPhysalisProfile(providerId, profileId).map { _.toBasicProfile() }
   }
 
   // not needed?
   def findByEmailAndProvider(email: String, providerId: String): Future[Option[BasicProfile]] = {
-    Logger.info(s"UserService: findByEmailAndProvide '$providerId' '$email")
+    logger.info(s"FindByEmailAndProvide '$providerId' '$email")
     null
   }
 
@@ -60,12 +61,12 @@ class SimpleDBUserService extends UpdatableUserService {
   def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = { null }
 
   def save(profile: BasicProfile, mode: SaveMode): Future[User] = {
-    Logger.info(s"UserService: save $profile")
+    Logger.info(s"save $profile")
     Future.successful(saveProfileAndSearchUser(profile, mode));
   }
 
   private def saveProfileAndSearchUser(p: BasicProfile, mode: SaveMode): User = {
-    Logger.info(s"UserService: saveProfileAndSearchUser $p")
+    logger.info(s"saveProfileAndSearchUser $p")
     val physalisProfileOption = SimpleDBService.findPhysalisProfile(p.providerId, p.userId)
 
     physalisProfileOption match {
