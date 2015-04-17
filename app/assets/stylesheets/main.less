@@ -1,110 +1,119 @@
 @import url(http://fonts.googleapis.com/css?family=Ubuntu);
 
-
 .physalis-infobox {
-	margin: 30px 0;
-/*	 border:1px solid #ccc;	*/
+  margin: 30px 0;
+  /*	 border:1px solid #ccc;	*/
 }
+
 /* General */
-@base-grey-background:#F8F8F8;
-@base-grey-foreground:#363B40;
+@base-grey-background: #F8F8F8;
+@base-grey-foreground: #363B40;
 @base-orange: #ff802b;
 @base-black: #202020;
 @base-background: #f3f3f3;
+@base-disabled-grey: #aaaaaa;
 @base-green: #11b400;
 @base-primary: @base-green;
 @base-primary-border: #22cc00;
 
 //@base-box-background: #ffffff;
-.registerbox{
-	background-color: @base-black;
-	color: white;
-	padding: 7px 60px;
-	margin:0px;
-	a.btn {
-	 	vertical-align: middle;
-/*	 	color: black; */
-	}
+.registerbox {
+  background-color: @base-black;
+  color: white;
+  padding: 7px 60px;
+  margin: 0px;
+  a.btn {
+    vertical-align: middle;
+    /*	 	color: black; */
+  }
 }
 
-.btn-primary{
-    border: 1px solid #29691d;
+.btn-primary {
+  border: 1px solid #29691d;
 }
 
 .jumbotron h1, .jumbotron .h1 {
-    font-size: 45px;
+  font-size: 45px;
 }
 
-.jumbotron.jumbotron-no-bottom{
-	margin-bottom:0;
+.jumbotron.jumbotron-no-bottom {
+  margin-bottom: 0;
 }
 
 body, .navbar-default .navbar-nav > li > a {
-    color: @base-black;
+  color: @base-black;
 }
 
 body {
-	/*font-size:16px;*/
-	/*font-family:  Ubuntu, Helvetica,Arial,sans-serif;*/
+  /*font-size:16px;*/
+  /*font-family:  Ubuntu, Helvetica,Arial,sans-serif;*/
 }
 
 a {
-	color:@base-orange;
-	text-decoration:underline;
+  color: @base-orange;
+  text-decoration: underline;
 }
 
-h1,h2, a.title {
-	color:@base-black;
-	text-decoration:none;
+h1, h2, a.title {
+  color: @base-black;
+  text-decoration: none;
 }
-
 
 a.btn {
-	color:@base-black;
-	font-weight:bold;
+  color: @base-black;
+  font-weight: bold;
 }
 
 a.btn.btn-lg {
-	font-weight:normal;
+  font-weight: normal;
 }
 
-a.btn-primary,.btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active{
-	background-color:@base-primary;
-	color: white;
-	text-decoration:none;
-	font-weight:normal;
+.dropdown-menu li a, .dropdown-menu li a:hover {
+  font-style: normal;
+  text-decoration: none;
 }
 
+.dropdown-menu li a.disabled {
+  color: @base-disabled-grey;
 
-a.btn-primary:hover,a.btn-primary:active {
-	background-color:@base-primary-border;
+}
+
+a.btn-primary, .btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
+  background-color: @base-primary;
+  color: white;
+  text-decoration: none;
+  font-weight: normal;
+}
+
+a.btn-primary:hover, a.btn-primary:active {
+  background-color: @base-primary-border;
 }
 
 section {
-    padding-top: 20px;
+  padding-top: 20px;
 }
 
 .navbar-default {
   /*  background: transparent;*/
-    border-bottom: 0;
-    margin-bottom: 0;
-    p , h4 {
-    	margin-top:26px;
-    }
+  border-bottom: 0;
+  margin-bottom: 0;
+  p, h4 {
+    margin-top: 26px;
+  }
 }
 
-.titleButton{
-	margin-top: 10px;
+.titleButton {
+  margin-top: 10px;
 }
 
 .col-with-little-padding {
-	padding-right:8px;
-	padding-left:8px;
+  padding-right: 8px;
+  padding-left: 8px;
 }
 
-.infobox h2,.infobox h3,.infobox h4 {
-    color: @base-black;
-    margin-top:10px;
+.infobox h2, .infobox h3, .infobox h4 {
+  color: @base-black;
+  margin-top: 10px;
 }
 
 /*.infobox h3.orange, .infobox h4.orange {
@@ -120,132 +129,187 @@ section {
 }
 */
 .physalis-btn-black {
-    background: @base-black;
-    color: white;
-    text-align: right;
-    padding-right:8px;
-    font-weight: bold;
+  background: @base-black;
+  color: white;
+  text-align: right;
+  padding-right: 8px;
+  font-weight: bold;
 }
 
 #titleheader {
-	margin-right:9px;
-} 
-h1 span.title, h2 span.title, h3 span.title{
-	#titleheader();
+  margin-right: 9px;
 }
+
+h1 span.title, h2 span.title, h3 span.title {
+  #titleheader();
+}
+
 hr.nomargin {
-    margin-top:0px;
+  margin-top: 0px;
 }
 
 .banner {
-    height: 170px;
-    width: 100%;
-    background-color: @base-black;
+  height: 170px;
+  width: 100%;
+  background-color: @base-black;
 }
-
 
 /* Password. */
 
-.is0{background:url(../images/progressImg1.png) no-repeat 0 0;width:138px;height:7px;}
-.is10{background-position:0 -7px;}
-.is20{background-position:0 -14px;}
-.is30{background-position:0 -21px;}
-.is40{background-position:0 -28px;}
-.is50{background-position:0 -35px;}
-.is60{background-position:0 -42px;}
-.is70{background-position:0 -49px;}
-.is80{background-position:0 -56px;}
-.is90{background-position:0 -63px;}
-.is100{background-position:0 -70px;}
+.is0 {
+  background: url(../images/progressImg1.png) no-repeat 0 0;
+  width: 138px;
+  height: 7px;
+}
+
+.is10 {
+  background-position: 0 -7px;
+}
+
+.is20 {
+  background-position: 0 -14px;
+}
+
+.is30 {
+  background-position: 0 -21px;
+}
+
+.is40 {
+  background-position: 0 -28px;
+}
+
+.is50 {
+  background-position: 0 -35px;
+}
+
+.is60 {
+  background-position: 0 -42px;
+}
+
+.is70 {
+  background-position: 0 -49px;
+}
+
+.is80 {
+  background-position: 0 -56px;
+}
+
+.is90 {
+  background-position: 0 -63px;
+}
+
+.is100 {
+  background-position: 0 -70px;
+}
 
 #passwordStrengthDiv, #passwordStrengthDiv2 {
-    float:left;
+  float: left;
 }
 
 .pointer {
-    cursor:pointer;
+  cursor: pointer;
 }
-
-
 
 .text-left-not-xs, .text-left-not-sm, .text-left-not-md, .text-left-not-lg {
-    text-align: left;
+  text-align: left;
 }
+
 .text-center-not-xs, .text-center-not-sm, .text-center-not-md, .text-center-not-lg {
-    text-align: center;
+  text-align: center;
 }
+
 .text-right-not-xs, .text-right-not-sm, .text-right-not-md, .text-right-not-lg {
-    text-align: right;
+  text-align: right;
 }
+
 .text-justify-not-xs, .text-justify-not-sm, .text-justify-not-md, .text-justify-not-lg {
-    text-align: justify;
+  text-align: justify;
 }
 
 @media (max-width: 767px) {
-    .text-left-not-xs, .text-center-not-xs, .text-right-not-xs, .text-justify-not-xs {
-        text-align: inherit;
-    }
-    .text-left-xs {
-        text-align: left;
-    }
-    .text-center-xs {
-        text-align: center;
-    }
-    .text-right-xs {
-        text-align: right;
-    }
-    .text-justify-xs {
-        text-align: justify;
-    }
+  .text-left-not-xs, .text-center-not-xs, .text-right-not-xs, .text-justify-not-xs {
+    text-align: inherit;
+  }
+
+  .text-left-xs {
+    text-align: left;
+  }
+
+  .text-center-xs {
+    text-align: center;
+  }
+
+  .text-right-xs {
+    text-align: right;
+  }
+
+  .text-justify-xs {
+    text-align: justify;
+  }
 }
+
 @media (min-width: 768px) and (max-width: 991px) {
-    .text-left-not-sm, .text-center-not-sm, .text-right-not-sm, .text-justify-not-sm {
-        text-align: inherit;
-    }
-    .text-left-sm {
-        text-align: left;
-    }
-    .text-center-sm {
-        text-align: center;
-    }
-    .text-right-sm {
-        text-align: right;
-    }
-    .text-justify-sm {
-        text-align: justify;
-    }
+  .text-left-not-sm, .text-center-not-sm, .text-right-not-sm, .text-justify-not-sm {
+    text-align: inherit;
+  }
+
+  .text-left-sm {
+    text-align: left;
+  }
+
+  .text-center-sm {
+    text-align: center;
+  }
+
+  .text-right-sm {
+    text-align: right;
+  }
+
+  .text-justify-sm {
+    text-align: justify;
+  }
 }
+
 @media (min-width: 992px) and (max-width: 1199px) {
-    .text-left-not-md, .text-center-not-md, .text-right-not-md, .text-justify-not-md {
-        text-align: inherit;
-    }
-    .text-left-md {
-        text-align: left;
-    }
-    .text-center-md {
-        text-align: center;
-    }
-    .text-right-md {
-        text-align: right;
-    }
-    .text-justify-md {
-        text-align: justify;
-    }
+  .text-left-not-md, .text-center-not-md, .text-right-not-md, .text-justify-not-md {
+    text-align: inherit;
+  }
+
+  .text-left-md {
+    text-align: left;
+  }
+
+  .text-center-md {
+    text-align: center;
+  }
+
+  .text-right-md {
+    text-align: right;
+  }
+
+  .text-justify-md {
+    text-align: justify;
+  }
 }
+
 @media (min-width: 1200px) {
-    .text-left-not-lg, .text-center-not-lg, .text-right-not-lg, .text-justify-not-lg {
-        text-align: inherit;
-    }
-    .text-left-lg {
-        text-align: left;
-    }
-    .text-center-lg {
-        text-align: center;
-    }
-    .text-right-lg {
-        text-align: right;
-    }
-    .text-justify-lg {
-        text-align: justify;
-    }
+  .text-left-not-lg, .text-center-not-lg, .text-right-not-lg, .text-justify-not-lg {
+    text-align: inherit;
+  }
+
+  .text-left-lg {
+    text-align: left;
+  }
+
+  .text-center-lg {
+    text-align: center;
+  }
+
+  .text-right-lg {
+    text-align: right;
+  }
+
+  .text-justify-lg {
+    text-align: justify;
+  }
 }
