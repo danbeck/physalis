@@ -1,4 +1,4 @@
-@(user: User)(implicit flash: Flash)
+@(user: User)(implicit flash: Flash, request: Request[AnyContent])
 @main(user) {
     <div class="jumbotron jumbotron-no-bottom">
         <h1>Physalis builds HTML5 apps with Apache Cordova</h1>
