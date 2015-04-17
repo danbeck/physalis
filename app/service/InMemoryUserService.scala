@@ -23,10 +23,10 @@ package service
 import java.util.UUID
 import play.api.Logger
 import securesocial.core._
-import securesocial.core.providers.{ UsernamePasswordProvider, MailToken }
+import securesocial.core.providers.{UsernamePasswordProvider, MailToken}
 import scala.concurrent.Future
-import securesocial.core.services.{ UserService, SaveMode }
-import models.{ User, Project }
+import securesocial.core.services.{UserService, SaveMode}
+import models.{User, Project}
 import models.PhysalisProfile
 
 /**
@@ -64,8 +64,8 @@ class InMemoryUserService extends UpdatableUserService {
     result
     //    allProjs.toList
   }
-  
-  
+
+
   def update(user: User): User = {
     users = users + ((user.main.providerId, user.main.userId) -> user)
     user
@@ -76,7 +76,7 @@ class InMemoryUserService extends UpdatableUserService {
       val optionalUserMappingTupple = users.find(_._2.username == Some(username))
       optionalUserMappingTupple match {
         case Some(tupple) => Some(tupple._2)
-        case _            => None
+        case _ => None
       }
     })
   }
@@ -89,9 +89,11 @@ class InMemoryUserService extends UpdatableUserService {
       user <- users.values;
       basicProfile <- user.identities.find(su => su.providerId == providerId && su.userId == userId)
     ) yield {
-      basicProfile
-    }
-    Future.successful(result.headOption.map { _.toBasicProfile })
+        basicProfile
+      }
+    Future.successful(result.headOption.map {
+      _.toBasicProfile
+    })
   }
 
   def findByEmailAndProvider(email: String, providerId: String): Future[Option[BasicProfile]] = {
@@ -103,8 +105,8 @@ class InMemoryUserService extends UpdatableUserService {
       user <- users.values;
       basicProfile <- user.identities.find(su => su.providerId == providerId && su.email == someEmail)
     ) yield {
-      basicProfile
-    }
+        basicProfile
+      }
     Future.successful(result.headOption.map(_.toBasicProfile))
   }
 
@@ -199,10 +201,14 @@ class InMemoryUserService extends UpdatableUserService {
   }
 
   //not needed
-  def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = { null }
+  def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = {
+    null
+  }
 
   // not needed
-  def updatePasswordInfo(user: models.User, info: PasswordInfo): Future[Option[BasicProfile]] = { null }
+  def updatePasswordInfo(user: models.User, info: PasswordInfo): Future[Option[BasicProfile]] = {
+    null
+  }
 
 }
 

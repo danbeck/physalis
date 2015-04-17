@@ -72,7 +72,7 @@ object Repository {
   }
 
   def findUser(profile: PhysalisProfile): Option[User] = {
-    val profilesItems = profileDomain.select(s"""select 
+    val profilesItems = profileDomain.select( s"""select
       providerId, 
       providerUserId, 
       firstName, 
@@ -85,7 +85,7 @@ object Repository {
           where userId = '${profile.userId}'""")
     val profiles = profilesItems.map { item => physalisProfile(item) }
 
-    val projectsItems = projectsDomain.select(s"""select 
+    val projectsItems = projectsDomain.select( s"""select
       name, 
       icon, 
       gitUrl, 
@@ -94,7 +94,7 @@ object Repository {
       where userId = '${profile.userId}'""")
     val projects = projectsItems.map { item => project(item) }
 
-    val userItem = userDomain.select(s"""select username, 
+    val userItem = userDomain.select( s"""select username,
       fullname, 
       email, 
       wantsnewsletter 
@@ -105,7 +105,7 @@ object Repository {
   }
 
   def findBasicProfile(providerId: String, providerUserId: String): Option[PhysalisProfile] = {
-    val profileOption = profileDomain.select(s"""select 
+    val profileOption = profileDomain.select( s"""select
       providerId, 
       providerUserId, 
       firstName, 

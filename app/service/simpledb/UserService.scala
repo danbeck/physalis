@@ -1,4 +1,5 @@
 package service.simpledb
+
 import play.api.Logger
 import awscala.simpledb.SimpleDBClient
 import awscala.simpledb.Domain
@@ -11,7 +12,7 @@ import securesocial.core.PasswordInfo
 import securesocial.core.services.SaveMode
 import play.api.Logger
 import java.util.UUID
-import models.{ Project, User }
+import models.{Project, User}
 import awscala.simpledb.Item
 import securesocial.core.BasicProfile
 import models.PhysalisProfile
@@ -21,7 +22,7 @@ class UserService extends UpdatableUserService {
   val logger: Logger = Logger(this.getClass())
 
   def find(username: String): Future[Option[User]] = {
-    logger.info(s"find '$username")
+    logger.info(s"Find '$username")
     null
   }
 
@@ -38,11 +39,15 @@ class UserService extends UpdatableUserService {
   def deleteExpiredTokens() = {}
 
   // not needed
-  def deleteToken(uuid: String): Future[Option[MailToken]] = { null }
+  def deleteToken(uuid: String): Future[Option[MailToken]] = {
+    null
+  }
 
   def find(providerId: String, profileId: String): Future[Option[BasicProfile]] = Future.successful {
     logger.info(s"Find '$providerId' '$profileId")
-    Repository.findPhysalisProfile(providerId, profileId).map { _.toBasicProfile() }
+    Repository.findPhysalisProfile(providerId, profileId).map {
+      _.toBasicProfile()
+    }
   }
 
   // not needed?
@@ -52,13 +57,19 @@ class UserService extends UpdatableUserService {
   }
 
   //not needed
-  def findToken(token: String): Future[Option[MailToken]] = { null }
+  def findToken(token: String): Future[Option[MailToken]] = {
+    null
+  }
 
   //not needed
-  def link(current: User, to: BasicProfile): Future[User] = { null }
+  def link(current: User, to: BasicProfile): Future[User] = {
+    null
+  }
 
   //not needed
-  def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = { null }
+  def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = {
+    null
+  }
 
   def save(profile: BasicProfile, mode: SaveMode): Future[User] = {
     Logger.info(s"save $profile")
@@ -83,8 +94,10 @@ class UserService extends UpdatableUserService {
   }
 
   //not needed
-  def saveToken(token: MailToken): Future[MailToken] = { null }
+  def saveToken(token: MailToken): Future[MailToken] = null
+
 
   // not needed
-  def updatePasswordInfo(user: models.User, info: PasswordInfo): Future[Option[BasicProfile]] = { null }
+  def updatePasswordInfo(user: models.User, info: PasswordInfo): Future[Option[BasicProfile]] = null
+
 }
