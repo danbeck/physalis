@@ -1,25 +1,25 @@
-@(user:User, userForm: Form[_])(implicit flash: Flash)
+@(user: User, userForm: Form[_])(implicit flash: Flash)
 
 
-@main(user, doNotShowLoginButton= true) {
+@main(user, doNotShowLoginButton = true) {
 
     <div class="row">
-     <h4>This is the first time you use Physalis. Please enter some information so that we can setup your account.</h4>
+        <h4>This is the first time you use Physalis. Please enter some information so that we can setup your account.</h4>
     </div>
     <div class="row">
         <div>
         @helper.form(action = controllers.accounts.routes.Login.postUserData) {
-        @helper.inputText(userForm("username"), '_label -> "Username")
-        @helper.inputText(userForm("email"),  '_label -> "E-mail", '_help->"")
+            @helper.inputText(userForm("username"), '_label -> "Username")
+            @helper.inputText(userForm("email"), '_label -> "E-mail", '_help -> "")
 
-	 	<div class="panel panel-default">
-  			<div class="panel-body">
-            	@helper.checkbox(userForm("wantNewsletter") , '_label -> "Register newsletter",  '_help -> "We send updates about the latest new features build into physalis. We won't spam you.")
-  			</div>
-		</div>
-		<div class="form-actions">
-			<button type="submit" class="btn btn-lg btn-primary">Let's build your first app!</button>
-		</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                @helper.checkbox(userForm("wantNewsletter"), '_label -> "Register newsletter", '_help -> "We send updates about the latest new features build into physalis. We won't spam you.")
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-lg btn-primary">Let's build your first app!</button>
+            </div>
 
         }
 

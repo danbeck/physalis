@@ -1,11 +1,13 @@
 @(user: User, projects: List[Project])
 
-@main(user=user) {
+@main(user = user) {
 
-<ul>
-@for(project <- projects){
-<li><a href="@controllers.accounts.routes.Workspace.user(project.username)">@project.username / @project.name</a></li>
-}
-</ul>
+    <ul>
+    @for(project <- projects) {
+        <li><a href="@controllers.accounts.routes.Workspace.user(project.username)">@project.username
+            / @project.name</a>
+        </li>
+    }
+    </ul>
 
 }

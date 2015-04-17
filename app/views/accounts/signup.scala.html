@@ -1,14 +1,14 @@
 @(user: User)(implicit flash: Flash)
 
- @main(user=user, doNotShowLoginButton=true) {
+@main(user = user, doNotShowLoginButton = true) {
 
-        <div class="row">
-            <div class="col-sm-5"><h4>
-                Sign up to Physalis using any of the following services:
-            </h4>
-            </div>
-            <div class="col-sm-4">
-                <a type="button" href="authenticate/github" class="btn btn-primary btn-lg">Sign up with Github</a>
-            </div>
+    <div class="row">
+        <div class="col-sm-5"><h4>
+            Sign up to Physalis using any of the following services:
+        </h4>
         </div>
-    }
+        <div class="col-sm-4">
+            <a type="button" href="authenticate/github" class="btn btn-primary btn-lg">Sign up with Github</a>
+        </div>
+    </div>
+}
