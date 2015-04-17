@@ -58,12 +58,11 @@ object Repository {
   }
 
   def saveUser(user: User) = {
-
     val userData = ArrayBuffer("wantsnewsletter" -> user.wantNewsletter.toString())
     if (user.username.isDefined) userData += "username" -> user.username.get
     if (user.fullname.isDefined) userData += "fullname" -> user.fullname.get
     if (user.email.isDefined) userData += "fullname" -> user.email.get
-    userDomain.put(user.id, userData: _*)
+    userDomain.replaceIfExists(user.id, userData: _*)
   }
 
   def findProjects(): Seq[Project] = {
@@ -83,7 +82,7 @@ object Repository {
       userId 
           from Profile 
           where userId = '${profile.userId}'""")
-    val profiles = profilesItems.map { item => physalisProfile(item) }
+    val profiles = profilesItems.map(physalisProfile _)
 
     val projectsItems = projectsDomain.select( s"""select
       name, 
@@ -92,7 +91,7 @@ object Repository {
       username 
       from Project 
       where userId = '${profile.userId}'""")
-    val projects = projectsItems.map { item => project(item) }
+    val projects = projectsItems.map(project _)
 
     val userItem = userDomain.select( s"""select username,
       fullname, 
@@ -117,7 +116,7 @@ object Repository {
           from Profile 
           where providerId = '${providerId}', providerUserId= '${providerUserId}'""").headOption
 
-    profileOption.map(physalisProfile(_))
+    profileOption.map(physalisProfile _)
   }
 
   def findPhysalisProfile(providerId: String, providerUserId: String): Option[PhysalisProfile] = {
@@ -135,7 +134,7 @@ object Repository {
           where 
           providerId = '${providerId}' and providerUserId = '${providerUserId}'""").headOption
 
-    itemOption.map(physalisProfile(_))
+    itemOption.map(physalisProfile _)
   }
 
   def findUserIdByProfile(profile: BasicProfile): Option[String] = {
