@@ -21,14 +21,15 @@ import service.UpdatableUserService
 class UserService extends UpdatableUserService {
   val logger: Logger = Logger(this.getClass())
 
-  def find(username: String): Future[Option[User]] = {
+  def findUserByUsername(username: String): Future[Option[User]] = {
     logger.info(s"Find '$username")
-    null
+    Future.successful {
+      Repository.findUserByUsername(username)
+    }
   }
 
-  def projects: List[Project] = {
-    Repository.findProjects().toList
-  }
+  def projects: List[Project] = Repository.findProjects().toList
+
 
   def update(user: User): User = {
     Repository.saveUser(user)
@@ -39,9 +40,8 @@ class UserService extends UpdatableUserService {
   def deleteExpiredTokens() = {}
 
   // not needed
-  def deleteToken(uuid: String): Future[Option[MailToken]] = {
-    null
-  }
+  def deleteToken(uuid: String): Future[Option[MailToken]] = null
+
 
   def find(providerId: String, profileId: String): Future[Option[BasicProfile]] = Future.successful {
     logger.info(s"Find '$providerId' '$profileId")
@@ -57,14 +57,12 @@ class UserService extends UpdatableUserService {
   }
 
   //not needed
-  def findToken(token: String): Future[Option[MailToken]] = {
-    null
-  }
+  def findToken(token: String) = null
+
 
   //not needed
-  def link(current: User, to: BasicProfile): Future[User] = {
-    null
-  }
+  def link(current: User, to: BasicProfile) = null
+
 
   //not needed
   def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = {
@@ -94,7 +92,7 @@ class UserService extends UpdatableUserService {
   }
 
   //not needed
-  def saveToken(token: MailToken): Future[MailToken] = null
+  def saveToken(token: MailToken) = null
 
 
   // not needed

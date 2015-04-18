@@ -71,7 +71,7 @@ class InMemoryUserService extends UpdatableUserService {
     user
   }
 
-  def find(username: String): Future[Option[User]] = {
+  def findUserByUsername(username: String): Future[Option[User]] = {
     Future.successful({
       val optionalUserMappingTupple = users.find(_._2.username == Some(username))
       optionalUserMappingTupple match {

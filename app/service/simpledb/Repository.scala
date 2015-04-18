@@ -65,42 +65,72 @@ object Repository {
     userDomain.replaceIfExists(user.id, userData: _*)
   }
 
+
+  def findUserByUsername(username: String): Option[User] = {
+    val awsUser = userDomain.select( s"""select username,
+      fullname,
+      email,
+      wantsnewsletter
+      from User
+      where username = '${username}'""").headOption
+
+    awsUser.map(_.name) match {
+      case Some(itemId) => findUser(itemId)
+      case None => None
+    }
+  }
+
   def findProjects(): Seq[Project] = {
     val projectsItems = projectsDomain.select(s"select userId, name, icon, gitUrl from Projects")
     projectsItems.map(project(_))
   }
 
-  def findUser(profile: PhysalisProfile): Option[User] = {
-    val profilesItems = profileDomain.select( s"""select
-      providerId, 
-      providerUserId, 
-      firstName, 
-      lastName, 
-      fullName, 
-      email, 
-      avatarUrl, 
-      userId 
-          from Profile 
-          where userId = '${profile.userId}'""")
-    val profiles = profilesItems.map(physalisProfile _)
+  def findUser(profile: PhysalisProfile): Option[User] = findUser(profile.userId)
 
-    val projectsItems = projectsDomain.select( s"""select
-      name, 
-      icon, 
-      gitUrl, 
-      username 
-      from Project 
-      where userId = '${profile.userId}'""")
+  private def findUser(userId: String): Option[User] = {
+    val profiles = findProfiles(userId)
+    val projects = findProjects(userId)
+    val awsItems = userDomain.select( s"""select username,
+      fullname,
+      email,
+      wantsnewsletter
+      from User
+      where itemName() = '${userId}'""").headOption
+
+    awsItems.map(user(_, projects, profiles(0), profiles))
+  }
+
+
+  private def findProjects(profile: PhysalisProfile): Seq[Project] = findProjects(profile.userId)
+
+  private def findProjects(userId: String): Seq[Project] = {
+    val projectsItems = projectsDomain.select(
+      s"""select
+        name,
+        icon,
+        gitUrl,
+        username
+        from Project
+        where userId = '${userId}'""")
     val projects = projectsItems.map(project _)
+    projects
+  }
 
-    val userItem = userDomain.select( s"""select username,
-      fullname, 
-      email, 
-      wantsnewsletter 
-      from User 
-      where itemName() = '${profile.userId}'""").headOption
+  private def findProfiles(profile: PhysalisProfile): Seq[PhysalisProfile]  = findProfiles(profile.userId)
 
-    userItem.map(user(_, projects, profile, profiles))
+  private def findProfiles(userId: String): Seq[PhysalisProfile] = {
+    val profilesItems = profileDomain.select( s"""select
+      providerId,
+      providerUserId,
+      firstName,
+      lastName,
+      fullName,
+      email,
+      avatarUrl,
+      userId
+          from Profile
+          where userId = '${userId}'""")
+    profilesItems.map(physalisProfile _)
   }
 
   def findBasicProfile(providerId: String, providerUserId: String): Option[PhysalisProfile] = {
