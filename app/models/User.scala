@@ -35,6 +35,7 @@ case class PhysalisProfile(id: String = UUID.randomUUID().toString(),
   def save() = Repository.saveProfile(this)
 
 }
+
 object PhysalisProfile {
   def create(p: BasicProfile) = PhysalisProfile(providerId = p.providerId,
     providerUserId = p.userId,
@@ -75,4 +76,13 @@ case class User(id: String,
                 main: PhysalisProfile,
                 identities: List[PhysalisProfile]) {
   val newUser: Boolean = !username.isDefined
+
+  def save() = {
+    Repository.saveUser(this)
+    this
+  }
+}
+
+object User{
+  def findByUsername(userId: String) = Repository.findUserByUsername(userId)
 }

@@ -70,7 +70,7 @@ class UserService extends UpdatableUserService {
   }
 
   def save(profile: BasicProfile, mode: SaveMode): Future[User] = {
-    Logger.info(s"save $profile")
+    logger.info(s"Save $profile")
     Future.successful(saveProfileAndSearchUser(profile, mode));
   }
 
