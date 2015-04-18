@@ -1,10 +1,9 @@
 package controllers.accounts
 
 import play.api.Logger
-import play.api.mvc.{Session, Result, Controller, Action, RequestHeader}
+import play.api.mvc._
 import play.api.data.validation.Constraints
 import play.api.i18n.Messages
-import play.api.mvc.Flash
 import securesocial.core.java.UserAwareAction
 import securesocial.core.RuntimeEnvironment
 import models.User
@@ -86,19 +85,24 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
     Ok(workspace.index(request.user, Some(projectForm)))
   }
 
-  def createNewProject = SecuredAction.async { implicit request =>
-    projectForm.bindFromRequest.fold(
-      formWithErrors => Future.successful(Redirect(routes.Workspace.newProjectPage())),
-      tuple => {
-        val project = Project(name = tuple._2,
-          icon = None,
-          gitUrl = tuple._1,
-          username = request.user.username.get).save()
+  def createNewProject = SecuredAction.async {
 
-        val updatedUser = request.user.copy(projects = project :: request.user.projects)
-        request.authenticator.updateUser(updatedUser).flatMap { authenticator =>
-          Redirect(routes.Workspace.user(request.user.username.get)).touchingAuthenticator(authenticator)
-        }
-      })
+    implicit request =>
+      projectForm.bindFromRequest.fold(
+        formWithErrors => Future.successful(Redirect(routes.Workspace.newProjectPage())),
+        tuple => updateUser(tuple._2, tuple._1, request))
+  }
+
+  private def updateUser(projectname: String, gitUrl: String, request: SecuredRequest[AnyContent]) = {
+    val project = Project(name = projectname,
+      icon = None,
+      gitUrl = gitUrl,
+      userId = request.user.id,
+      username = request.user.username.get).save()
+
+    val updatedUser = request.user.copy(projects = project :: request.user.projects)
+    request.authenticator.updateUser(updatedUser).flatMap { authenticator =>
+      Redirect(routes.Workspace.user(request.user.username.get)).touchingAuthenticator(authenticator)
+    }
   }
 }

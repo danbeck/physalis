@@ -28,6 +28,7 @@ object Repository {
     val projectData = ArrayBuffer(
       "name" -> project.name,
       "gitUrl" -> project.gitUrl,
+      "userId" -> project.userId,
       "username" -> project.username)
 
     if (project.icon.isDefined) projectData += ("icon" -> project.icon.get)
@@ -109,6 +110,7 @@ object Repository {
         name,
         icon,
         gitUrl,
+        userId,
         username
         from Project
         where userId = '${userId}'""")
@@ -116,7 +118,7 @@ object Repository {
     projects
   }
 
-  private def findProfiles(profile: PhysalisProfile): Seq[PhysalisProfile]  = findProfiles(profile.userId)
+  private def findProfiles(profile: PhysalisProfile): Seq[PhysalisProfile] = findProfiles(profile.userId)
 
   private def findProfiles(userId: String): Seq[PhysalisProfile] = {
     val profilesItems = profileDomain.select( s"""select
@@ -231,6 +233,7 @@ object Repository {
       name = name,
       icon = icon,
       gitUrl = gitUrl,
+      userId = userId,
       username = username)
   }
 
