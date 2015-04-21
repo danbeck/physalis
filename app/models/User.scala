@@ -85,5 +85,5 @@ case class User(id: String,
 }
 
 object User {
-  def findByUsername(userId: String) = Repository.findUserByUsername(userId)
+  def findByUsername(userId: String): Option[User] = Repository.findUserByUsername(userId)
 }
