@@ -82,8 +82,8 @@ object Repository {
   }
 
   def findProjects(): Seq[Project] = {
-    val projectsItems = projectsDomain.select(s"select userId, name, icon, gitUrl from Projects")
-    projectsItems.map(project(_))
+    val projectsItems = projectsDomain.select(s"select userId, name, icon, gitUrl, username from Project")
+    projectsItems.map(project _)
   }
 
   def findUser(profile: PhysalisProfile): Option[User] = findUser(profile.userId)
