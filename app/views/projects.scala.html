@@ -2,12 +2,15 @@
 
 @main(user = user) {
 
-    <ul>
+    <div class="list-group">
     @for(project <- projects) {
-        <li><a href="@controllers.accounts.routes.Workspace.user(project.username)">@project.username
-            / @project.name</a>
-        </li>
+        <a href="@controllers.accounts.routes.Workspace.user(project.username)" class="list-group-item">
+            <h4 class="list-group-item-heading">@project.name - @project.username</h4>
+            @*<p class="list-group-item-text"></p>*@
+            <p class="list-group-item-text">Here comes the description of this project</p>
+        </a>
+
     }
-    </ul>
+    </div>
 
 }
