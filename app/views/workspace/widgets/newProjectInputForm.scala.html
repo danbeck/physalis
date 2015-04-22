@@ -1,0 +1,14 @@
+@(projectForm: Option[Form[(String, String)]] = None)(implicit flash: Flash)
+
+@if(projectForm.isDefined) {
+    <div class="row">
+    @helper.form(action = controllers.accounts.routes.Workspace.createNewProject, 'class -> "form-inline") {
+        <input class="col-md-6 form-control" type="text" name="appName" placeholder="App name"></input>
+
+        <div class="form-group">
+            <input class="col-md-5 form-control" type="text" name="gitUrl" placeholder="Git HTTPS clone URL"></input>
+        </div>
+        <button type="submit" class="btn btn-primary">Pull & build app!</button>
+    }
+    </div>
+}

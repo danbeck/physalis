@@ -2,31 +2,8 @@
 
 @main(user) {
 
-    @if(projectForm.isDefined) {
-        <div class="row">
-        @helper.form(action = controllers.accounts.routes.Workspace.createNewProject, 'class -> "form-inline") {
-            <input class="col-md-6 form-control" type="text" name="appName" placeholder="App name"></input>
-            <div class="form-group">
-                <input class="col-md-5 form-control" type="text" name="gitUrl" placeholder="Git HTTPS clone URL"></input>
-            </div>
-            <button type="submit" class="btn btn-primary">Pull & build app!</button>
-        }
-        </div>
-    } else {
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="btn-group">
-                    <a type="button" href="@controllers.accounts.routes.Workspace.newProjectPage"
-                    class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false"
-                    >Create a new project <span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="@controllers.accounts.routes.Workspace.newProjectPage">Public project</a></li>
-                        <li><a href="#" class="disabled">Private project</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    }
+    @widgets.createNewProjectButton(projectForm)
+    @widgets.newProjectInputForm(projectForm)
 
     <hr>
 
