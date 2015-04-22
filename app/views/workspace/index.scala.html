@@ -29,17 +29,6 @@
     }
 
     <hr>
-    <div class="row">
-        <div class="col-sm-4">
-            <h2>
-                My projects
-            </h2>
-        </div>
-    </div>
 
-    <div class="row">
-    @for(p <- user.projects) {
-        @projectView(p)
-    }
-    </div>
+    @widgets.usersProjects(user)
 }
