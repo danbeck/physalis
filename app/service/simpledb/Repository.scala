@@ -2,15 +2,12 @@ package service.simpledb
 
 import play.api.Logger
 import awscala.simpledb.SimpleDBClient
-import models.Project
+import models._
 import awscala.simpledb.Item
 import securesocial.core.BasicProfile
 import scala.concurrent.Future
 import java.util.UUID
-import models.User
 import awscala.simpledb.Domain
-import models.PhysalisProfile
-import models.Project
 import scala.collection.mutable.ArrayBuffer
 
 object Repository {
@@ -21,6 +18,21 @@ object Repository {
   private val projectsDomain: Domain = simpleDB.createDomain("Project")
   private val profileDomain: Domain = simpleDB.createDomain("Profile")
   private val buildTasks: Domain = simpleDB.createDomain("BuildTask")
+
+  def findNewBuildTasks(): Seq[BuildTask] = {
+
+    val items = buildTasks.select(s"select * from BuildTasks where state = 'NEW'")
+    //    val items = buildTasks.select(s"select * from BuildTasks where state = 'NEW'")
+
+    items.map(item => {
+      BuildTask(id = item.name,
+        projectId = attrValue(item,"projectId"),
+        userId = attrValue(item,"userId"),
+        gitUrl = attrValue(item, "gitUrl"),
+        platform = attrValue(item,"platform"))
+    })
+  }
+
 
   def saveProject(project: Project) = {
     logger.info(s"Save project '${project}")
@@ -154,7 +166,7 @@ object Repository {
   def findPhysalisProfile(providerId: String, providerUserId: String): Option[PhysalisProfile] = {
     logger.info(s"Search Profile: '${providerId}/${providerUserId}'")
     val itemOption = profileDomain.select(
-      s"""select 
+      s"""select
             providerId, 
             providerUserId, 
             firstName, 
@@ -177,7 +189,7 @@ object Repository {
     logger.info(s"Search user '${providerId}' '${providerUserId}")
 
     profileDomain.select(
-      s"""select userId from Profile 
+      s"""select userId from Profile
           where providerId = '${providerId}' and providerUserId = '${providerUserId}'""")
       .headOption.map(_.attributes(0).value)
   }
@@ -200,16 +212,34 @@ object Repository {
     Logger.info(s"saved profile: ${p.id}")
   }
 
+  private def buildTask(item: Item) = {
+    BuildTask(id = item.name,
+      projectId = attrValue(item, "projectId"),
+      userId = attrValue(item, "userId"),
+      gitUrl = attrValue(item, "gitUrl"),
+      platform = attrValue(item, "platform"))
+  }
+
+  private def attrValue(item: Item, attrName: String): String = {
+    attrOption(item, attrName).get
+  }
+
+  private def attrOption(item: Item, attributeName: String): Option[String] = {
+    val attr = item.attributes.find(_.name == attributeName)
+    attr.map(value => value.getValue)
+  }
+
+
   private def physalisProfile(item: Item) = {
     val id = item.name
-    val providerId = item.attributes.find(_.name == "providerId").get.value
-    val providerUserId = item.attributes.find(_.name == "providerUserId").get.value
-    val firstName = item.attributes.find(_.name == "firstName").map(_.value)
-    val lastName = item.attributes.find(_.name == "lastName").map(_.value)
-    val fullName = item.attributes.find(_.name == "fullName").map(_.value)
-    val email = item.attributes.find(_.name == "email").map(_.value)
-    val avatarUrl = item.attributes.find(_.name == "avatarUrl").map(_.value)
-    val userId = item.attributes.find(_.name == "userId").get.value
+    val providerId = attrValue(item, "providerId")
+    val providerUserId = attrValue(item, "providerUserId")
+    val firstName = attrOption(item, "firstName")
+    val lastName = attrOption(item, "lastName")
+    val fullName = attrOption(item, "fullName")
+    val email = attrOption(item, "email")
+    val avatarUrl = attrOption(item, "avatarUrl")
+    val userId = attrValue(item, "userId")
 
     PhysalisProfile(id = id,
       providerId = providerId,
@@ -223,11 +253,11 @@ object Repository {
   }
 
   private def project(item: Item) = {
-    val userId = item.attributes.collectFirst { case attr if attr.name == "userId" => attr.value }.get
-    val name = item.attributes.collectFirst { case attr if attr.name == "name" => attr.value }.get
-    val icon = item.attributes.collectFirst { case attr if attr.name == "icon" => attr.value }
-    val gitUrl = item.attributes.collectFirst { case attr if attr.name == "gitUrl" => attr.value }.get
-    val username = item.attributes.collectFirst { case attr if attr.name == "username" => attr.value }.get
+    val userId = attrValue(item, "userId")
+    val name = attrValue(item, "name")
+    val icon = attrOption(item, "icon")
+    val gitUrl = attrValue(item, "gitUrl")
+    val username = attrValue(item, "username")
 
     Project(id = item.name,
       name = name,
@@ -242,10 +272,10 @@ object Repository {
   }
 
   private def user(item: Item, projects: List[Project], main: PhysalisProfile, identities: List[PhysalisProfile]): User = {
-    val username = item.attributes.collectFirst { case attr if attr.name == "username" => attr.value }
-    val fullname = item.attributes.collectFirst { case attr if attr.name == "fullname" => attr.value }
-    val email = item.attributes.collectFirst { case attr if attr.name == "email" => attr.value }
-    val wantsnewsletter = item.attributes.collectFirst { case attr if attr.name == "wantsNewsletter" => attr.value } == Some("true")
+    val username = attrOption(item, "username")
+    val fullname = attrOption(item, "fullname")
+    val email = attrOption(item, "email")
+    val wantsnewsletter = attrOption(item, "wantsNewsletter") == Some("true")
 
     User(id = item.name,
       username = username,
