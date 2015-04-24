@@ -22,8 +22,10 @@
 import java.lang.reflect.Constructor
 
 import controllers.CustomRoutesService
-import models.User
+import models.{PhysalisProfile, User}
 import play.Play
+import play.api.Logger
+import play.api.Application
 import play.api.data.Form
 import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
@@ -33,12 +35,28 @@ import securesocial.controllers.{ChangeInfo, RegistrationInfo, ViewTemplates}
 import securesocial.core.RuntimeEnvironment
 import securesocial.core.providers.GitHubProvider
 import securesocial.core.services.UserService
-import service.{InMemoryUserService, SecureSocialEventListener}
+import service.{PhysalisBuildService, InMemoryUserService, SecureSocialEventListener}
 import service.simpledb.{UserService => SimpleDBUserService}
 
 import scala.collection.immutable.ListMap
 
 object Global extends play.api.GlobalSettings {
+
+  val logger: Logger = Logger.apply(this.getClass)
+
+  override def onStart(app: Application) = {
+    val platformsToBuildFor: Option[String] = app.configuration.getString("PLATFORMS_TO_BUILD_FOR")
+
+    val platforms: Option[Array[String]] = platformsToBuildFor.map(string => string.split(","))
+    if (platforms.isDefined) {
+      val buildService = new PhysalisBuildService(platforms.get)
+      buildService.start
+    }
+  }
+
+  override def onStop(app: Application) = {
+    logger.info("Physalis shutdown...")
+  }
 
   /**
    * An implementation that checks if the controller expects a RuntimeEnvironment and
@@ -100,9 +118,9 @@ object Global extends play.api.GlobalSettings {
 
   }
 
-  /**
-   * The runtime environment for this sample app.
-   */
+  /** 9
+    * The runtime environment for this sample app.
+    */
   object MyRuntimeEnvironment extends RuntimeEnvironment.Default[User] {
     override lazy val routes = new CustomRoutesService()
     override lazy val userService: UserService[User] = createUserService()
@@ -125,4 +143,5 @@ object Global extends play.api.GlobalSettings {
     }
 
   }
+
 }

@@ -21,7 +21,7 @@ object Repository {
 
   def findNewBuildTasks(): Seq[BuildTask] = {
 
-    val items = buildTasks.select(s"select * from BuildTasks where state = 'NEW'")
+    val items = buildTasks.select(s"select * from BuildTask where state = 'NEW'")
     //    val items = buildTasks.select(s"select * from BuildTasks where state = 'NEW'")
 
     items.map(item => {

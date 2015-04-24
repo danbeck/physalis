@@ -2,41 +2,37 @@ package service
 
 import models.BuildTask
 import play.api.Logger
-import scala.sys.process._
+
+import scala.concurrent.Future
 
 /**
  * This is the build service, which builds apps using Apache Cordova.
  * Created by daniel on 23.04.15.
  */
-object PhysalisBuildService {
+class PhysalisBuildService(buildPlatforms: Seq[String]) {
 
   val logger: Logger = Logger(this.getClass())
 
   def start = {
-    while (true) {
-      val buildTasks: Seq[BuildTask] = BuildTask.findNew
-      buildTasks.foreach {
-        process _
+    new Thread(new Runnable {
+      def run() {
+        logger.info("Start the physalis build service")
+        while (true) {
+          newBuildTasks.foreach(process _)
+          Thread.sleep(1000)
+        }
       }
-      Thread.sleep(1000)
-    }
+    }).start()
   }
 
+  private def newBuildTasks() = {
+    BuildTask.findNew.filter(task => buildPlatforms.contains(task.platform))
+  }
+
+
   def process(buildTask: BuildTask) = {
-    Logger.info(s"Process item: ${buildTask}")
-
-
-    val GitRegex = """https://(.*)/(.*\.git)""".r
-    val projectName = buildTask.gitUrl match {
-      case GitRegex(_, projectName) => projectName
-    }
-    Logger.info(s"prrojectname was ${projectName}")
-
-    Logger.info(s"checkout ${buildTask.gitUrl}")
-
-    val command = s"""git clone ${buildTask.gitUrl} --depth=1 ${buildTask.userId}/${buildTask.projectId}"""
-    Logger.info(s">> Executing ${command}")
-    command.!
+    buildTask.gitClone()
+    buildTask.startBuilding()
   }
 
   //  def createAndDeleteFakeProject = "sudo docker run danielbeck/cordova-ubuntu cordova create testapp".!
