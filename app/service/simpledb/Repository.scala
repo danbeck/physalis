@@ -26,10 +26,10 @@ object Repository {
 
     items.map(item => {
       BuildTask(id = item.name,
-        projectId = attrValue(item,"projectId"),
-        userId = attrValue(item,"userId"),
+        projectId = attrValue(item, "projectId"),
+        userId = attrValue(item, "userId"),
         gitUrl = attrValue(item, "gitUrl"),
-        platform = attrValue(item,"platform"))
+        platform = attrValue(item, "platform"))
     })
   }
 
@@ -56,17 +56,12 @@ object Repository {
       projects = List(),
       main = profile,
       identities = List(profile))
-
     logger.info(s"Save user ${user}")
-
     val userData = ArrayBuffer("wantsnewsletter" -> user.wantNewsletter.toString())
-
     if (user.username.isDefined) userData += "username" -> user.username.get
     if (user.fullname.isDefined) userData += "fullname" -> user.fullname.get
     if (user.email.isDefined) userData += "email" -> user.email.get
-
     userDomain.put(user.id, userData: _*)
-
     user
   }
 
@@ -86,7 +81,6 @@ object Repository {
       wantsnewsletter
       from User
       where username = '${username}'""").headOption
-
     awsUser.map(_.name) match {
       case Some(itemId) => findUser(itemId)
       case None => None
@@ -102,7 +96,7 @@ object Repository {
 
   private def findUser(userId: String): Option[User] = {
     val profiles = findProfiles(userId)
-    val projects = findProjects(userId)
+    val projects = findProjectsByUser(userId)
     val awsItems = userDomain.select( s"""select username,
       fullname,
       email,
@@ -114,9 +108,14 @@ object Repository {
   }
 
 
-  private def findProjects(profile: PhysalisProfile): Seq[Project] = findProjects(profile.userId)
+  private def findProjects(profile: PhysalisProfile): Seq[Project] = findProjectsByUser(profile.userId)
 
-  private def findProjects(userId: String): Seq[Project] = {
+  def findProject(username: String, project: String): Option[Project] = {
+    val userOption: Option[User] = findUserByUsername(username)
+    userOption.map(user => findProjectByUserAndProjectname(user.id, project).get)
+  }
+
+  private def findProjectsByUser(userId: String): Seq[Project] = {
     val projectsItems = projectsDomain.select(
       s"""select
         name,
@@ -128,6 +127,19 @@ object Repository {
         where userId = '${userId}'""")
     val projects = projectsItems.map(project _)
     projects
+  }
+
+  private def findProjectByUserAndProjectname(userId: String, projectName: String): Option[Project] = {
+    val projectsItems: Seq[Item] = projectsDomain.select(
+      s"""select
+        name,
+        icon,
+        gitUrl,
+        userId,
+        username
+        from Project
+        where userId = '${userId}' and name = '${projectName}'""")
+    projectsItems.map(project _).headOption
   }
 
   private def findProfiles(profile: PhysalisProfile): Seq[PhysalisProfile] = findProfiles(profile.userId)

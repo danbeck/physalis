@@ -17,3 +17,10 @@ case class Project(id: String = UUID.randomUUID().toString(),
     this
   }
 }
+
+
+object Project {
+  def findByUsernameAndProjectname(username: String, projectname: String) =
+    Repository.findProject(username, projectname)
+
+}
