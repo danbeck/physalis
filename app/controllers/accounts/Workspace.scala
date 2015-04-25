@@ -54,15 +54,12 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
   }
 
   def user(username: String) = PhysalisUserAwareAction.async { implicit request =>
-    def findUser(username: String) = USER_SERVICE.findUserByUsername(username)
-    def showMyAccount(user: User) = Future {
-      Ok(workspace.index(user))
-    }
+    def findUser(username: String) = User.findByUsername(username)
+    def showMyAccount(user: User) = Future(Ok(workspace.myaccount(user)))
 
-    def showPublicAccount(username: String): Future[Result] = {
-      val userFuture = findUser(username)
-      userFuture.map {
-        case Some(user) => Ok(workspace.index(user))
+    def showPublicAccount(username: String) = Future.successful {
+      findUser(username) match {
+        case Some(user) => Ok(workspace.publicaccount(user))
         case None => Ok(workspace.notExistingUser(null))
       }
     }
@@ -82,15 +79,14 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
       "appName" -> nonEmptyText(2, 70)))
 
   def newProjectPage = SecuredAction { implicit request =>
-    Ok(workspace.index(request.user, Some(projectForm)))
+    Ok(workspace.myaccount(request.user, Some(projectForm)))
   }
 
   def createNewProject = SecuredAction.async {
-
     implicit request =>
       projectForm.bindFromRequest.fold(
         formWithErrors => Future.successful(Redirect(routes.Workspace.newProjectPage())),
-        tuple => updateUser(tuple._2, tuple._1, request))
+        validInputData => updateUser(validInputData._2, validInputData._1, request))
   }
 
   private def updateUser(projectname: String, gitUrl: String, request: SecuredRequest[AnyContent]) = {
