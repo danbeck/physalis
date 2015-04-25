@@ -20,10 +20,7 @@ case class User(id: String,
 
   val newUser: Boolean = !username.isDefined
 
-  def save() = {
-    Repository.saveUser(this)
-    this
-  }
+  def save() = Repository.saveUser(this)
 }
 
 object User {
