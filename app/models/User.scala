@@ -23,6 +23,7 @@ case class User(id: String,
   def save() = Repository.saveUser(this)
 }
 
+
 object User {
   def findByUsername(userId: String): Option[User] = Repository.findUserByUsername(userId)
 }
