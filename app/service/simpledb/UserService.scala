@@ -96,6 +96,6 @@ class UserService extends UpdatableUserService {
 
 
   // not needed
-  def updatePasswordInfo(user: models.User, info: PasswordInfo): Future[Option[BasicProfile]] = null
+  def updatePasswordInfo(user: User, info: PasswordInfo): Future[Option[BasicProfile]] = null
 
 }

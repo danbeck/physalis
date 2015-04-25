@@ -15,7 +15,6 @@ import scala.util.Failure
 import play.api.data.Forms._
 import play.api.data._
 import play.api.data.Form
-import models.Project
 import java.util.UUID
 import securesocial.core.utils._
 import org.slf4j.LoggerFactory
@@ -30,10 +29,6 @@ import views.html.workspace
 class Workspace(override implicit val env: RuntimeEnvironment[User]) extends PhysalisSecureSocial {
 
   val USER_SERVICE = env.userService.asInstanceOf[UpdatableUserService]
-
-  def project(username: String, project: String) = UserAwareAction { implicit request =>
-    Ok("Show project")
-  }
 
   def savedata() = UserAwareAction {
     implicit request =>
@@ -90,7 +85,7 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
   }
 
   private def updateUser(projectname: String, gitUrl: String, request: SecuredRequest[AnyContent]) = {
-    val project = Project(name = projectname,
+    val project = models.Project(name = projectname,
       icon = None,
       gitUrl = gitUrl,
       userId = request.user.id,
