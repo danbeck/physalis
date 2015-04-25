@@ -12,15 +12,10 @@ case class Project(id: String = UUID.randomUUID().toString(),
                    gitUrl: String,
                    userId: String,
                    username: String) {
-  def save() = {
-    Repository.saveProject(this)
-    this
-  }
+  def save() = Repository.saveProject(this)
 }
 
-
 object Project {
-  def findByUsernameAndProjectname(username: String, projectname: String) =
+  def findByUsernameAndProjectname(username: String, projectname: String): Option[Project] =
     Repository.findProject(username, projectname)
-
 }

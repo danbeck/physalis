@@ -55,14 +55,14 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
     def showPublicAccount(username: String) = Future.successful {
       findUser(username) match {
         case Some(user) => Ok(workspace.publicaccount(user))
-        case None => Ok(workspace.notExistingUser(null))
+        case None       => Ok(workspace.notExistingUser(null))
       }
     }
 
     request.user match {
       case Some(u) if u.username.get == username => showMyAccount(u)
-      case Some(u) => showPublicAccount(username)
-      case None => showPublicAccount(username)
+      case Some(u)                               => showPublicAccount(username)
+      case None                                  => showPublicAccount(username)
     }
   }
 
@@ -89,7 +89,8 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
       icon = None,
       gitUrl = gitUrl,
       userId = request.user.id,
-      username = request.user.username.get).save()
+      username = request.user.username.get)
+    project.save()
 
     val updatedUser = request.user.copy(projects = project :: request.user.projects)
     request.authenticator.updateUser(updatedUser).flatMap { authenticator =>
