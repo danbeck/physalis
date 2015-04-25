@@ -4,13 +4,11 @@
 
     <div class="list-group">
     @for(project <- projects) {
-        <a href="@controllers.accounts.routes.Workspace.user(project.username)" class="list-group-item">
+        <a href="@controllers.accounts.routes.Workspace.project(project.username,project.name)" class="list-group-item">
             <h4 class="list-group-item-heading">@project.name - @project.username</h4>
             @*<p class="list-group-item-text"></p>*@
             <p class="list-group-item-text">Here comes the description of this project</p>
         </a>
-
     }
     </div>
-
 }
