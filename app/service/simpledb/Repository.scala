@@ -33,7 +33,6 @@ object Repository {
     })
   }
 
-
   def saveProject(project: Project) = {
     logger.info(s"Save project '${project}")
 
@@ -73,9 +72,8 @@ object Repository {
     userDomain.replaceIfExists(user.id, userData: _*)
   }
 
-
   def findUserByUsername(username: String): Option[User] = {
-    val awsUser = userDomain.select( s"""select username,
+    val awsUser = userDomain.select(s"""select username,
       fullname,
       email,
       wantsnewsletter
@@ -83,7 +81,7 @@ object Repository {
       where username = '${username}'""").headOption
     awsUser.map(_.name) match {
       case Some(itemId) => findUser(itemId)
-      case None => None
+      case None         => None
     }
   }
 
@@ -97,7 +95,7 @@ object Repository {
   private def findUser(userId: String): Option[User] = {
     val profiles = findProfiles(userId)
     val projects = findProjectsByUser(userId)
-    val awsItems = userDomain.select( s"""select username,
+    val awsItems = userDomain.select(s"""select username,
       fullname,
       email,
       wantsnewsletter
@@ -107,12 +105,13 @@ object Repository {
     awsItems.map(user(_, projects, profiles(0), profiles))
   }
 
-
   private def findProjects(profile: PhysalisProfile): Seq[Project] = findProjectsByUser(profile.userId)
 
   def findProject(username: String, project: String): Option[Project] = {
     val userOption: Option[User] = findUserByUsername(username)
-    userOption.map(user => findProjectByUserAndProjectname(user.id, project).get)
+    if (userOption.isDefined)
+      findProjectByUserAndProjectname(userOption.get.id, project)
+    else None
   }
 
   private def findProjectsByUser(userId: String): Seq[Project] = {
@@ -145,7 +144,7 @@ object Repository {
   private def findProfiles(profile: PhysalisProfile): Seq[PhysalisProfile] = findProfiles(profile.userId)
 
   private def findProfiles(userId: String): Seq[PhysalisProfile] = {
-    val profilesItems = profileDomain.select( s"""select
+    val profilesItems = profileDomain.select(s"""select
       providerId,
       providerUserId,
       firstName,
@@ -160,7 +159,7 @@ object Repository {
   }
 
   def findBasicProfile(providerId: String, providerUserId: String): Option[PhysalisProfile] = {
-    val profileOption = profileDomain.select( s"""select
+    val profileOption = profileDomain.select(s"""select
       providerId, 
       providerUserId, 
       firstName, 
@@ -240,7 +239,6 @@ object Repository {
     val attr = item.attributes.find(_.name == attributeName)
     attr.map(value => value.getValue)
   }
-
 
   private def physalisProfile(item: Item) = {
     val id = item.name

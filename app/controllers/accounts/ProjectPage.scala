@@ -23,7 +23,6 @@ class ProjectPage(override implicit val env: RuntimeEnvironment[User]) extends P
   }
 
   def nonExistingProj() = UserAwareAction { implicit request =>
-//    Ok(views.workspace.nonExistingProject(request.user))
-    Ok("")
+    Ok(workspace.nonExistingProject(request.user.orNull))
   }
 }
