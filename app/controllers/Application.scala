@@ -13,7 +13,7 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
     def showHomepage() = Ok(views.html.index())
         
     request.user match {
-      case Some(u) => redirectToWorkspace(u.username.get)
+      case Some(u) => redirectToWorkspace(u.usernameOption.get)
       case None    => showHomepage()
     }
   }

@@ -1,8 +1,8 @@
-@(user: User)
+@(loggedInUser: User, isMyAccount:Boolean)
 
 <div class="row">
-    @for(p <- user.projects) {
-        @projectView(p)
+    @for(p <- loggedInUser.projects) {
+        @projectView(p,isMyAccount)
     }
 </div>
 

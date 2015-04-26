@@ -10,15 +10,15 @@ import service.simpledb.Repository
 import java.util.UUID
 
 case class User(id: String,
-                username: Option[String] = None,
-                fullname: Option[String] = None,
-                email: Option[String] = None,
+                usernameOption: Option[String] = None,
+                fullnameOption: Option[String] = None,
+                emailOption: Option[String] = None,
                 wantNewsletter: Boolean = false,
                 projects: List[Project] = List(),
                 main: PhysalisProfile,
                 identities: List[PhysalisProfile]) {
 
-  val newUser: Boolean = !username.isDefined
+  val newUser: Boolean = !usernameOption.isDefined
 
   def save() = Repository.saveUser(this)
 }

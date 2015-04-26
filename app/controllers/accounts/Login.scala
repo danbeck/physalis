@@ -22,7 +22,7 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
 
   def loginRedirectURI = UserAwareAction { implicit request =>
     request.user match {
-      case Some(u) if !u.newUser => Redirect(routes.Workspace.user(u.username.get))
+      case Some(u) if !u.newUser => Redirect(routes.Workspace.user(u.usernameOption.get))
       case Some(u) if u.newUser  => Redirect(routes.Login.showEnterUserDataForm)
       case None                  => Redirect(controllers.routes.Application.index)
     }
@@ -47,7 +47,7 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
   }
 
   private def updateUser(data: UserData, user: User): User = {
-    val newuser = user.copy(email = Some(data.email), username = Some(data.username))
+    val newuser = user.copy(emailOption = Some(data.email), usernameOption = Some(data.username))
     userservice.update(newuser)
   }
 

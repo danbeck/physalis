@@ -45,27 +45,27 @@ object Repository {
 
   def saveEmptyUser(profile: PhysalisProfile): User = {
     val user = User(id = profile.userId,
-      username = None,
-      fullname = None,
-      email = None,
+      usernameOption = None,
+      fullnameOption = None,
+      emailOption = None,
       wantNewsletter = false,
       projects = List(),
       main = profile,
       identities = List(profile))
     logger.info(s"Save user ${user}")
     val userData = ArrayBuffer("wantsnewsletter" -> user.wantNewsletter.toString())
-    if (user.username.isDefined) userData += "username" -> user.username.get
-    if (user.fullname.isDefined) userData += "fullname" -> user.fullname.get
-    if (user.email.isDefined) userData += "email" -> user.email.get
+    if (user.usernameOption.isDefined) userData += "username" -> user.usernameOption.get
+    if (user.fullnameOption.isDefined) userData += "fullname" -> user.fullnameOption.get
+    if (user.emailOption.isDefined) userData += "email" -> user.emailOption.get
     userDomain.put(user.id, userData: _*)
     user
   }
 
   def saveUser(user: User) = {
     val userData = ArrayBuffer("wantsnewsletter" -> user.wantNewsletter.toString())
-    if (user.username.isDefined) userData += "username" -> user.username.get
-    if (user.fullname.isDefined) userData += "fullname" -> user.fullname.get
-    if (user.email.isDefined) userData += "fullname" -> user.email.get
+    if (user.usernameOption.isDefined) userData += "username" -> user.usernameOption.get
+    if (user.fullnameOption.isDefined) userData += "fullname" -> user.fullnameOption.get
+    if (user.emailOption.isDefined) userData += "fullname" -> user.emailOption.get
     userDomain.replaceIfExists(user.id, userData: _*)
   }
 
@@ -285,9 +285,9 @@ object Repository {
     val wantsnewsletter = attrOption(item, "wantsNewsletter") == Some("true")
 
     User(id = item.name,
-      username = username,
-      fullname = fullname,
-      email = email,
+      usernameOption = username,
+      fullnameOption = fullname,
+      emailOption = email,
       wantNewsletter = wantsnewsletter,
       projects = projects,
       main = main,

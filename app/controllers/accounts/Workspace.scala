@@ -40,9 +40,9 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
     }
 
     request.user match {
-      case Some(u) if u.username.get == username => showMyAccount(u)
-      case Some(u)                               => showPublicAccount(username)
-      case None                                  => showPublicAccount(username)
+      case Some(u) if u.usernameOption.get == username => showMyAccount(u)
+      case Some(u)                                     => showPublicAccount(username)
+      case None                                        => showPublicAccount(username)
     }
   }
 
@@ -66,20 +66,20 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
 
   private def redirectAndFlashError() = {
     Future.successful(Redirect(routes.Workspace.newProjectPage())
-        .flashing("error" -> """The URL must end with ".git". """))
+      .flashing("error" -> """The URL must end with ".git". """))
   }
-  
+
   private def updateUserAndRedirect(projectname: String, gitUrl: String, request: SecuredRequest[AnyContent]) = {
     val project = models.Project(name = projectname,
       icon = None,
       gitUrl = gitUrl,
       userId = request.user.id,
-      username = request.user.username.get)
+      username = request.user.usernameOption.get)
     project.save()
 
     val updatedUser = request.user.copy(projects = project :: request.user.projects)
     request.authenticator.updateUser(updatedUser).flatMap { authenticator =>
-      Redirect(routes.Workspace.user(request.user.username.get)).touchingAuthenticator(authenticator)
+      Redirect(routes.Workspace.user(request.user.usernameOption.get)).touchingAuthenticator(authenticator)
     }
   }
 }

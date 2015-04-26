@@ -1,3 +1,5 @@
+package global
+
 /**
  * Original work: SecureSocial (https://github.com/jaliss/securesocial)
  * Copyright 2014 Jorge Aliss (jaliss at gmail dot com) - twitter: @jaliss
@@ -44,8 +46,10 @@ object Global extends play.api.GlobalSettings {
 
   val logger: Logger = Logger.apply(this.getClass)
 
+  var platformsToBuildFor: Option[String] = None
+
   override def onStart(app: Application) = {
-    val platformsToBuildFor: Option[String] = app.configuration.getString("PLATFORMS_TO_BUILD_FOR")
+    platformsToBuildFor = app.configuration.getString("PLATFORMS_TO_BUILD_FOR")
 
     val platforms: Option[Array[String]] = platformsToBuildFor.map(string => string.split(","))
     if (platforms.isDefined) {
@@ -87,29 +91,23 @@ object Global extends play.api.GlobalSettings {
       implicit val implicitEnv = env
 
       override def getLoginPage(form: Form[(String, String)],
-                                msg: Option[String] = None)
-                               (implicit request: RequestHeader, lang: Lang): Html =
+                                msg: Option[String] = None)(implicit request: RequestHeader, lang: Lang): Html =
         views.html.login(null)
 
-      override def getSignUpPage(form: Form[RegistrationInfo], token: String)
-                                (implicit request: RequestHeader, lang: Lang): Html =
+      override def getSignUpPage(form: Form[RegistrationInfo], token: String)(implicit request: RequestHeader, lang: Lang): Html =
         Registration.signUp(form, token)
 
-      override def getStartSignUpPage(form: Form[String])
-                                     (implicit request: RequestHeader, lang: Lang): Html =
+      override def getStartSignUpPage(form: Form[String])(implicit request: RequestHeader, lang: Lang): Html =
         Registration.startSignUp(form)
 
       override def getStartResetPasswordPage(form: Form[String])(implicit request: RequestHeader, lang: Lang): Html =
         Registration.startResetPassword(form)
 
-
       override def getResetPasswordPage(form: Form[(String, String)], token: String)(implicit request: RequestHeader, lang: Lang): Html =
         Registration.resetPasswordPage(form, token)
 
-
       override def getPasswordChangePage(form: Form[ChangeInfo])(implicit request: RequestHeader, lang: Lang): Html =
         securesocial.views.html.passwordChange(form)
-
 
       def getNotAuthorizedPage(implicit request: RequestHeader, lang: Lang): Html =
         Html("no authorized")
@@ -118,9 +116,10 @@ object Global extends play.api.GlobalSettings {
 
   }
 
-  /** 9
-    * The runtime environment for this sample app.
-    */
+  /**
+   * 9
+   * The runtime environment for this sample app.
+   */
   object MyRuntimeEnvironment extends RuntimeEnvironment.Default[User] {
     override lazy val routes = new CustomRoutesService()
     override lazy val userService: UserService[User] = createUserService()
@@ -136,7 +135,7 @@ object Global extends play.api.GlobalSettings {
       val inMemoryDB: Boolean = Play.application.configuration.getBoolean("IN_MEMORY_DB", false)
 
       inMemoryDB match {
-        case true => new InMemoryUserService
+        case true  => new InMemoryUserService
         case false => new SimpleDBUserService
       }
 
