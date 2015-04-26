@@ -30,24 +30,6 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
 
   val USER_SERVICE = env.userService.asInstanceOf[UpdatableUserService]
 
-  def savedata() = UserAwareAction {
-    implicit request =>
-      val profile = BasicProfile(
-        providerId = "github",
-        userId = "karin",
-        firstName = Some("Karin"),
-        lastName = Some("Beck"),
-        fullName = Some("Karin Beck"),
-        email = Some("karin@freen.et"),
-        avatarUrl = Some("www"),
-        authMethod = null,
-        oAuth1Info = None,
-        oAuth2Info = None,
-        passwordInfo = None)
-      USER_SERVICE.save(profile, SaveMode.SignUp)
-      Ok("alles ok")
-  }
-
   def user(username: String) = PhysalisUserAwareAction.async { implicit request =>
     def findUser(username: String) = User.findByUsername(username)
     def showMyAccount(user: User) = Future(Ok(workspace.myaccount(user)))
