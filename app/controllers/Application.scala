@@ -9,17 +9,19 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
   val userService = env.userService.asInstanceOf[UpdatableUserService]
 
   def index = UserAwareAction { implicit request =>
+    def redirectToWorkspace(username:String) = Redirect(controllers.accounts.routes.Workspace.user(username))
+    def showHomepage() = Ok(views.html.index())
+        
     request.user match {
-      case Some(u) => Ok(views.html.index(u))
-      case None => Ok(views.html.index(null))
+      case Some(u) => redirectToWorkspace(u.username.get)
+      case None    => showHomepage()
     }
   }
 
   def projects = UserAwareAction { implicit request =>
     request.user match {
       case Some(u) => Ok(views.html.projects(u, userService.projects))
-      case None => Ok(views.html.projects(null, userService.projects))
-
+      case None    => Ok(views.html.projects(null, userService.projects))
     }
   }
 
