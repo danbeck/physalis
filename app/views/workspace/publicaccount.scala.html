@@ -1,7 +1,15 @@
-@(user: User, projectForm: Option[Form[(String, String)]] = None)(implicit flash: Flash)
+@(user: User)
 
-@main(user) {
-    <hr>
+@main() {
+	<div class="row">
+	    <div class="col-sm-4">
+	        <h2>
+	            <span class="physalislabel">User: </span>@user.username
+	        </h2>
+	    </div>
+	</div>
+
+	<hr/>
 
     @widgets.usersProjects(user)
 }

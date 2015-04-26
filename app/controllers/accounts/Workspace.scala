@@ -32,7 +32,6 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
 
   def user(username: String) = PhysalisUserAwareAction.async { implicit request =>
     def showMyAccount(user: User) = Future(Ok(workspace.myaccount(user)))
-
     def showPublicAccount(username: String) = Future.successful {
       User.findByUsername(username) match {
         case Some(user) => Ok(workspace.publicaccount(user))
