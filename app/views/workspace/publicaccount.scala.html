@@ -1,10 +1,6 @@
 @(user: User, projectForm: Option[Form[(String, String)]] = None)(implicit flash: Flash)
 
 @main(user) {
-
-    @widgets.createNewProjectButton(projectForm)
-    @widgets.newProjectInputForm(projectForm)
-
     <hr>
 
     @widgets.usersProjects(user)
