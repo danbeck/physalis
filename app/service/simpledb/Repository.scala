@@ -20,10 +20,7 @@ object Repository {
   private val buildTasks: Domain = simpleDB.createDomain("BuildTask")
 
   def findNewBuildTasks(): Seq[BuildTask] = {
-
     val items = buildTasks.select(s"select * from BuildTask where state = 'NEW'")
-    //    val items = buildTasks.select(s"select * from BuildTasks where state = 'NEW'")
-
     items.map(item => {
       BuildTask(id = item.name,
         projectId = attrValue(item, "projectId"),
