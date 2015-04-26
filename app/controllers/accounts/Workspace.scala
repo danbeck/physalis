@@ -31,11 +31,10 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
   val USER_SERVICE = env.userService.asInstanceOf[UpdatableUserService]
 
   def user(username: String) = PhysalisUserAwareAction.async { implicit request =>
-    def findUser(username: String) = User.findByUsername(username)
     def showMyAccount(user: User) = Future(Ok(workspace.myaccount(user)))
 
     def showPublicAccount(username: String) = Future.successful {
-      findUser(username) match {
+      User.findByUsername(username) match {
         case Some(user) => Ok(workspace.publicaccount(user))
         case None       => Ok(workspace.notExistingUser(null))
       }
@@ -62,11 +61,16 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
   def createNewProject = SecuredAction.async {
     implicit request =>
       projectForm.bindFromRequest.fold(
-        formWithErrors => Future.successful(Redirect(routes.Workspace.newProjectPage())),
-        validInputData => updateUser(validInputData._2, validInputData._1, request))
+        formWithErrors => redirectAndFlashError(),
+        validInputData => updateUserAndRedirect(validInputData._2, validInputData._1, request))
   }
 
-  private def updateUser(projectname: String, gitUrl: String, request: SecuredRequest[AnyContent]) = {
+  private def redirectAndFlashError() = {
+    Future.successful(Redirect(routes.Workspace.newProjectPage())
+        .flashing("error" -> """The URL must end with ".git". """))
+  }
+  
+  private def updateUserAndRedirect(projectname: String, gitUrl: String, request: SecuredRequest[AnyContent]) = {
     val project = models.Project(name = projectname,
       icon = None,
       gitUrl = gitUrl,
