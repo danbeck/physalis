@@ -35,10 +35,11 @@ class ProjectPage(override implicit val env: RuntimeEnvironment[User]) extends P
   }
 
   def persistBuildRequest(user: User, project: Project)(implicit request: SecuredRequest[AnyContent]) = {
-    BuildTask(projectId = project.id,
+    val buildTask = BuildTask(projectId = project.id,
       userId = project.userId,
       gitUrl = project.gitUrl,
       platform = "android")
+    buildTask.startBuilding()
     Ok(workspace.project(user, user, project))
   }
 

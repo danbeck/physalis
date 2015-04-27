@@ -16,10 +16,11 @@ case class BuildTask(
   platform: String) {
 
   private val logger: Logger = Logger(this.getClass)
-  private val GitRegex = """https?://(.*)/(.*\.git)""".r
+  private val GitRegex = """https://(.*)/(.*\.git)""".r
 
-  private val projectName = gitUrl match {
+  private def projectName = gitUrl match {
     case GitRegex(_, projectName) => projectName
+    case _ => "didnt match"
   }
 
   private val projectPath = """${userId}/${projectId}"""
@@ -36,7 +37,7 @@ case class BuildTask(
 
   def startBuilding(): Unit = {
     logger.info(s"Build ${projectName} for platform ${platform}")
-    def createAndDeleteFakeProject = s"sudo docker run danielbeck/cordova-ubuntu cordova build ${projectPath}".!
+//    def createAndDeleteFakeProject = s"sudo docker run danielbeck/cordova-ubuntu cordova build ${projectPath}".!
   }
 
 }
