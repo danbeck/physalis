@@ -15,15 +15,13 @@ case class BuildTask(
   gitUrl: String,
   platform: String) {
 
+  private val projectPath = """${userId}/${projectId}"""
   private val logger: Logger = Logger(this.getClass)
-  private val GitRegex = """https://(.*)/(.*\.git)""".r
 
   private def projectName = gitUrl match {
-    case GitRegex(_, projectName) => projectName
-    case _ => "didnt match"
+    case BuildTask.validGitUrlRegex(projectName) => projectName
+    case _                                       => "didnt match"
   }
-
-  private val projectPath = """${userId}/${projectId}"""
 
   private def persistBuildInProcess(): Unit = {
     logger.info(s"Marked BuildTask ${id} in progress")
@@ -36,16 +34,18 @@ case class BuildTask(
   }
 
   def startBuilding(): Unit = {
-    logger.info(s"Build ${projectName} for platform ${platform}")
-//    def createAndDeleteFakeProject = s"sudo docker run danielbeck/cordova-ubuntu cordova build ${projectPath}".!
+    logger.info(s"Build ${projectName} (gitURL was: $gitUrl) for platform $platform")
+    //    def createAndDeleteFakeProject = s"sudo docker run danielbeck/cordova-ubuntu cordova build ${projectPath}".!
   }
 
 }
 
 object BuildTask {
   def findNew = Repository.findNewBuildTasks()
+  val validGitUrlRegex = """https?://.*/(.*)\.git""".r
+  val validGitUrlPattern = validGitUrlRegex.pattern
   def createNew(project: Project, user: User) = {
-//    BuildTask()
+    //    BuildTask()
   }
 
 }

@@ -7,6 +7,8 @@ import play.api.i18n.Messages
 import securesocial.core.java.UserAwareAction
 import securesocial.core.RuntimeEnvironment
 import models.User
+import models.BuildTask
+import models.BuildTask.validGitUrlPattern
 import service.InMemoryUserService
 import service.UpdatableUserService
 import scala.concurrent.Future
@@ -50,7 +52,7 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
 
   val projectForm = Form(
     tuple(
-      "gitUrl" -> nonEmptyText(7, 200).verifying { text => text.matches(s"https?://.*.git") },
+      "gitUrl" -> nonEmptyText(7, 200).verifying { text => validGitUrlPattern.matcher(text).matches },
       "appName" -> nonEmptyText(2, 70)))
 
   def newProjectPage = SecuredAction { implicit request =>
