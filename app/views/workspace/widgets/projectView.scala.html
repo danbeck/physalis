@@ -2,10 +2,10 @@
 <div class="col-md-4 projectview">
     <div class="thumbnail">
         <div class="caption">
-            <h3><a href="@controllers.accounts.routes.ProjectPage.show(project.username, project.name)">@project.name</a></h3>
+            <h3><a href="@controllers.workspace.routes.ProjectPage.show(project.username, project.name)">@project.name</a></h3>
             <p>Last build: n.a.</p>
             @if(isMyAccount){            	
-            	<p><a href="@controllers.accounts.routes.ProjectPage.build(project.username, project.name)" class="btn " role="button">Pull & Build</a>
+            	<p><a href="@controllers.workspace.routes.Build.build(project.username, project.name)" class="btn " role="button">Pull & Build</a>
             }
         </div>
     </div>

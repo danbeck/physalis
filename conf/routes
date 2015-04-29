@@ -20,12 +20,12 @@ GET    /authenticate/:provider   @securesocial.controllers.ProviderController.au
 #GET    /test/simpledb            @controllers.Application.testSimpleDB
 
 #workspace
-GET    /newproject               @controllers.accounts.Workspace.newProjectPage
-POST   /newproject               @controllers.accounts.Workspace.createNewProject
-GET    /:username/:project/build @controllers.accounts.ProjectPage.build(username:String,project:String)
-GET    /:username/:project       @controllers.accounts.ProjectPage.show(username:String,project:String)
-GET    /nonexistingproj          @controllers.accounts.ProjectPage.nonExistingProj()
-GET    /:username                @controllers.accounts.Workspace.user(username:String)
+GET    /newproject               @controllers.workspace.Workspace.newProjectPage
+POST   /newproject               @controllers.workspace.Workspace.createNewProject
+GET    /:username/:project/build @controllers.workspace.Build.build(username:String,project:String)
+GET    /:username/:project       @controllers.workspace.ProjectPage.show(username:String,project:String)
+GET    /nonexistingproj          @controllers.workspace.ProjectPage.nonExistingProj()
+GET    /:username                @controllers.workspace.Workspace.user(username:String)
 
 #GET     /authenticate/:provider     @securesocial.controllers.ProviderController.authenticate(provider)
 #POST    /authenticate/:provider     @securesocial.controllers.ProviderController.authenticateByPost(provider)

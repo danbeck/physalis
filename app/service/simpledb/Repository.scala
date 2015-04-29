@@ -21,12 +21,18 @@ object Repository {
 
   def findNewBuildTasks(): Seq[BuildTask] = {
     val items = buildTasks.select(s"select * from BuildTask where state = 'NEW'")
+
     items.map(item => {
+      val projectId = attrValue(item, "projectId")
+      val userId = attrValue(item, "userId")
+      val platform = attrValue(item, "platform")
+      val project = findProjectById(projectId).get
+      val user = findUser(userId).get
+
       BuildTask(id = item.name,
-        projectId = attrValue(item, "projectId"),
-        userId = attrValue(item, "userId"),
-        gitUrl = attrValue(item, "gitUrl"),
-        platform = attrValue(item, "platform"))
+        project = project,
+        user = user,
+        platform = platform)
     })
   }
 
@@ -138,6 +144,18 @@ object Repository {
     projectsItems.map(project _).headOption
   }
 
+  def findProjectById(projectId: String) = {
+    val projectsItems = projectsDomain.select(s"""select
+        name,
+        icon,
+        gitUrl,
+        userId,
+        username
+        from Project
+			  where itemName() = '${projectId}'""").headOption
+    projectsItems.map(project _).headOption
+  }
+
   private def findProfiles(profile: PhysalisProfile): Seq[PhysalisProfile] = findProfiles(profile.userId)
 
   private def findProfiles(userId: String): Seq[PhysalisProfile] = {
@@ -218,14 +236,6 @@ object Repository {
 
     profileDomain.put(p.id, profileData: _*)
     Logger.info(s"saved profile: ${p.id}")
-  }
-
-  private def buildTask(item: Item) = {
-    BuildTask(id = item.name,
-      projectId = attrValue(item, "projectId"),
-      userId = attrValue(item, "userId"),
-      gitUrl = attrValue(item, "gitUrl"),
-      platform = attrValue(item, "platform"))
   }
 
   private def attrValue(item: Item, attrName: String): String = {

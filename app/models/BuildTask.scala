@@ -10,17 +10,15 @@ import java.util.UUID
  */
 case class BuildTask(
   id: String = UUID.randomUUID().toString(),
-  projectId: String,
-  userId: String,
-  gitUrl: String,
+  project: Project,
+  user: User,
   platform: String) {
 
-  private val projectPath = s"${userId}/${projectId}"
+  private val projectPath = s"${user.id}/${project.id}"
   private val logger: Logger = Logger(this.getClass)
 
-  private val projectName = gitUrl match {
+  private val projectName = project.gitUrl match {
     case BuildTask.validGitUrlRegex(projectName) => projectName
-    case _                                       => "didnt match"
   }
 
   private def persistBuildInProcess(): Unit = {
@@ -28,13 +26,13 @@ case class BuildTask(
   }
 
   def gitClone() = {
-    val command = s"git clone ${gitUrl} --depth=1 ${projectPath}"
+    val command = s"git clone ${project.gitUrl} --depth=1 ${projectPath}"
     Logger.info(s">> ${command}")
     command.!
   }
 
   def startBuilding(): Unit = {
-    logger.info(s"Build ${projectName} (gitURL was: $gitUrl) for platform $platform")
+    logger.info(s"Build ${projectName} (gitURL was: ${project.gitUrl}) for platform $platform")
     //    def createAndDeleteFakeProject = s"sudo docker run danielbeck/cordova-ubuntu cordova build ${projectPath}".!
   }
 

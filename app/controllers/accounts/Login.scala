@@ -18,11 +18,11 @@ import scala.concurrent.Future
  */
 class Login(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
 
-	private val userservice = env.userService.asInstanceOf[UpdatableUserService]
+  private val userservice = env.userService.asInstanceOf[UpdatableUserService]
 
   def loginRedirectURI = UserAwareAction { implicit request =>
     request.user match {
-      case Some(u) if !u.newUser => Redirect(routes.Workspace.user(u.usernameOption.get))
+      case Some(u) if !u.newUser => Redirect(controllers.workspace.routes.Workspace.user(u.usernameOption.get))
       case Some(u) if u.newUser  => Redirect(routes.Login.showEnterUserDataForm)
       case None                  => Redirect(controllers.routes.Application.index)
     }
@@ -57,7 +57,7 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
       value => {
         val updated = updateUser(value, request.user)
         request.authenticator.updateUser(updated).flatMap { authenticator =>
-          Redirect(routes.Workspace.user(value.username)).touchingAuthenticator(authenticator)
+          Redirect(controllers.workspace.routes.Workspace.user(value.username)).touchingAuthenticator(authenticator)
         }
       })
   }

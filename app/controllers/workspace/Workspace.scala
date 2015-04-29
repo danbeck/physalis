@@ -1,4 +1,4 @@
-package controllers.accounts
+package controllers.workspace
 
 import play.api.Logger
 import play.api.mvc._

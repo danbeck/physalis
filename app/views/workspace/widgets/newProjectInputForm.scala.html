@@ -2,7 +2,7 @@
 
 @if(projectForm.isDefined) {
     <div class="row">
-    @helper.form(action = controllers.accounts.routes.Workspace.createNewProject, 'class -> "form-inline") {
+    @helper.form(action = controllers.workspace.routes.Workspace.createNewProject, 'class -> "form-inline") {
         <input class="col-md-6 form-control" type="text" name="appName" placeholder="App name"></input>
 
         <div class="form-group">

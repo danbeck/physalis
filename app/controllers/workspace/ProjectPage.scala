@@ -1,4 +1,4 @@
-package controllers.accounts
+package controllers.workspace
 
 import controllers.PhysalisSecureSocial
 import models.User
@@ -22,26 +22,6 @@ class ProjectPage(override implicit val env: RuntimeEnvironment[User]) extends P
       case Some(proj) => Ok(workspace.project(request.user.orNull, shownUser.get, proj))
       case _          => Redirect(routes.ProjectPage.nonExistingProj())
     }
-  }
-
-  def build(username: String, projectname: String) = SecuredAction { implicit request =>
-    val project: Option[Project] = Project.findByUsernameAndProjectname(username, projectname)
-
-    (username, project) match {
-      case (_, None) => Redirect(routes.ProjectPage.nonExistingProj())
-      case (username, Some(_)) if username != request.user.usernameOption.get => Redirect(routes.ProjectPage.nonExistingProj())
-      case (username, Some(proj)) => persistBuildRequest(request.user, proj)
-    }
-  }
-
-  def persistBuildRequest(user: User, project: Project)(implicit request: SecuredRequest[AnyContent]) = {
-    val buildTask = BuildTask(projectId = project.id,
-      userId = project.userId,
-      gitUrl = project.gitUrl,
-      platform = "android")
-    buildTask.gitClone()
-    buildTask.startBuilding()
-    Ok(workspace.project(user, user, project))
   }
 
   def nonExistingProj() = UserAwareAction { implicit request =>
