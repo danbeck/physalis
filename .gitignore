@@ -15,3 +15,4 @@ conf/mail.conf
 conf/evolutions
 documentation/
 /bin/
+/.cache

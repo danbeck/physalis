@@ -39,6 +39,7 @@ class ProjectPage(override implicit val env: RuntimeEnvironment[User]) extends P
       userId = project.userId,
       gitUrl = project.gitUrl,
       platform = "android")
+    buildTask.gitClone()
     buildTask.startBuilding()
     Ok(workspace.project(user, user, project))
   }

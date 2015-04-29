@@ -15,10 +15,10 @@ case class BuildTask(
   gitUrl: String,
   platform: String) {
 
-  private val projectPath = """${userId}/${projectId}"""
+  private val projectPath = s"${userId}/${projectId}"
   private val logger: Logger = Logger(this.getClass)
 
-  private def projectName = gitUrl match {
+  private val projectName = gitUrl match {
     case BuildTask.validGitUrlRegex(projectName) => projectName
     case _                                       => "didnt match"
   }
