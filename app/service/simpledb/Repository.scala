@@ -26,14 +26,28 @@ object Repository {
       val projectId = attrValue(item, "projectId")
       val userId = attrValue(item, "userId")
       val platform = attrValue(item, "platform")
+      val s3Url = attrOption(item, "s3Url")
+      val state = attrValue(item, "state")
       val project = findProjectById(projectId).get
       val user = findUser(userId).get
 
       BuildTask(id = item.name,
         project = project,
         user = user,
+        state = state,
+        s3Url = s3Url,
         platform = platform)
     })
+  }
+
+  def saveBuildTask(task: BuildTask) = {
+    val data = ArrayBuffer("projectId" -> task.project.id,
+      "userId" -> task.user.id,
+      "platform" -> task.platform,
+      "state" -> task.state)
+    if (task.s3Url.isDefined) data += "s3Url" -> task.s3Url.get
+    buildTasks.replaceIfExists(task.id, data: _*)
+    task
   }
 
   def saveUser(user: User): User = {

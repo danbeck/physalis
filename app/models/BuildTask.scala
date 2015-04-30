@@ -12,6 +12,8 @@ case class BuildTask(
   id: String = UUID.randomUUID().toString(),
   project: Project,
   user: User,
+  state: String = "NEW",
+  s3Url: Option[String] = None,
   platform: String) {
 
   private val projectPath = s"${user.id}/${project.id}"
@@ -21,9 +23,16 @@ case class BuildTask(
     case BuildTask.validGitUrlRegex(projectName) => projectName
   }
 
-  private def persistBuildInProcess(): Unit = {
-    logger.info(s"Marked BuildTask ${id} in progress")
+  def save(): BuildTask = {
+    logger.info(s"Save BuildTask $this")
+    Repository.saveBuildTask(this)
   }
+
+  def inProgress(): BuildTask = this.copy(state = "IN_PROGRESS")
+
+  def done(s3Url: Option[String] = None): BuildTask = this.copy(state = "DONE", s3Url = s3Url)
+
+  def error(): BuildTask = this.copy(state = "ERROR")
 
   def gitClone() = {
     val command = s"git clone ${project.gitUrl} --depth=1 ${projectPath}"
