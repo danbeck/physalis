@@ -10,6 +10,7 @@ case class Project(id: String = UUID.randomUUID().toString(),
                    name: String,
                    icon: Option[String],
                    gitUrl: String,
+                   visible: Boolean = true,
                    userId: String,
                    username: String) {
   def save() = Repository.saveProject(this)

@@ -36,19 +36,6 @@ object Repository {
     })
   }
 
-  def saveProject(project: Project) = {
-    logger.info(s"Save project '${project}")
-
-    val projectData = ArrayBuffer(
-      "name" -> project.name,
-      "gitUrl" -> project.gitUrl,
-      "userId" -> project.userId,
-      "username" -> project.username)
-
-    if (project.icon.isDefined) projectData += ("icon" -> project.icon.get)
-    projectsDomain.put(project.id, projectData: _*)
-  }
-
   def saveUser(user: User): User = {
     val userData = ArrayBuffer("wantsnewsletter" -> user.wantsNewsletter.toString,
       "accountPlan" -> user.accountPlan)
@@ -63,18 +50,14 @@ object Repository {
     val awsUser = userDomain.select(s"""select username,
       fullname,
       email,
-      wantsnewsletter
+      wantsnewsletter,
+      accountPlan
       from User
       where username = '${username}'""").headOption
     awsUser.map(_.name) match {
       case Some(itemId) => findUser(itemId)
       case None         => None
     }
-  }
-
-  def findProjects(): Seq[Project] = {
-    val projectsItems = projectsDomain.select(s"select userId, name, icon, gitUrl, username from Project")
-    projectsItems.map(project _)
   }
 
   def findUser(profile: PhysalisProfile): Option[User] = findUser(profile.userId)
@@ -85,7 +68,8 @@ object Repository {
     val awsItems = userDomain.select(s"""select username,
       fullname,
       email,
-      wantsnewsletter
+      wantsnewsletter,
+      accountPlan
       from User
       where itemName() = '${userId}'""").headOption
 
@@ -101,12 +85,35 @@ object Repository {
     else None
   }
 
+  def findProjects(): Seq[Project] = {
+    val projectsItems = projectsDomain
+      .select(s"""select userId, name, icon, gitUrl, username, visible 
+                  from Project
+                  where visible = 'true'""")
+    projectsItems.map(project _)
+  }
+
+  def saveProject(project: Project) = {
+    logger.info(s"Save project '${project}")
+
+    val projectData = ArrayBuffer(
+      "name" -> project.name,
+      "gitUrl" -> project.gitUrl,
+      "userId" -> project.userId,
+      "visible" -> project.visible.toString(),
+      "username" -> project.username)
+
+    if (project.icon.isDefined) projectData += ("icon" -> project.icon.get)
+    projectsDomain.put(project.id, projectData: _*)
+  }
+
   private def findProjectsByUser(userId: String): Seq[Project] = {
     val projectsItems = projectsDomain.select(
       s"""select
         name,
         icon,
         gitUrl,
+        visible,
         userId,
         username
         from Project
@@ -121,6 +128,7 @@ object Repository {
         name,
         icon,
         gitUrl,
+        visible,
         userId,
         username
         from Project
@@ -133,6 +141,7 @@ object Repository {
         name,
         icon,
         gitUrl,
+        visible,
         userId,
         username
         from Project
@@ -157,22 +166,6 @@ object Repository {
     profilesItems.map(physalisProfile _)
   }
 
-  def findBasicProfile(providerId: String, providerUserId: String): Option[PhysalisProfile] = {
-    val profileOption = profileDomain.select(s"""select
-      providerId, 
-      providerUserId, 
-      firstName, 
-      lastName, 
-      fullName, 
-      email, 
-      avatarUrl, 
-      userId 
-          from Profile 
-          where providerId = '${providerId}', providerUserId= '${providerUserId}'""").headOption
-
-    profileOption.map(physalisProfile _)
-  }
-
   def findPhysalisProfile(providerId: String, providerUserId: String): Option[PhysalisProfile] = {
     logger.info(s"Search Profile: '${providerId}/${providerUserId}'")
     val itemOption = profileDomain.select(
@@ -189,19 +182,6 @@ object Repository {
           providerId = '${providerId}' and providerUserId = '${providerUserId}'""").headOption
 
     itemOption.map(physalisProfile _)
-  }
-
-  def findUserIdByProfile(profile: BasicProfile): Option[String] = {
-    findUserIdByProfile(profile.providerId, profile.userId)
-  }
-
-  def findUserIdByProfile(providerId: String, providerUserId: String): Option[String] = {
-    logger.info(s"Search user '${providerId}' '${providerUserId}")
-
-    profileDomain.select(
-      s"""select userId from Profile
-          where providerId = '${providerId}' and providerUserId = '${providerUserId}'""")
-      .headOption.map(_.attributes(0).value)
   }
 
   def saveProfile(profile: PhysalisProfile) = {
@@ -221,6 +201,19 @@ object Repository {
     profileDomain.put(profile.id, profileData: _*)
     Logger.info(s"saved profile: ${profile.id}")
     profile
+  }
+
+  def findUserIdByProfile(profile: BasicProfile): Option[String] = {
+    findUserIdByProfile(profile.providerId, profile.userId)
+  }
+
+  def findUserIdByProfile(providerId: String, providerUserId: String): Option[String] = {
+    logger.info(s"Search user '${providerId}' '${providerUserId}")
+
+    profileDomain.select(
+      s"""select userId from Profile
+          where providerId = '${providerId}' and providerUserId = '${providerUserId}'""")
+      .headOption.map(_.attributes(0).value)
   }
 
   private def attrValue(item: Item, attrName: String): String = {
@@ -260,11 +253,13 @@ object Repository {
     val icon = attrOption(item, "icon")
     val gitUrl = attrValue(item, "gitUrl")
     val username = attrValue(item, "username")
+    val visible = attrValue(item, "visible") == "true"
 
     Project(id = item.name,
       name = name,
       icon = icon,
       gitUrl = gitUrl,
+      visible = visible,
       userId = userId,
       username = username)
   }
@@ -278,11 +273,13 @@ object Repository {
     val fullname = attrOption(item, "fullname")
     val email = attrOption(item, "email")
     val wantsnewsletter = attrOption(item, "wantsNewsletter") == Some("true")
+    val accountPlan = attrValue(item, "accountPlan")
 
     User(id = item.name,
       usernameOption = username,
       fullnameOption = fullname,
       emailOption = email,
+      accountPlan = accountPlan,
       wantsNewsletter = wantsnewsletter,
       projects = projects,
       main = main,
