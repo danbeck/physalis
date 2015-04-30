@@ -49,30 +49,14 @@ object Repository {
     projectsDomain.put(project.id, projectData: _*)
   }
 
-  def saveEmptyUser(profile: PhysalisProfile): User = {
-    val user = User(id = profile.userId,
-      usernameOption = None,
-      fullnameOption = None,
-      emailOption = None,
-      wantNewsletter = false,
-      projects = List(),
-      main = profile,
-      identities = List(profile))
-    logger.info(s"Save user ${user}")
-    val userData = ArrayBuffer("wantsnewsletter" -> user.wantNewsletter.toString())
+  def saveUser(user: User): User = {
+    val userData = ArrayBuffer("wantsnewsletter" -> user.wantsNewsletter.toString,
+      "accountPlan" -> user.accountPlan)
     if (user.usernameOption.isDefined) userData += "username" -> user.usernameOption.get
     if (user.fullnameOption.isDefined) userData += "fullname" -> user.fullnameOption.get
     if (user.emailOption.isDefined) userData += "email" -> user.emailOption.get
-    userDomain.put(user.id, userData: _*)
-    user
-  }
-
-  def saveUser(user: User) = {
-    val userData = ArrayBuffer("wantsnewsletter" -> user.wantNewsletter.toString())
-    if (user.usernameOption.isDefined) userData += "username" -> user.usernameOption.get
-    if (user.fullnameOption.isDefined) userData += "fullname" -> user.fullnameOption.get
-    if (user.emailOption.isDefined) userData += "fullname" -> user.emailOption.get
     userDomain.replaceIfExists(user.id, userData: _*)
+    user
   }
 
   def findUserByUsername(username: String): Option[User] = {
@@ -220,22 +204,23 @@ object Repository {
       .headOption.map(_.attributes(0).value)
   }
 
-  def saveProfile(p: PhysalisProfile) = {
-    logger.info(s"Save profile ${p}")
+  def saveProfile(profile: PhysalisProfile) = {
+    logger.info(s"Save profile ${profile}")
 
     val profileData = ArrayBuffer(
-      "providerId" -> p.providerId,
-      "providerUserId" -> p.providerUserId,
-      "userId" -> p.userId)
+      "providerId" -> profile.providerId,
+      "providerUserId" -> profile.providerUserId,
+      "userId" -> profile.userId)
 
-    if (p.firstName.isDefined) profileData += "firstName" -> p.firstName.get
-    if (p.lastName.isDefined) profileData += "lastName" -> p.lastName.get
-    if (p.fullName.isDefined) profileData += "fullName" -> p.fullName.get
-    if (p.email.isDefined) profileData += "email" -> p.email.get
-    if (p.avatarUrl.isDefined) profileData += "avatarUrl" -> p.avatarUrl.get
+    if (profile.firstName.isDefined) profileData += "firstName" -> profile.firstName.get
+    if (profile.lastName.isDefined) profileData += "lastName" -> profile.lastName.get
+    if (profile.fullName.isDefined) profileData += "fullName" -> profile.fullName.get
+    if (profile.email.isDefined) profileData += "email" -> profile.email.get
+    if (profile.avatarUrl.isDefined) profileData += "avatarUrl" -> profile.avatarUrl.get
 
-    profileDomain.put(p.id, profileData: _*)
-    Logger.info(s"saved profile: ${p.id}")
+    profileDomain.put(profile.id, profileData: _*)
+    Logger.info(s"saved profile: ${profile.id}")
+    profile
   }
 
   private def attrValue(item: Item, attrName: String): String = {
@@ -298,7 +283,7 @@ object Repository {
       usernameOption = username,
       fullnameOption = fullname,
       emailOption = email,
-      wantNewsletter = wantsnewsletter,
+      wantsNewsletter = wantsnewsletter,
       projects = projects,
       main = main,
       identities = identities)

@@ -12,7 +12,7 @@ import securesocial.core.PasswordInfo
 import securesocial.core.services.SaveMode
 import play.api.Logger
 import java.util.UUID
-import models.{Project, User}
+import models.{ Project, User }
 import awscala.simpledb.Item
 import securesocial.core.BasicProfile
 import models.PhysalisProfile
@@ -23,50 +23,16 @@ class UserService extends UpdatableUserService {
 
   def findUserByUsername(username: String): Future[Option[User]] = {
     logger.info(s"Find '$username")
-    Future.successful {
-      Repository.findUserByUsername(username)
-    }
+    Future.successful { User.findByUsername(username) }
   }
 
   def projects: List[Project] = Repository.findProjects().toList
 
-
-  def update(user: User): User = {
-    Repository.saveUser(user)
-    user
-  }
-
-  // not needed
-  def deleteExpiredTokens() = {}
-
-  // not needed
-  def deleteToken(uuid: String): Future[Option[MailToken]] = null
-
+  def update(user: User): User = user.save()
 
   def find(providerId: String, profileId: String): Future[Option[BasicProfile]] = Future.successful {
     logger.info(s"Find '$providerId' '$profileId")
-    Repository.findPhysalisProfile(providerId, profileId).map {
-      _.toBasicProfile()
-    }
-  }
-
-  // not needed?
-  def findByEmailAndProvider(email: String, providerId: String): Future[Option[BasicProfile]] = {
-    logger.info(s"FindByEmailAndProvide '$providerId' '$email")
-    null
-  }
-
-  //not needed
-  def findToken(token: String) = null
-
-
-  //not needed
-  def link(current: User, to: BasicProfile) = null
-
-
-  //not needed
-  def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = {
-    null
+    PhysalisProfile.find(providerId, profileId).map(_.basicProfile)
   }
 
   def save(profile: BasicProfile, mode: SaveMode): Future[User] = {
@@ -74,28 +40,35 @@ class UserService extends UpdatableUserService {
     Future.successful(saveProfileAndSearchUser(profile, mode));
   }
 
-  private def saveProfileAndSearchUser(p: BasicProfile, mode: SaveMode): User = {
-    logger.info(s"saveProfileAndSearchUser $p")
-    val physalisProfileOption = Repository.findPhysalisProfile(p.providerId, p.userId)
+  private def saveProfileAndSearchUser(basicProfile: BasicProfile, mode: SaveMode): User = {
+    logger.info(s"saveProfileAndSearchUser $basicProfile")
 
-    physalisProfileOption match {
-      case Some(profile) =>
-        Repository.saveProfile(profile)
-        Repository.findUser(profile).get
-
+    PhysalisProfile.find(basicProfile) match {
+      case Some(pyhsalisProfile) =>
+        pyhsalisProfile.save()
+        User.find(pyhsalisProfile).get
       case None =>
-        val profile = PhysalisProfile.create(p)
-        Repository.saveProfile(profile)
-        Logger.info("saveEmptyUser")
-        Repository.saveEmptyUser(profile)
+        val profile = PhysalisProfile.create(basicProfile).save()
+        createEmptyUser(profile).save()
     }
   }
 
+  private def createEmptyUser(p: PhysalisProfile) = User(id = p.userId,
+    main = p, identities = List(p))
+
+  // -----------------------------------------------------------------
   //not needed
+
   def saveToken(token: MailToken) = null
-
-
-  // not needed
   def updatePasswordInfo(user: User, info: PasswordInfo): Future[Option[BasicProfile]] = null
+  def findToken(token: String) = null
+  def link(current: User, to: BasicProfile) = null
+  def deleteExpiredTokens() = Unit
+  def deleteToken(uuid: String): Future[Option[MailToken]] = null
+  def passwordInfoFor(user: User): Future[Option[PasswordInfo]] = null
+  def findByEmailAndProvider(email: String, providerId: String): Future[Option[BasicProfile]] = {
+    logger.info(s"FindByEmailAndProvide '$providerId' '$email")
+    null
+  }
 
 }

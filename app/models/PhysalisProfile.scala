@@ -22,7 +22,7 @@ case class PhysalisProfile(id: String = UUID.randomUUID().toString(),
                            oAuth2Info: Option[OAuth2Info] = None,
                            passwordInfo: Option[PasswordInfo] = None) extends GenericProfile {
 
-  def toBasicProfile() = BasicProfile(providerId = providerId,
+  def basicProfile() = BasicProfile(providerId = providerId,
     userId = providerUserId,
     firstName = firstName,
     lastName = lastName,
@@ -34,7 +34,6 @@ case class PhysalisProfile(id: String = UUID.randomUUID().toString(),
   def save() = Repository.saveProfile(this)
 
 }
-
 
 object PhysalisProfile {
   def create(p: BasicProfile) = PhysalisProfile(providerId = p.providerId,
@@ -54,4 +53,8 @@ object PhysalisProfile {
     email = p.email,
     avatarUrl = p.avatarUrl,
     userId = userId)
+
+  def find(profile: BasicProfile): Option[PhysalisProfile] = find(profile.providerId, profile.userId)
+
+  def find(providerId: String, userId: String): Option[PhysalisProfile] = Repository.findPhysalisProfile(providerId, userId)
 }

@@ -18,6 +18,6 @@ case class Project(id: String = UUID.randomUUID().toString(),
 object Project {
   def findByUsernameAndProjectname(username: String, projectname: String): Option[Project] =
     Repository.findProject(username, projectname)
-
   def findById(id: String): Option[Project] = Repository.findProjectById(id)
+  def findAll(): List[Project] = Repository.findProjects().toList
 }

@@ -13,17 +13,18 @@ case class User(id: String,
                 usernameOption: Option[String] = None,
                 fullnameOption: Option[String] = None,
                 emailOption: Option[String] = None,
-                wantNewsletter: Boolean = false,
+                wantsNewsletter: Boolean = false,
+                accountPlan: String = "onlyPublic",
                 projects: List[Project] = List(),
                 main: PhysalisProfile,
                 identities: List[PhysalisProfile]) {
 
   val newUser: Boolean = !usernameOption.isDefined
 
-  def save() = Repository.saveUser(this)
+  def save(): User = Repository.saveUser(this)
 }
 
-
 object User {
-  def findByUsername(userId: String): Option[User] = Repository.findUserByUsername(userId)
+  def findByUsername(username: String): Option[User] = Repository.findUserByUsername(username)
+  def find(profile: PhysalisProfile): Option[User] = Repository.findUser(profile)
 }
