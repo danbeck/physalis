@@ -16,15 +16,17 @@ class PhysalisBuildService(platform: String) {
   def start() = {
     logger.info(s"Start build service for ${platform}")
     new Thread(() => {
-      newBuildTasks.foreach(process _)
-      Thread.sleep(1000)
+      while (true) {
+        newBuildTasks.foreach(process _)
+        Thread.sleep(1000)
+      }
     }).start()
   }
 
   private def newBuildTasks() = {
-    val buildTasks = BuildTask.findNew.filter(task => platform.contains(task.platform))
-    logger.info("Found BuildTasks: " + buildTasks.map(t => t.id.toString).mkString(","))
-    buildTasks
+    val tasks = BuildTask.findNew.filter(task => platform.contains(task.platform))
+    if (!tasks.isEmpty) logger.info("Found BuildTasks: " + tasks.map(t => t.id.toString).mkString(","))
+    tasks
   }
 
   def process(buildTask: BuildTask) = {
