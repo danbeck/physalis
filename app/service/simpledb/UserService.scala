@@ -36,13 +36,11 @@ class UserService extends UpdatableUserService {
   }
 
   def save(profile: BasicProfile, mode: SaveMode): Future[User] = {
-    logger.info(s"Save $profile")
+    logger.info(s"SecureSocial - save profile ${profile.providerId} ${profile.userId}")
     Future.successful(saveProfileAndSearchUser(profile, mode));
   }
 
   private def saveProfileAndSearchUser(basicProfile: BasicProfile, mode: SaveMode): User = {
-    logger.info(s"saveProfileAndSearchUser $basicProfile")
-
     PhysalisProfile.find(basicProfile) match {
       case Some(pyhsalisProfile) =>
         pyhsalisProfile.save()
