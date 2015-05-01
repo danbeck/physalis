@@ -24,7 +24,7 @@ case class BuildTask(
   }
 
   def save(): BuildTask = {
-    logger.info(s"Save BuildTask $this")
+    logger.info(s"Save BuildTask ${this.id}")
     Repository.saveBuildTask(this)
   }
 
@@ -35,9 +35,12 @@ case class BuildTask(
   def error(): BuildTask = this.copy(state = "ERROR")
 
   def gitClone() = {
-    val command = s"git clone ${project.gitUrl} --depth=1 ${projectPath}"
+    val command = s"rm -rf ${projectPath}"
     Logger.info(s">> ${command}")
     command.!
+    val cloneCommand = s"git clone ${project.gitUrl} --depth=1 ${projectPath}"
+    Logger.info(s">> ${cloneCommand}")
+    cloneCommand.!
   }
 
   def startBuilding(): Unit = {
