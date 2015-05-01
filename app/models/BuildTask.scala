@@ -16,7 +16,7 @@ case class BuildTask(
   s3Url: Option[String] = None,
   platform: String) {
 
-  private val projectPath = s"${user.id}/${project.id}"
+  private val projectPath = s"${user.id}/${project.id}/$platform"
   private val logger: Logger = Logger(this.getClass)
 
   private val projectName = project.gitUrl match {

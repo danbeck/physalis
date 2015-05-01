@@ -1,5 +1,6 @@
 package global
 
+
 /**
  * Original work: SecureSocial (https://github.com/jaliss/securesocial)
  * Copyright 2014 Jorge Aliss (jaliss at gmail dot com) - twitter: @jaliss
@@ -42,19 +43,20 @@ import service.simpledb.{UserService => SimpleDBUserService}
 
 import scala.collection.immutable.ListMap
 
+
 object Global extends play.api.GlobalSettings {
 
   val logger: Logger = Logger.apply(this.getClass)
 
-  var platformsToBuildFor: Option[String] = None
-
   override def onStart(app: Application) = {
-    platformsToBuildFor = app.configuration.getString("PLATFORMS_TO_BUILD_FOR")
+    logger.info("Starting services...")
+    val platformsToBuildFor: Option[String] = app.configuration.getString("PLATFORMS_TO_BUILD_FOR")
 
     val platforms: Option[Array[String]] = platformsToBuildFor.map(string => string.split(","))
+
+    logger.info(s"Configured build platforms ${platforms}")
     if (platforms.isDefined) {
-      val buildService = new PhysalisBuildService(platforms.get)
-      buildService.start
+      platforms.get.foreach { platform => new PhysalisBuildService(platform).start }
     }
   }
 
