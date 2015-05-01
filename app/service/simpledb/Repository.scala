@@ -19,22 +19,24 @@ object Repository {
   private val profileDomain: Domain = simpleDB.createDomain("Profile")
   private val buildTasks: Domain = simpleDB.createDomain("BuildTask")
 
-  def findNewBuildTasks(): Seq[BuildTask] = {
-    val items = buildTasks.select(s"select * from BuildTask where state = 'NEW'")
+  def findNewBuildTasks(platform: String): Seq[BuildTask] = {
+    val items = buildTasks.select(s"""select projectId,
+      userId,
+      s3Url
+      from BuildTask 
+      where state = 'NEW' and platform = '$platform'""")
 
     items.map(item => {
       val projectId = attrValue(item, "projectId")
       val userId = attrValue(item, "userId")
-      val platform = attrValue(item, "platform")
       val s3Url = attrOption(item, "s3Url")
-      val state = attrValue(item, "state")
       val project = findProjectById(projectId).get
       val user = findUser(userId).get
 
       BuildTask(id = item.name,
         project = project,
         user = user,
-        state = state,
+        state = "NEW",
         s3Url = s3Url,
         platform = platform)
     })

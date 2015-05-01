@@ -24,7 +24,7 @@ case class BuildTask(
   }
 
   def save(): BuildTask = {
-    logger.info(s"Save BuildTask ${this.id}")
+    logger.info(s"Save BuildTask ${this.id}:${this.state}")
     Repository.saveBuildTask(this)
   }
 
@@ -44,14 +44,14 @@ case class BuildTask(
   }
 
   def startBuilding(): Unit = {
-    logger.info(s"Build ${projectName} (gitURL was: ${project.gitUrl}) for platform $platform")
+    logger.info(s"Building ${projectName} (gitURL was: ${project.gitUrl}) for platform $platform")
     //    def createAndDeleteFakeProject = s"sudo docker run danielbeck/cordova-ubuntu cordova build ${projectPath}".!
   }
 
 }
 
 object BuildTask {
-  def findNew = Repository.findNewBuildTasks()
+  def findNew(platform: String) = Repository.findNewBuildTasks(platform)
   val validGitUrlRegex = """https?://.*/(.*)\.git""".r
   val validGitUrlPattern = validGitUrlRegex.pattern
   def createNew(project: Project, user: User) = {

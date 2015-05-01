@@ -24,8 +24,10 @@ class PhysalisBuildService(platform: String) {
   }
 
   private def newBuildTasks() = {
-    val tasks = BuildTask.findNew.filter(task => platform.contains(task.platform))
-    if (!tasks.isEmpty) logger.info("Found BuildTasks: " + tasks.map(t => t.id.toString).mkString(","))
+//    def info(tasks: Seq[BuildTask]) = tasks.map(t => s"${t.platform}->${t.id},${t.project.gitUrl}")
+
+    val tasks = BuildTask.findNew(platform)
+    if (!tasks.isEmpty) logger.info(s"$platform - found BuildTasks: " + tasks.map(t => t.id.toString).mkString(","))
     tasks
   }
 
