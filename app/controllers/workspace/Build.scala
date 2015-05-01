@@ -44,8 +44,6 @@ class Build(override implicit val env: RuntimeEnvironment[User]) extends Physali
   def persistBuildRequest(user: User, project: Project)(implicit request: SecuredRequest[AnyContent]) = {
     val buildTask = BuildTask(project = project, user = user, platform = "android")
     buildTask.save()
-//    buildTask.gitClone()
-//    buildTask.startBuilding()
-    Ok(workspace.project(user, true, project))
+    Redirect(controllers.workspace.routes.ProjectPage.show(user.usernameOption.get, project.name))
   }
 }
