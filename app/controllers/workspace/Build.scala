@@ -46,6 +46,6 @@ class Build(override implicit val env: RuntimeEnvironment[User]) extends Physali
     buildTask.save()
 //    buildTask.gitClone()
 //    buildTask.startBuilding()
-    Ok(workspace.project(user, user, project))
+    Ok(workspace.project(user, true, project))
   }
 }

@@ -1,13 +1,13 @@
-@(user: User, shownUser: User, project: Project)(implicit flash: Flash)
+@(user: User, isMyAccount:Boolean, project: Project)(implicit flash: Flash)
 
 @main(user) {
 	<div class="col-md-4 projectview">
-    <div class="thumbnail">
         <div class="caption">
-            <h3><a href="@controllers.workspace.routes.ProjectPage.show(project.username, project.name)">@project.name</a></h3>
+            <h3>@project.name</h3>
             <p>Last build: n.a.</p>
-            <p><a href="#" class="btn " role="button">Pull & Build</a>
+            @if(isMyAccount){            	
+            	<p><a href="@controllers.workspace.routes.Build.build(project.username, project.name)" class="btn " role="button">Pull & Build</a>
+            }
         </div>
-    </div>
-</div>
+  </div>
 }
