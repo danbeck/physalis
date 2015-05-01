@@ -3,15 +3,16 @@ package controllers
 import models.User
 import securesocial.core.RuntimeEnvironment
 import service.UpdatableUserService
+import play.api.mvc.Action
 
 class Application(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
 
   val userService = env.userService.asInstanceOf[UpdatableUserService]
 
   def index = UserAwareAction { implicit request =>
-    def redirectToWorkspace(username:String) = Redirect(controllers.workspace.routes.Workspace.user(username))
+    def redirectToWorkspace(username: String) = Redirect(controllers.workspace.routes.Workspace.user(username))
     def showHomepage() = Ok(views.html.index())
-        
+
     request.user match {
       case Some(u) => redirectToWorkspace(u.usernameOption.get)
       case None    => showHomepage()
@@ -23,6 +24,10 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
       case Some(u) => Ok(views.html.projects(u, userService.projects))
       case None    => Ok(views.html.projects(null, userService.projects))
     }
+  }
+
+  def untrail(path: String) = Action {
+    MovedPermanently("/" + path)
   }
 
   def training = UserAwareAction { implicit request =>
