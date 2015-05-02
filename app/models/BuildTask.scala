@@ -48,33 +48,43 @@ case class BuildTask(
     cloneCommand.!
   }
 
+  private def cordovaDir(): Option[File] = {
+    def recursiveListFiles(f: File): Array[File] = {
+      val these = f.listFiles
+      these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
+    }
+
+    val checkoutDir = new File(s"${System.getProperty("user.dir")}/$projectPath/")
+    recursiveListFiles(checkoutDir)
+      .filter(_.isDirectory())
+      .filter(_.getName == "www")
+      .filter(_.listFiles.exists { file => file.getName == "config.xml" })
+      .sortWith(_.getName.count(_ == '/') < _.getName.count(_ == '/'))
+      .map(_.getParentFile)
+      .headOption
+  }
   def startBuilding(): Unit = {
     logger.info(s"Building ${projectName} (gitURL was: ${project.gitUrl}) for platform $platform")
 
     if (platform == "android") {
-      val empty: Array[String] = new Array[String](0)
-      logger.info("exec docker/cordova")
-      val projectDir = s"${System.getProperty("user.dir")}/$projectPath/GreenMahjong/";
-      //            Runtime.getRuntime.exec(s"docker run danielbeck/cordova-android build $platform", empty, new File(projectPath))
-      //      val addPlatformCordova = new ProcessBuilder("/usr/bin/docker", "run", "--rm", "danielbeck/cordova-android", "platform", "add", platform)
-      //        .directory(new File(projectDir)).start
-      //      logProcess(addPlatformCordova)
-
-      logger.info(s"CWD: $projectDir")
-      val addcordova = new ProcessBuilder("/usr/bin/docker",
-        "run", "--rm", "-v", s"${projectDir}:/data",
-        "danielbeck/cordova-android", "platform", "add", platform).start
-      logProcess(addcordova)
-      val cordova = new ProcessBuilder("/usr/bin/docker",
-        "run", "--rm", "-v", s"${projectDir}:/data",
-        "danielbeck/cordova-android", "build", platform).start
-      logProcess(cordova)
-      //      val pwd = new ProcessBuilder("pwd").directory(new File(projectDir)).start
-      //      logProcess(pwd)
-
-      //      val command = s"docker run danielbeck/cordova-android ${projectPath} build ${platform}"
+      cordovaDir match {
+        case Some(dir) => build(dir.getAbsolutePath)
+        case _         => logger.error("Could not found a cordova project !")
+      }
       logger.info("done")
     }
+  }
+
+  def build(dir: String) = {
+    logger.info(s"Building dir $dir")
+    val addcordova = new ProcessBuilder("/usr/bin/docker",
+      "run", "--rm", "-v", s"${dir}:/data",
+      "danielbeck/cordova-android", "platform", "add", platform).start
+    logProcess(addcordova)
+    val cordova = new ProcessBuilder("/usr/bin/docker",
+      "run", "--rm", "-v", s"${dir}:/data",
+      "danielbeck/cordova-android", "build", platform).start
+    logProcess(cordova)
   }
 
   def logProcess(p: java.lang.Process) = {
