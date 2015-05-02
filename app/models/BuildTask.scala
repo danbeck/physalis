@@ -4,6 +4,11 @@ import play.api.Logger
 import service.simpledb.Repository
 import scala.sys.process._
 import java.util.UUID
+import java.lang.ProcessBuilder
+import java.io.File
+import java.lang.ProcessBuilder.Redirect
+import java.io.InputStreamReader
+import java.io.BufferedReader
 
 /**
  * Created by daniel on 23.04.15.
@@ -45,7 +50,41 @@ case class BuildTask(
 
   def startBuilding(): Unit = {
     logger.info(s"Building ${projectName} (gitURL was: ${project.gitUrl}) for platform $platform")
-    //    def createAndDeleteFakeProject = s"sudo docker run danielbeck/cordova-ubuntu cordova build ${projectPath}".!
+
+    if (platform == "android") {
+      val empty: Array[String] = new Array[String](0)
+      logger.info("exec docker/cordova")
+      val projectDir = s"${System.getProperty("user.dir")}/$projectPath/GreenMahjong/";
+      //            Runtime.getRuntime.exec(s"docker run danielbeck/cordova-android build $platform", empty, new File(projectPath))
+      //      val addPlatformCordova = new ProcessBuilder("/usr/bin/docker", "run", "--rm", "danielbeck/cordova-android", "platform", "add", platform)
+      //        .directory(new File(projectDir)).start
+      //      logProcess(addPlatformCordova)
+
+      logger.info(s"CWD: $projectDir")
+      val addcordova = new ProcessBuilder("/usr/bin/docker",
+        "run", "--rm", "-v", s"${projectDir}:/data",
+        "danielbeck/cordova-android", "platform", "add", platform).start
+      logProcess(addcordova)
+      val cordova = new ProcessBuilder("/usr/bin/docker",
+        "run", "--rm", "-v", s"${projectDir}:/data",
+        "danielbeck/cordova-android", "build", platform).start
+      logProcess(cordova)
+      //      val pwd = new ProcessBuilder("pwd").directory(new File(projectDir)).start
+      //      logProcess(pwd)
+
+      //      val command = s"docker run danielbeck/cordova-android ${projectPath} build ${platform}"
+      logger.info("done")
+    }
+  }
+
+  def logProcess(p: java.lang.Process) = {
+    val br = new BufferedReader(new InputStreamReader(p.getErrorStream()))
+    val str = Stream.continually(br.readLine()).takeWhile(_ != null).mkString("\n")
+    logger.info("EE: " + str) //      var line: String = null
+    val brS = new BufferedReader(new InputStreamReader(p.getInputStream))
+    val strS = Stream.continually(brS.readLine()).takeWhile(_ != null).mkString("\n")
+    logger.info("II: " + strS) //      var line: String = null
+
   }
 
 }
