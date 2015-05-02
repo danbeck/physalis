@@ -69,7 +69,7 @@ case class BuildTask(
     if (platform == "android") {
       cordovaDir match {
         case Some(dir) => build(dir.getAbsolutePath)
-        case _         => logger.error("Could not found a cordova project !")
+        case _         => logger.error("Could not found a cordova project!")
       }
       logger.info("done")
     }
