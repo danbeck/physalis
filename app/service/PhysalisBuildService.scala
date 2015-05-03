@@ -37,10 +37,12 @@ class PhysalisBuildService(platform: String) {
 
   def process(buildTask: BuildTask) = {
     logger.info("processing buildtask: " + buildTask.id)
-    buildTask.inProgress().save()
-    buildTask.gitClone()
-    buildTask.build().right.foreach { t => t.save() }
-    buildTask.done().save()
+    val buildTaskInprogress = buildTask.inProgress().save()
+    buildTaskInprogress.gitClone()
+    val buildOrError = buildTaskInprogress.build()
+    buildOrError.right.foreach { _.done().save() }
+    //    buildOrError.left.foreach {buildOrError.}
+
   }
 
   //  def createAndDeleteFakeProject = "sudo docker run danielbeck/cordova-ubuntu cordova create testapp".!
