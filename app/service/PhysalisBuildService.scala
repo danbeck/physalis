@@ -39,7 +39,7 @@ class PhysalisBuildService(platform: String) {
     logger.info("processing buildtask: " + buildTask.id)
     buildTask.inProgress().save()
     buildTask.gitClone()
-    buildTask.startBuilding()
+    buildTask.build().right.foreach { t => t.save() }
     buildTask.done().save()
   }
 

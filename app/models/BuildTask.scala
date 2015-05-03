@@ -9,7 +9,9 @@ import java.io.File
 import java.lang.ProcessBuilder.Redirect
 import java.io.InputStreamReader
 import java.io.BufferedReader
-
+import java.io.InputStream
+import service.S3BucketService
+import java.net.URL
 /**
  * Created by daniel on 23.04.15.
  */
@@ -39,13 +41,14 @@ case class BuildTask(
 
   def error(): BuildTask = this.copy(state = "ERROR")
 
-  def gitClone() = {
+  def gitClone(): BuildTask = {
     val command = s"rm -rf ${projectPath}"
     Logger.info(s">> ${command}")
     command.!
     val cloneCommand = s"git clone ${project.gitUrl} --depth=1 ${projectPath}"
     Logger.info(s">> ${cloneCommand}")
     cloneCommand.!
+    this
   }
 
   private def cordovaDir(): Option[File] = {
@@ -63,40 +66,78 @@ case class BuildTask(
       .map(_.getParentFile)
       .headOption
   }
-  def startBuilding(): Unit = {
+
+  def build(): Either[String, BuildTask] = {
     logger.info(s"Building ${projectName} (gitURL was: ${project.gitUrl}) for platform $platform")
 
     if (platform == "android") {
       cordovaDir match {
-        case Some(dir) => build(dir.getAbsolutePath)
-        case _         => logger.error("Could not found a cordova project!")
+        case Some(dir) => buildAndUploadArtifact(dir.getAbsolutePath)
+        case _         => Left("Couldn't found a Apache Cordova project!")
       }
-      logger.info("done")
+    } else Left(s"$platform ist not defined")
+  }
+
+  def buildAndUploadArtifact(dir: String): Either[String, BuildTask] = {
+    logger.info(s"Building. CWD set to $dir")
+    addCordovaPlatform(dir)
+    buildWithCordova(dir)
+    getBuildArtifact(dir).right.map { file =>
+      logger.info("Uploading file to S3")
+      S3BucketService.putFile(this.user.id, this.project.id, "latest", file)
+      val urlString = S3BucketService.getBucketURL(this.user.id, this.project.id, "latest").toString
+      logger.info(s"S3 URL $urlString")
+      this.copy(s3Url = Some(urlString))
     }
   }
 
-  def build(dir: String) = {
-    logger.info(s"Building dir $dir")
-    val addcordova = new ProcessBuilder("/usr/bin/docker",
-      "run", "--rm", "-v", s"${dir}:/data",
-      "danielbeck/cordova-android", "platform", "add", platform).start
-    logProcess(addcordova)
-    val cordova = new ProcessBuilder("/usr/bin/docker",
-      "run", "--rm", "-v", s"${dir}:/data",
-      "danielbeck/cordova-android", "build", platform).start
-    logProcess(cordova)
+  private def addCordovaPlatform(dir: String) = {
+    logger.info("addCordovaPlatform")
+    val process = execute("/usr/bin/docker", "run", "--rm", "-v", s"${dir}:/data",
+      "danielbeck/cordova-android", "platform", "add", platform)
+  }
+
+  private def buildWithCordova(dir: String) = {
+    logger.info("buildWithCordova")
+    val process = execute("/usr/bin/docker", "run", "--rm", "-v", s"${dir}:/data",
+      "danielbeck/cordova-android", "build", platform)
+  }
+
+  private def execute(command: String*): java.lang.Process = {
+    val process = new ProcessBuilder(command: _*).start
+    logProcess(process)
+    process
+  }
+
+  private def getBuildArtifact(dir: String): Either[String, File] = {
+    if (platform == "android") {
+      getAndroidBuildArtifact(dir)
+    } else {
+      logger.info("That was not android " + platform)
+      Left("platform not defined")
+    }
+  }
+
+  private def getAndroidBuildArtifact(dir: String) = {
+    logger.info(s"search android build artifact $dir/platforms/$platform/ant-build/MainActivity-debug.apk")
+    val outputFile = new File(s"$dir/platforms/$platform/ant-build/MainActivity-debug.apk")
+    if (outputFile.exists) {
+      logger.info("file exists")
+      Right(outputFile)
+    } else
+      Left("Building failed!")
   }
 
   def logProcess(p: java.lang.Process) = {
-    val br = new BufferedReader(new InputStreamReader(p.getErrorStream()))
-    val str = Stream.continually(br.readLine()).takeWhile(_ != null).mkString("\n")
-    logger.info("EE: " + str) //      var line: String = null
-    val brS = new BufferedReader(new InputStreamReader(p.getInputStream))
-    val strS = Stream.continually(brS.readLine()).takeWhile(_ != null).mkString("\n")
-    logger.info("II: " + strS) //      var line: String = null
-
+    logStream(p.getErrorStream)
+    logStream(p.getInputStream)
   }
 
+  def logStream(stream: InputStream) = {
+    val br = new BufferedReader(new InputStreamReader(stream))
+    val str = Stream.continually(br.readLine()).takeWhile(_ != null).mkString("\n")
+    logger.info(str)
+  }
 }
 
 object BuildTask {
