@@ -61,7 +61,7 @@ case class BuildTask(
     recursiveListFiles(checkoutDir)
       .filter(_.isDirectory())
       .filter(_.getName == "www")
-      .filter(_.listFiles.exists { file => file.getName == "config.xml" })
+      .filter(_.listFiles.exists { _.getName == "config.xml" })
       .sortWith(_.getName.count(_ == '/') < _.getName.count(_ == '/'))
       .map(_.getParentFile)
       .headOption
