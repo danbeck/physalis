@@ -17,7 +17,7 @@ class PhysalisBuildService(platform: String) {
     logger.info(s"Start build service for ${platform}")
     thread = new Thread(() => {
       while (true) {
-        newBuildTasks.foreach(process _)
+        newBuildTasks.foreach(processAndHandleExceptions _)
         Thread.sleep(1000)
       }
     })
@@ -35,15 +35,16 @@ class PhysalisBuildService(platform: String) {
     tasks
   }
 
-  def process(buildTask: BuildTask) = {
-    logger.info("processing buildtask: " + buildTask.id)
-    val buildTaskInprogress = buildTask.inProgress().save()
-    buildTaskInprogress.gitClone()
-    val buildOrError = buildTaskInprogress.build()
-    buildOrError.right.foreach { _.done().save() }
-    //    buildOrError.left.foreach {buildOrError.}
+  def processAndHandleExceptions(buildTask: BuildTask) = {
+    try {
 
+      logger.info("processing buildtask: " + buildTask.id)
+      val buildTaskInprogress = buildTask.inProgress().save()
+      buildTaskInprogress.gitClone()
+      val buildOrError = buildTaskInprogress.build()
+      buildOrError.right.foreach { _.done().save() }
+    } catch {
+      case t: Throwable => logger.error(s"Got error in Build-Service: ${t.getMessage}", t);
+    }
   }
-
-  //  def createAndDeleteFakeProject = "sudo docker run danielbeck/cordova-ubuntu cordova create testapp".!
 }
