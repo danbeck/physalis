@@ -42,7 +42,7 @@ object Repository {
       BuildTask(id = item.name,
         project = project,
         user = user,
-        state = "NEW",
+        state = state,
         s3Url = s3Url,
         platform = platform)
     }).headOption
