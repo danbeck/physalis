@@ -19,6 +19,35 @@ object Repository {
   private val profileDomain: Domain = simpleDB.createDomain("Profile")
   private val buildTasks: Domain = simpleDB.createDomain("BuildTask")
 
+  def findBuildTasks(id: String): Option[BuildTask] = {
+    val items = buildTasks.select(s"""select projectId,
+        userId,
+        s3Url,
+        state,
+        platform,
+        created,
+        updated
+      from BuildTask 
+      where itemname() = '$id'""")
+
+    items.map(item => {
+      val projectId = attrValue(item, "projectId")
+      val userId = attrValue(item, "userId")
+      val s3Url = attrOption(item, "s3Url")
+      val project = findProjectById(projectId, true).get
+      val user = findUser(userId).get
+      val platform = attrValue(item, "platform")
+      val state = attrValue(item, "state")
+
+      BuildTask(id = item.name,
+        project = project,
+        user = user,
+        state = "NEW",
+        s3Url = s3Url,
+        platform = platform)
+    }).headOption
+  }
+
   def findNewBuildTasks(platform: String): Seq[BuildTask] = {
     val items = buildTasks.select(s"""select projectId,
       userId,
@@ -103,10 +132,17 @@ object Repository {
 
   def findProjects(): Seq[Project] = {
     val projectsItems = projectsDomain
-      .select(s"""select userId, name, icon, gitUrl, username, visible 
-                  from Project
-                  where visible = 'true'""")
-    projectsItems.map(project _)
+      .select(s"""select 
+                  userId, 
+                  name, 
+                  icon, 
+                  gitUrl, 
+                  username, 
+                  visible,
+                  lastBuildTaskId 
+                from Project
+                where visible = 'true'""")
+    projectsItems.map(item => project(item, false))
   }
 
   def saveProject(project: Project) = {
@@ -120,63 +156,67 @@ object Repository {
       "username" -> project.username)
 
     if (project.icon.isDefined) projectData += ("icon" -> project.icon.get)
+    if (project.lastBuildTask.isDefined) projectData += ("lastBuildTaskid" -> project.lastBuildTask.get.id)
     projectsDomain.put(project.id, projectData: _*)
   }
 
   private def findProjectsByUser(userId: String): Seq[Project] = {
     val projectsItems = projectsDomain.select(
       s"""select
-        name,
-        icon,
-        gitUrl,
-        visible,
-        userId,
-        username
+          name,
+          icon,
+          gitUrl,
+          visible,
+          userId,
+          username,
+          lastBuildTaskId
         from Project
         where userId = '${userId}'""")
-    val projects = projectsItems.map(project _)
+    val projects = projectsItems.map(item => project(item, false))
     projects
   }
 
   private def findProjectByUserAndProjectname(userId: String, projectName: String): Option[Project] = {
     val projectsItems: Seq[Item] = projectsDomain.select(
       s"""select
-        name,
-        icon,
-        gitUrl,
-        visible,
-        userId,
-        username
+          name,
+          icon,
+          gitUrl,
+          visible,
+          userId,
+          username,
+          lastBuildTaskId
         from Project
         where userId = '${userId}' and name = '${projectName}'""")
-    projectsItems.map(project _).headOption
+    projectsItems.map(item => project(item, false)).headOption
   }
 
-  def findProjectById(projectId: String) = {
+  def findProjectById(projectId: String, shallow: Boolean = false) = {
     val projectsItems = projectsDomain.select(s"""select
-        name,
-        icon,
-        gitUrl,
-        visible,
-        userId,
-        username
+          name,
+          icon,
+          gitUrl,
+          visible,
+          userId,
+          username,
+          lastBuildTaskId
         from Project
 			  where itemName() = '${projectId}'""").headOption
-    projectsItems.map(project _).headOption
+    projectsItems.map(item => project(item, shallow)).headOption
   }
 
   private def findProfiles(profile: PhysalisProfile): Seq[PhysalisProfile] = findProfiles(profile.userId)
 
   private def findProfiles(userId: String): Seq[PhysalisProfile] = {
     val profilesItems = profileDomain.select(s"""select
-      providerId,
-      providerUserId,
-      firstName,
-      lastName,
-      fullName,
-      email,
-      avatarUrl,
-      userId
+            providerId,
+            providerUserId,
+            firstName,
+            lastName,
+            fullName,
+            email,
+            avatarUrl,
+            userId
           from Profile
           where userId = '${userId}'""")
     profilesItems.map(physalisProfile _)
@@ -263,21 +303,25 @@ object Repository {
       userId = userId)
   }
 
-  private def project(item: Item) = {
+  private def project(item: Item, shallow: Boolean) = {
     val userId = attrValue(item, "userId")
     val name = attrValue(item, "name")
     val icon = attrOption(item, "icon")
     val gitUrl = attrValue(item, "gitUrl")
     val username = attrValue(item, "username")
     val visible = attrValue(item, "visible") == "true"
-
+    val lastBuildTask = attrOption(item, "lastBuildTaskId") match {
+      case Some(id) if shallow => findBuildTasks(id)
+      case _                   => None
+    }
     Project(id = item.name,
       name = name,
       icon = icon,
       gitUrl = gitUrl,
       visible = visible,
       userId = userId,
-      username = username)
+      username = username,
+      lastBuildTask = lastBuildTask)
   }
 
   private def user(item: Item, projects: Seq[Project], main: PhysalisProfile, identities: Seq[PhysalisProfile]): User = {
