@@ -12,6 +12,7 @@ import java.io.BufferedReader
 import java.io.InputStream
 import service.S3BucketService
 import java.net.URL
+import java.time.Instant
 /**
  * Created by daniel on 23.04.15.
  */
@@ -21,7 +22,9 @@ case class BuildTask(
   user: User,
   state: String = "NEW",
   s3Url: Option[String] = None,
-  platform: String) {
+  platform: String,
+  created: Instant = Instant.now,
+  updated: Instant = Instant.now) {
 
   private val projectPath = s"${user.id}/${project.id}/$platform"
   private val logger: Logger = Logger(this.getClass)
@@ -35,11 +38,13 @@ case class BuildTask(
     Repository.saveBuildTask(this)
   }
 
-  def inProgress(): BuildTask = this.copy(state = "IN_PROGRESS")
+  private def updateState(state: String) = this.copy(state = state, updated = Instant.now)
 
-  def done(s3Url: Option[String] = None): BuildTask = this.copy(state = "DONE", s3Url = s3Url)
+  def inProgress() = this.updateState("IN_PROGRESS")
 
-  def error(): BuildTask = this.copy(state = "ERROR")
+  def done(s3Url: Option[String] = None) = this.updateState("DONE").copy(s3Url = s3Url)
+
+  def error(): BuildTask = this.updateState("ERROR")
 
   def gitClone(): BuildTask = {
     val command = s"rm -rf ${projectPath}"
@@ -144,8 +149,9 @@ object BuildTask {
   def findNew(platform: String) = Repository.findNewBuildTasks(platform)
   val validGitUrlRegex = """https?://.*/(.*)\.git""".r
   val validGitUrlPattern = validGitUrlRegex.pattern
-  def createNew(project: Project, user: User) = {
-    //    BuildTask()
-  }
+//  def createNew(project: Project, user: User) = {
+//    //    BuildTask()
+//  }
+  def findLastBuildTask(project: Project, platform: String): Option[BuildTask] = Repository.findLastBuildTask(project, platform)
 
 }

@@ -12,9 +12,10 @@ case class Project(id: String = UUID.randomUUID().toString(),
                    gitUrl: String,
                    visible: Boolean = true,
                    userId: String,
-                   username: String,
-                   lastBuildTask: Option[BuildTask] = None) {
+                   username: String) {
   def save() = Repository.saveProject(this)
+
+  def lastBuildTask(platform: String): Option[BuildTask] = BuildTask.findLastBuildTask(this, platform)
 }
 
 object Project {

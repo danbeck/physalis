@@ -9,6 +9,7 @@ import scala.concurrent.Future
 import java.util.UUID
 import awscala.simpledb.Domain
 import scala.collection.mutable.ArrayBuffer
+import java.time.Instant
 
 object Repository {
   val logger: Logger = Logger(this.getClass())
@@ -71,11 +72,44 @@ object Repository {
     })
   }
 
+  def findLastBuildTask(project: Project, platform: String): Option[BuildTask] = {
+    val items = buildTasks.select(s"""select userId,
+      s3Url,
+      state,
+      created,
+      updated
+      from BuildTask 
+      where platform = '$platform'
+      order by created desc""")
+
+    // TODO: only take the first BuildTask.
+    items.headOption.map {
+      item =>
+        val userId = attrValue(item, "userId")
+        val created = Instant.parse(attrValue(item, "created"))
+        val updated = Instant.parse(attrValue(item, "updated"))
+        val state = attrValue(item, "state")
+        val s3Url = attrOption(item, "s3Url")
+        val user = findUser(userId).get
+
+        BuildTask(id = item.name,
+          project = project,
+          user = user,
+          state = state,
+          s3Url = s3Url,
+          platform = platform,
+          created = created,
+          updated = updated)
+    }
+  }
+
   def saveBuildTask(task: BuildTask) = {
     val data = ArrayBuffer("projectId" -> task.project.id,
       "userId" -> task.user.id,
       "platform" -> task.platform,
-      "state" -> task.state)
+      "state" -> task.state,
+      "created" -> task.created.toString(),
+      "updated" -> task.updated.toString())
     if (task.s3Url.isDefined) data += "s3Url" -> task.s3Url.get
     buildTasks.replaceIfExists(task.id, data: _*)
     task
@@ -138,8 +172,7 @@ object Repository {
                   icon, 
                   gitUrl, 
                   username, 
-                  visible,
-                  lastBuildTaskId 
+                  visible
                 from Project
                 where visible = 'true'""")
     projectsItems.map(item => project(item, false))
@@ -156,7 +189,6 @@ object Repository {
       "username" -> project.username)
 
     if (project.icon.isDefined) projectData += ("icon" -> project.icon.get)
-    if (project.lastBuildTask.isDefined) projectData += ("lastBuildTaskid" -> project.lastBuildTask.get.id)
     projectsDomain.put(project.id, projectData: _*)
   }
 
@@ -168,8 +200,7 @@ object Repository {
           gitUrl,
           visible,
           userId,
-          username,
-          lastBuildTaskId
+          username
         from Project
         where userId = '${userId}'""")
     val projects = projectsItems.map(item => project(item, false))
@@ -184,8 +215,7 @@ object Repository {
           gitUrl,
           visible,
           userId,
-          username,
-          lastBuildTaskId
+          username
         from Project
         where userId = '${userId}' and name = '${projectName}'""")
     projectsItems.map(item => project(item, false)).headOption
@@ -198,8 +228,7 @@ object Repository {
           gitUrl,
           visible,
           userId,
-          username,
-          lastBuildTaskId
+          username
         from Project
 			  where itemName() = '${projectId}'""").headOption
     projectsItems.map(item => project(item, shallow)).headOption
@@ -310,18 +339,13 @@ object Repository {
     val gitUrl = attrValue(item, "gitUrl")
     val username = attrValue(item, "username")
     val visible = attrValue(item, "visible") == "true"
-    val lastBuildTask = attrOption(item, "lastBuildTaskId") match {
-      case Some(id) if shallow => findBuildTasks(id)
-      case _                   => None
-    }
     Project(id = item.name,
       name = name,
       icon = icon,
       gitUrl = gitUrl,
       visible = visible,
       userId = userId,
-      username = username,
-      lastBuildTask = lastBuildTask)
+      username = username)
   }
 
   private def user(item: Item, projects: Seq[Project], main: PhysalisProfile, identities: Seq[PhysalisProfile]): User = {
