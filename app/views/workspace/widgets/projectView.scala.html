@@ -1,21 +1,44 @@
-@(project: Project, isMyAccount:Boolean)
-<div class="col-md-4 projectview">
-    <div class="thumbnail">
-        <div class="caption">
+@(project: Project, isMyAccount:Boolean, lastUbuntuBuildTask:Option[BuildTask] = None, lastAndroidBuildTask:Option[BuildTask]=None)
             <h3><a href="@controllers.workspace.routes.ProjectPage.show(project.username, project.name)">@project.name</a></h3>
             <p>Last build: n.a.</p>
             @if(isMyAccount){            	
-            	<p><a href="@controllers.workspace.routes.Build.build(project.username, project.name)" class="btn " role="button">Pull & Build</a>
-            	
-            	
-            	@if(project.lastBuildTask("ubuntu").isDefined){
-            		<p><a href="@project.lastBuildTask("ubuntu").get.s3Url">Download for ubuntu</a></p>	
+            	@if(!lastUbuntuBuildTask.isDefined || !lastAndroidBuildTask.isDefined || lastUbuntuBuildTask.get.state!="IN_PROGRESS" ||  lastAndroidBuildTask.get.state!="IN_PROGRESS"){
+	            	<p><a href="@controllers.workspace.routes.Build.build(project.username, project.name)" 
+	            		class="btn btn-lg" role="button">Pull & Build</a>
             	}
             	
-            	@if(project.lastBuildTask("android").isDefined){
-            		<p><a href="@project.lastBuildTask("android").get.s3Url">Download for android</a></p>	
+            	
+            	@if(lastUbuntuBuildTask.isDefined && lastUbuntuBuildTask.get.state=="IN_PROGRESS"){
+            		<p><class="btn btn-lg">Ubuntu: Build in progress</p>	
+            	}
+            	
+            	@if(lastUbuntuBuildTask.isDefined && lastUbuntuBuildTask.get.state=="ERROR"){
+            		<p>Ubuntu: Build ERROR</p>	
+            	}
+            	
+            	@if(lastUbuntuBuildTask.isDefined&& lastUbuntuBuildTask.get.state=="NEW"){
+            	   		<p>Ubuntu: Build queued</p>	
+            	}
+            	
+            	@if(lastUbuntuBuildTask.isDefined&& lastUbuntuBuildTask.get.state=="DONE"){
+            		<p><a href="@lastUbuntuBuildTask.get.s3Url"
+            		class="btn btn-lg">Download Android apk file</a></p>	
+            	}
+            	
+            	@if(lastAndroidBuildTask.isDefined && lastAndroidBuildTask.get.state=="IN_PROGRESS"){
+            		<p><class="btn btn-lg">Android: Build in progress</p>	
+            	}
+            	
+            	@if(lastAndroidBuildTask.isDefined && lastAndroidBuildTask.get.state=="ERROR"){
+            		<p>Android: Build ERROR</p>	
+            	}
+            	
+            	@if(lastAndroidBuildTask.isDefined&& lastAndroidBuildTask.get.state=="NEW"){
+            	   		<p>Android: Build queued</p>	
+            	}
+            	
+            	@if(lastAndroidBuildTask.isDefined&& lastAndroidBuildTask.get.state=="DONE"){
+            		<p><a href="@lastAndroidBuildTask.get.s3Url"
+            		class="btn btn-lg">Download Android APK file</a></p>	
             	}
             }
-        </div>
-    </div>
-</div>

@@ -3,7 +3,7 @@
 @scripts = {
     <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
 }
-@main(loggedInUser,scripts) {
+@main(user=loggedInUser,scripts = scripts, refresh=true) {
 
     @widgets.createNewProjectButton(projectForm)
     @widgets.newProjectInputForm(projectForm)

@@ -2,7 +2,13 @@
 
 <div class="row">
     @for(p <- loggedInUser.projects) {
-        @projectView(p,isMyAccount)
+    	<div class="col-md-4 projectview">
+		    <div class="thumbnail">
+		        <div class="caption">
+        		@projectView(p,isMyAccount,p.lastBuildTask("ubuntu"),p.lastBuildTask("android"))
+    			</div>
+    		</div>
+    	</div>
     }
 </div>
 

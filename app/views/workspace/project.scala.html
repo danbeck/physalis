@@ -1,13 +1,9 @@
 @(user: User, isMyAccount:Boolean, project: Project)(implicit flash: Flash)
 
-@main(user) {
+@main(user=user, refresh=true) {
 	<div class="col-md-4 projectview">
         <div class="caption">
-            <h3>@project.name</h3>
-            <p>Last build: n.a.</p>
-            @if(isMyAccount){            	
-            	<p><a href="@controllers.workspace.routes.Build.build(project.username, project.name)" class="btn " role="button">Pull & Build</a>
-            }
+            @widgets.projectView(project,isMyAccount, project.lastBuildTask("ubuntu"),project.lastBuildTask("android"))
         </div>
   </div>
 }

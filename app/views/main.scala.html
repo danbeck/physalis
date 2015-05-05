@@ -1,4 +1,4 @@
-@(user: User = null, scripts: Html = Html(""), doNotShowLoginButton: Boolean = false)(content: Html)
+@(user: User = null, scripts: Html = Html(""), doNotShowLoginButton: Boolean = false, refresh:Boolean=false)(content: Html)
 <!DOCTYPE html>
 <html>
     <head>
@@ -12,6 +12,9 @@
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/font-awesome.min.css")">
         <meta name="description" content="Physalis is a build cloud for Apache Cordova apps. It builds HTML5 apps for Ubuntu, FirefoxOS and Android">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        @if(refresh) {
+        	 <meta http-equiv="refresh" content="3;">
+        }
             @googleMasterTool()
             @googleAnalytics()
             @scripts
