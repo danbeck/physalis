@@ -1,6 +1,9 @@
 @(loggedInUser: User, projectForm: Option[Form[(String, String)]] = None)(implicit flash: Flash)
 
-@main(loggedInUser) {
+@scripts = {
+    <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
+}
+@main(loggedInUser,scripts) {
 
     @widgets.createNewProjectButton(projectForm)
     @widgets.newProjectInputForm(projectForm)

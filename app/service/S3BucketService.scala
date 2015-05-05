@@ -14,6 +14,6 @@ object S3BucketService {
 
   def getBucketURL(userId: String, projectId: String, version: String): URL = {
     val s3obj: Option[S3Object] = bucket.getObject(s"$userId/$projectId/$version")
-    s3obj.get.generatePresignedUrl(new DateTime().plusHours(1))
+    s3obj.get.generatePresignedUrl(new DateTime().plusWeeks(1))
   }
 }
