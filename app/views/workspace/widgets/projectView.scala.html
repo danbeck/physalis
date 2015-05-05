@@ -6,6 +6,15 @@
             <p>Last build: n.a.</p>
             @if(isMyAccount){            	
             	<p><a href="@controllers.workspace.routes.Build.build(project.username, project.name)" class="btn " role="button">Pull & Build</a>
+            	
+            	
+            	@if(project.lastBuildTask("ubuntu").isDefined){
+            		<p><a href="@project.lastBuildTask("ubuntu").get.s3Url">Download for ubuntu</a></p>	
+            	}
+            	
+            	@if(project.lastBuildTask("android").isDefined){
+            		<p><a href="@project.lastBuildTask("android").get.s3Url">Download for android</a></p>	
+            	}
             }
         </div>
     </div>

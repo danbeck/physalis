@@ -42,7 +42,7 @@ case class BuildTask(
 
   def inProgress() = this.updateState("IN_PROGRESS")
 
-  def done(s3Url: Option[String] = None) = this.updateState("DONE").copy(s3Url = s3Url)
+  def done(s3Url: String) = this.updateState("DONE").copy(s3Url = Some(s3Url))
 
   def error(): BuildTask = this.updateState("ERROR")
 
@@ -72,27 +72,35 @@ case class BuildTask(
       .headOption
   }
 
-  def build(): Either[String, BuildTask] = {
+  def build(): BuildTask = {
+    buildAndUploadToS3 match {
+      case Left(error) => {
+        logger.error(error)
+        this.error
+      }
+      case Right(s3Url) => this.done(s3Url)
+    }
+  }
+  private def buildAndUploadToS3(): Either[String, String] = {
     logger.info(s"Building ${projectName} (gitURL was: ${project.gitUrl}) for platform $platform")
 
     if (platform == "android") {
       cordovaDir match {
-        case Some(dir) => buildAndUploadArtifact(dir.getAbsolutePath)
+        case Some(dir) => buildAndUploadToS3(dir.getAbsolutePath)
         case _         => Left("Couldn't found a Apache Cordova project!")
       }
     } else Left(s"$platform ist not defined")
   }
 
-  def buildAndUploadArtifact(dir: String): Either[String, BuildTask] = {
+  def buildAndUploadToS3(dir: String): Either[String, String] = {
     logger.info(s"Building. CWD set to $dir")
     addCordovaPlatform(dir)
     buildWithCordova(dir)
     getBuildArtifact(dir).right.map { file =>
       logger.info("Uploading file to S3")
-      S3BucketService.putFile(this.user.id, this.project.id, "latest", file)
-      val urlString = S3BucketService.getBucketURL(this.user.id, this.project.id, "latest").toString
+      val urlString = S3BucketService.putFile(task = this, file = file).toString
       logger.info(s"S3 URL $urlString")
-      this.copy(s3Url = Some(urlString))
+      urlString
     }
   }
 
@@ -149,9 +157,9 @@ object BuildTask {
   def findNew(platform: String) = Repository.findNewBuildTasks(platform)
   val validGitUrlRegex = """https?://.*/(.*)\.git""".r
   val validGitUrlPattern = validGitUrlRegex.pattern
-//  def createNew(project: Project, user: User) = {
-//    //    BuildTask()
-//  }
+  //  def createNew(project: Project, user: User) = {
+  //    //    BuildTask()
+  //  }
   def findLastBuildTask(project: Project, platform: String): Option[BuildTask] = Repository.findLastBuildTask(project, platform)
 
 }

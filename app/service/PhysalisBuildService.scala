@@ -37,12 +37,10 @@ class PhysalisBuildService(platform: String) {
 
   def processAndHandleExceptions(buildTask: BuildTask) = {
     try {
-
       logger.info("processing buildtask: " + buildTask.id)
       val buildTaskInprogress = buildTask.inProgress().save()
       buildTaskInprogress.gitClone()
-      val buildOrError = buildTaskInprogress.build()
-      buildOrError.right.foreach { _.done().save() }
+      buildTaskInprogress.build().save()
     } catch {
       case t: Throwable => logger.error(s"Got error in Build-Service: ${t.getMessage}", t);
     }

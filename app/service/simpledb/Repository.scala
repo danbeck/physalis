@@ -80,7 +80,8 @@ object Repository {
       updated
       from BuildTask 
       where platform = '$platform'
-      order by created desc""")
+      and created is not null
+      order by created desc limit 1""")
 
     // TODO: only take the first BuildTask.
     items.headOption.map {
