@@ -11,8 +11,13 @@ object S3BucketService {
   val bucket: Bucket = s3.bucket(BUCKET_NAME).get
   val logger: Logger = Logger(this.getClass)
 
-  def key(task: BuildTask, version: String) =
-    s"${task.project.userId}/${task.project.id}/$version/${task.project.name}"
+  def key(task: BuildTask, version: String) = {
+    val fileEnding = task.platform match {
+      case "android" => "apk"
+      case "ubuntu"  => "click"
+    }
+    s"${task.project.userId}/${task.project.id}/$version/${task.project.name}.$fileEnding"
+  }
 
   def putFile(task: BuildTask, version: String = "latest", file: File): URL = {
     val k = key(task, version)
