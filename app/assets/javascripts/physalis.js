@@ -6,7 +6,7 @@ $(document).ready(
 				var username = node$.attr("data-user");
 
 				var result = {};
-				$.getJSON("latest/" + username + "/" + projectname, function(
+				$.getJSON("https://physalis.io/latest/" + username + "/" + projectname, function(
 						data) {
 					if (!data.error) {
 						node$.empty();
@@ -23,10 +23,11 @@ $(document).ready(
 							node$.append("<p>Ubuntu build in progress</p>");
 						}
 						if (data.android.state === "DONE") {
-							node$.append("<p><a class='btn btn-lg' href='" + data.android.url + "'>Download Android APK</a></p>");
-						}
+//							node$.append("<p><a class='btn btn-lg' href='" + data.android.url + "'>Download Android APK</a></p>");
+							node$.append("<p><a class='btn' href='" + data.android.url + "'>Download Android APK</a></p>");
+												}
 						if (data.ubuntu.state === "DONE") {
-							node$.append("<p><a class='btn btn-lg' href='" + data.ubuntu.url + "'>Download Android APK</a></p>");
+							node$.append("<p><a class='btn' href='" + data.ubuntu.url + "'>Download Android APK</a></p>");
 						}
 
 					}
@@ -35,10 +36,18 @@ $(document).ready(
 
 			}
 
-			window.setInterval(function() {
+			function updateTheBuildState(){
+				setTimeout(updateTheBuildState,1000);
 				$("div[data-role='downloadProjects']").each(function() {
 					retrieveAndAddBuildDataToDom($(this));
 				});
-			}, 1000);
+			}
+//			window.setInterval(function() {
+//				$("div[data-role='downloadProjects']").each(function() {
+//					retrieveAndAddBuildDataToDom($(this));
+//				});
+//			}, 1000);
 
+			updateTheBuildState();
+			
 		});

@@ -1,6 +1,10 @@
 @(user: User, isMyAccount:Boolean, project: Project)(implicit flash: Flash)
 
-@main(user=user) {
+
+@scripts = {
+    <script src="@routes.Assets.at("javascripts/physalis.js")" type="text/javascript"></script>
+}
+@main(user=user,scripts=scripts) {
 	<div class="col-md-4 projectview">
         <div class="caption">
             @widgets.projectView(project,isMyAccount, project.lastBuildTask("ubuntu"),project.lastBuildTask("android"))
