@@ -63,6 +63,7 @@ case class BuildTask(
     }
 
     val checkoutDir = new File(s"${System.getProperty("user.dir")}/$projectPath/")
+    logger.info(s"checkoutDir was: $checkoutDir")
     recursiveListFiles(checkoutDir)
       .filter(_.isDirectory())
       .filter(_.getName == "www")
