@@ -1,7 +1,7 @@
 @(loggedInUser: User, projectForm: Option[Form[(String, String)]] = None)(implicit flash: Flash)
 
 @scripts = {
-    <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/physalis.js")" type="text/javascript"></script>
 }
 @main(user=loggedInUser,scripts = scripts) {
 

@@ -1,6 +1,6 @@
 @(user: User, isMyAccount:Boolean, project: Project)(implicit flash: Flash)
 
-@main(user=user, refresh=true) {
+@main(user=user) {
 	<div class="col-md-4 projectview">
         <div class="caption">
             @widgets.projectView(project,isMyAccount, project.lastBuildTask("ubuntu"),project.lastBuildTask("android"))
