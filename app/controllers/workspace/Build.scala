@@ -51,7 +51,7 @@ class Build(override implicit val env: RuntimeEnvironment[User]) extends Physali
       case (_, _, None) => projectNotFound
       case (_, None, Some(proj)) if !proj.visible => projectNotFound
       case (Some(u), Some(ru), Some(proj)) if !proj.visible && u.id != ru.id => projectNotFound
-      case (Some(u), Some(ru), Some(proj)) => {
+      case (Some(u), _, Some(proj)) => {
         val android = proj.lastBuildTask("android")
         val ubuntu = proj.lastBuildTask("ubuntu")
         Ok(Json.obj(
