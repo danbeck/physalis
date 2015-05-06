@@ -28,6 +28,7 @@ import securesocial.core.BasicProfile
 import securesocial.core.services.SaveMode
 import views.html.workspace
 import models.Project
+import play.api.libs.json.Json
 
 class Build(override implicit val env: RuntimeEnvironment[User]) extends PhysalisSecureSocial {
 
@@ -38,6 +39,29 @@ class Build(override implicit val env: RuntimeEnvironment[User]) extends Physali
       case (_, None) => Redirect(routes.ProjectPage.nonExistingProj())
       case (username, Some(_)) if username != request.user.usernameOption.get => Redirect(routes.ProjectPage.nonExistingProj())
       case (username, Some(proj)) => persistBuildRequest(request.user, proj)
+    }
+  }
+
+  def latestBuildJson(username: String, projectname: String) = UserAwareAction { implicit request =>
+    val project: Option[Project] = Project.findByUsernameAndProjectname(username, projectname)
+    val shownUser = User.findByUsername(username)
+    val projectNotFound = Ok(Json.obj("error" -> "project not found"))
+
+    (shownUser, request.user, project) match {
+      case (_, _, None) => projectNotFound
+      case (_, None, Some(proj)) if !proj.visible => projectNotFound
+      case (Some(u), Some(ru), Some(proj)) if !proj.visible && u.id != ru.id => projectNotFound
+      case (Some(u), Some(ru), Some(proj)) => {
+        val android = proj.lastBuildTask("android")
+        val ubuntu = proj.lastBuildTask("ubuntu")
+        Ok(Json.obj(
+          "android" -> Json.obj(
+            "state" -> android.map(_.state),
+            "url" -> android.map(_.s3Url)),
+          "ubuntu" -> Json.obj(
+            "state" -> ubuntu.map(_.state),
+            "url" -> ubuntu.map(_.s3Url))))
+      }
     }
   }
 
