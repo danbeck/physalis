@@ -80,6 +80,7 @@ object Repository {
       updated
       from BuildTask 
       where platform = '$platform'
+      and projectId = '${project.id}'
       and created is not null
       order by created desc limit 1""")
 

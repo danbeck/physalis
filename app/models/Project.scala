@@ -15,7 +15,7 @@ case class Project(id: String = UUID.randomUUID().toString(),
                    username: String) {
   def save() = Repository.saveProject(this)
 
-  def lastBuildTask(platform: String): Option[BuildTask] = BuildTask.findLastBuildTask(this, platform)
+  def lastBuildTask(platform: String): Option[BuildTask] = Repository.findLastBuildTask(this, platform)
 }
 
 object Project {

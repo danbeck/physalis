@@ -160,6 +160,5 @@ object BuildTask {
   //  def createNew(project: Project, user: User) = {
   //    //    BuildTask()
   //  }
-  def findLastBuildTask(project: Project, platform: String): Option[BuildTask] = Repository.findLastBuildTask(project, platform)
 
 }
