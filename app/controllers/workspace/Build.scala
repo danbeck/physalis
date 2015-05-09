@@ -67,6 +67,7 @@ class Build(override implicit val env: RuntimeEnvironment[User]) extends Physali
 
   def persistBuildRequest(user: User, project: Project)(implicit request: SecuredRequest[AnyContent]) = {
     BuildTask(project = project, user = user, platform = "android").save()
+    BuildTask(project = project, user = user, platform = "ubuntu").save()
     Redirect(controllers.workspace.routes.ProjectPage.show(user.usernameOption.get, project.name))
   }
 }

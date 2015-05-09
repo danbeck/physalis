@@ -63,14 +63,19 @@ case class BuildTask(
     }
 
     val checkoutDir = new File(s"${System.getProperty("user.dir")}/$projectPath/")
-    logger.info(s"checkoutDir was: $checkoutDir")
-    recursiveListFiles(checkoutDir)
-      .filter(_.isDirectory())
-      .filter(_.getName == "www")
-      .filter(_.listFiles.exists { _.getName == "config.xml" })
-      .sortWith(_.getName.count(_ == '/') < _.getName.count(_ == '/'))
-      .map(_.getParentFile)
-      .headOption
+
+    if (checkoutDir.exists)
+      None
+    else {
+      logger.info(s"checkoutDir was: $checkoutDir")
+      recursiveListFiles(checkoutDir)
+        .filter(_.isDirectory())
+        .filter(_.getName == "www")
+        .filter(_.listFiles.exists { _.getName == "config.xml" })
+        .sortWith(_.getName.count(_ == '/') < _.getName.count(_ == '/'))
+        .map(_.getParentFile)
+        .headOption
+    }
   }
 
   def build(): BuildTask = {
@@ -85,7 +90,7 @@ case class BuildTask(
   private def buildAndUploadToS3(): Either[String, String] = {
     logger.info(s"Building ${projectName} (gitURL was: ${project.gitUrl}) for platform $platform")
 
-    if (platform == "android") {
+    if (platform == "android" || platform == "ubuntu") {
       cordovaDir match {
         case Some(dir) => buildAndUploadToS3(dir.getAbsolutePath)
         case _         => Left("Couldn't found a Apache Cordova project!")
@@ -107,14 +112,20 @@ case class BuildTask(
 
   private def addCordovaPlatform(dir: String) = {
     logger.info("addCordovaPlatform")
-    val process = execute("/usr/bin/docker", "run", "--rm", "-v", s"${dir}:/data",
+    execute("/usr/bin/docker", "run", "--rm", "-v", s"${dir}:/data",
       "danielbeck/cordova-android", "platform", "add", platform)
   }
 
   private def buildWithCordova(dir: String) = {
     logger.info("buildWithCordova")
-    val process = execute("/usr/bin/docker", "run", "--rm", "-v", s"${dir}:/data",
-      "danielbeck/cordova-android", "build", platform)
+    if (platform == "android")
+      execute("/usr/bin/docker", "run", "--rm", "-v", s"${dir}:/data",
+        "danielbeck/cordova-android", "build", platform)
+
+    if (platform == "ubuntu")
+      execute("/usr/bin/docker", "run", "--rm", "--privileged", "-v", s"${dir}:/data",
+        "danielbeck/cordova-ubuntu", "build", platform)
+
   }
 
   private def execute(command: String*): java.lang.Process = {
