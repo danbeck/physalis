@@ -1,0 +1,9 @@
+@()(implicit flash: Flash)
+
+	@if(flash.get("error").isDefined){
+	<div class="alert alert-danger withPadding" role="alert">
+	  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+	  <span class="sr-only">Error:</span>
+	  @flash.get("error")
+	</div>
+	}
