@@ -141,6 +141,20 @@ object Repository {
     }
   }
 
+  def findUserByEmail(email: String): Option[User] = {
+    val awsUser = userDomain.select(s"""select username,
+      fullname,
+      email,
+      wantsnewsletter,
+      accountPlan
+      from User
+      where email = '${email}'""").headOption
+    awsUser.map(_.name) match {
+      case Some(itemId) => findUser(itemId)
+      case None         => None
+    }
+  }
+
   def findUser(profile: PhysalisProfile): Option[User] = findUser(profile.userId)
 
   private def findUser(userId: String): Option[User] = {

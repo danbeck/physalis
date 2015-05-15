@@ -9,7 +9,7 @@
     <div class="row">
         <div>
         @helper.form(action = controllers.accounts.routes.Login.postUserData) {
-            @helper.inputText(userForm("username"), '_label -> "Username")
+            @helper.inputText(userForm("username"), '_label -> "Username", '_help -> "")
             @helper.inputText(userForm("email"), '_label -> "E-mail", '_help -> "")
 
             <div class="panel panel-default">
@@ -17,6 +17,15 @@
                 @helper.checkbox(userForm("wantNewsletter"), '_label -> "Register newsletter", '_help -> "We send updates about the latest new features build into physalis. We won't spam you.")
                 </div>
             </div>
+            <p>globalErrors:</p>
+            @if(userForm.hasGlobalErrors) {
+			  <ul>
+			  @for(error <- userForm.globalErrors) {
+			    <li>@error.message</li>
+			  }
+			  </ul>
+			}
+			<p> THE END</p>
             <div class="form-actions">
                 <button type="submit" class="btn btn-lg btn-primary">Let's build your first app!</button>
             </div>

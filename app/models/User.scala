@@ -26,5 +26,6 @@ case class User(id: String,
 
 object User {
   def findByUsername(username: String): Option[User] = Repository.findUserByUsername(username)
+  def findByEmail(email: String): Option[User] = Repository.findUserByEmail(email)
   def find(profile: PhysalisProfile): Option[User] = Repository.findUser(profile)
 }

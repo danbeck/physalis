@@ -5,11 +5,12 @@ import models.User
 import play.api.mvc.Action
 import play.api.i18n.Messages
 import play.api.data.Forms._
-import play.api.data.Form
+import play.api.data._
 import securesocial.core.services.UserService
 import service.UpdatableUserService
 import securesocial.core.utils._
 import scala.concurrent.Future
+import views.html.accounts.signupEnterUserData
 
 /**
  * Login and Signup are controlled by the same workflow:
@@ -36,14 +37,23 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
     Ok(views.html.accounts.signup(null))
   }
 
-  case class UserData(username: String, email: String, wantsNewsletter: Option[Boolean])
+  case class UserData(username: String, email: String, wantsNewsletter: Boolean)
 
-  val userForm = Form(mapping("username" -> text,
+  private def validateUsername(user: UserData) = !User.findByUsername(user.username).isDefined
+  private def validateEmail(user: UserData) = !User.findByEmail(user.email).isDefined
+
+  val userForm = Form(mapping("username" -> nonEmptyText(3, 30),
     "email" -> email,
-    "wantNewsletter" -> optional(boolean))(UserData.apply)(UserData.unapply))
+    "wantNewsletter" -> boolean)(UserData.apply)(UserData.unapply)
+    verifying ("Username already taken", fields => fields match {
+      case userData => validateUsername(userData)
+    })
+    verifying ("Email already taken", fields => fields match {
+      case userData => validateEmail(userData)
+    }))
 
   def showEnterUserDataForm = SecuredAction { implicit request =>
-    Ok(views.html.accounts.signupEnterUserData(request.user, userForm))
+    Ok(signupEnterUserData(request.user, userForm))
   }
 
   private def updateUser(data: UserData, user: User): User = {
@@ -54,7 +64,8 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
   def postUserData = SecuredAction.async { implicit request =>
     userForm.bindFromRequest.fold(
       formWithErrors => Future.successful {
-        Redirect(controllers.accounts.routes.Login.showEnterUserDataForm).flashing("error" -> s"""${formWithErrors.errors}""")
+        //        Redirect(controllers.accounts.routes.Login.showEnterUserDataForm).flashing("error" -> s"""${formWithErrors.errors}""")
+        BadRequest(signupEnterUserData(request.user, formWithErrors))
       },
       value => {
         val updated = updateUser(value, request.user)
