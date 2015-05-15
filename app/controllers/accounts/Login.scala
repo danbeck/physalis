@@ -53,7 +53,9 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
 
   def postUserData = SecuredAction.async { implicit request =>
     userForm.bindFromRequest.fold(
-      formWithErrors => Future.successful(BadRequest("Oh no!: " + formWithErrors.errors)),
+      formWithErrors => Future.successful {
+        Redirect(controllers.accounts.routes.Login.showEnterUserDataForm).flashing("error" -> s"""${formWithErrors.errors}""")
+      },
       value => {
         val updated = updateUser(value, request.user)
         request.authenticator.updateUser(updated).flatMap { authenticator =>
