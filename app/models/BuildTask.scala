@@ -64,7 +64,7 @@ case class BuildTask(
 
     val checkoutDir = new File(s"${System.getProperty("user.dir")}/$projectPath/")
 
-    if (checkoutDir.exists)
+    if (!checkoutDir.exists)
       None
     else {
       logger.info(s"checkoutDir was: $checkoutDir")
