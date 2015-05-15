@@ -1,0 +1,5 @@
+@()
+@if(play.Play.application().configuration().getString("GOOGLE_MASTER_TOOL_VERIFICATION") != null) {
+    <meta name="google-site-verification" 
+    content='@play.Play.application().configuration().getString("GOOGLE_MASTER_TOOL_VERIFICATION")' />
+}

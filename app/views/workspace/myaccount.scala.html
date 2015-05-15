@@ -7,8 +7,8 @@
 
     @widgets.createNewProjectButton(projectForm)
     @widgets.newProjectInputForm(projectForm)
-
-    <hr>
-
+	
+	@errorWidget()
+	
     @widgets.usersProjects(loggedInUser, isMyAccount= true)
 }
