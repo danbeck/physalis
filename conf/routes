@@ -1,38 +1,38 @@
 # Home page
-GET    /                            @controllers.Application.index()
+GET    /                                       @controllers.Application.index()
 
 # Login pages
-GET    /login                       @controllers.CustomLoginController.login
-GET    /custom/logout               @controllers.CustomLoginController.logout
-GET    /logout                      @controllers.accounts.Login.logout
-GET    /loginredirecturi            @controllers.accounts.Login.loginRedirectURI
+GET    /login                                  @controllers.CustomLoginController.login
+GET    /custom/logout                          @controllers.CustomLoginController.logout
+GET    /logout                                 @controllers.accounts.Login.logout
+GET    /loginredirecturi                       @controllers.accounts.Login.loginRedirectURI
 
 # Explore pages 
-GET    /projects                    @controllers.Application.projects
-GET    /training                    @controllers.Application.training
+GET    /projects                               @controllers.Application.projects
+GET    /training                               @controllers.Application.training
 
 # Signup pages
-GET    /signup                      @controllers.accounts.Login.signup
-GET    /signup/userdata             @controllers.accounts.Login.showEnterUserDataForm
-POST   /signup/userdata             @controllers.accounts.Login.postUserData
+GET    /signup                                 @controllers.accounts.Login.signup
+GET    /signup/userdata                        @controllers.accounts.Login.showEnterUserDataForm
+POST   /signup/userdata                        @controllers.accounts.Login.postUserData
 
-GET    /authenticate/:provider      @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
+GET    /authenticate/:provider                 @securesocial.controllers.ProviderController.authenticate(provider, redirectTo: Option[String])
 #GET    /test/simpledb            @controllers.Application.testSimpleDB
 
 #workspace
-GET    /newproject                  @controllers.workspace.Workspace.newProjectPage
-POST   /newproject                  @controllers.workspace.Workspace.createNewProject
-GET    /latest/:username/:project   @controllers.workspace.Build.latestBuildJson(username:String,project:String)
-GET    /:username/:project/build    @controllers.workspace.Build.build(username:String,project:String)
-GET    /:username/:project          @controllers.workspace.ProjectPage.show(username:String,project:String)
-GET    /nonexistingproj             @controllers.workspace.ProjectPage.nonExistingProj()
-GET    /:username                   @controllers.workspace.Workspace.user(username:String)
+GET    /newproject                             @controllers.workspace.Workspace.newProjectPage
+POST   /newproject                             @controllers.workspace.Workspace.createNewProject
+GET    /latest/:username/:project              @controllers.workspace.Build.latestBuildJson(username:String,project:String)
+GET    /:username/:project/build               @controllers.workspace.Build.build(username:String,project:String)
+GET    /:username/:project                     @controllers.workspace.ProjectPage.show(username:String,project:String)
+GET    /nonexistingproj                        @controllers.workspace.ProjectPage.nonExistingProj()
+GET    /:username                              @controllers.workspace.Workspace.user(username:String)
 
 #GET     /authenticate/:provider     @securesocial.controllers.ProviderController.authenticate(provider)
 #POST    /authenticate/:provider     @securesocial.controllers.ProviderController.authenticateByPost(provider)
 
 # Map static resources from the /public folder to the /assets URL path
-GET    /public/*file                controllers.Assets.at(path="/public", file)
-GET    /assets/*file                securesocial.controllers.Assets.at(path = "/public/securesocial", file)
-GET    /*path/                      @controllers.Application.untrail(path: String)
-->     /auth                        securesocial.Routes
+GET    /public/*file                           controllers.Assets.at(path="/public", file)
+GET    /assets/*file                           securesocial.controllers.Assets.at(path = "/public/securesocial", file)
+GET    /*path/                                 @controllers.Application.untrail(path: String)
+->     /auth                                   securesocial.Routes
