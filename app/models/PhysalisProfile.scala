@@ -32,7 +32,6 @@ case class PhysalisProfile(id: String = UUID.randomUUID().toString(),
     authMethod = authMethod)
 
   def save() = Repository.saveProfile(this)
-
 }
 
 object PhysalisProfile {
@@ -43,16 +42,6 @@ object PhysalisProfile {
     fullName = p.fullName,
     email = p.email,
     avatarUrl = p.avatarUrl)
-
-  def create(p: BasicProfile, id: String, userId: String) = PhysalisProfile(id = id,
-    providerId = p.providerId,
-    providerUserId = p.userId,
-    firstName = p.firstName,
-    lastName = p.lastName,
-    fullName = p.fullName,
-    email = p.email,
-    avatarUrl = p.avatarUrl,
-    userId = userId)
 
   def find(profile: BasicProfile): Option[PhysalisProfile] = find(profile.providerId, profile.userId)
 
