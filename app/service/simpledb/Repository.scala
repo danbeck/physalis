@@ -277,7 +277,7 @@ object Repository {
             lastName, 
             fullName, 
             email, 
-            avatarUrl, 
+            avatarUrl,
             userId from Profile 
           where 
           providerId = '${providerId}' and providerUserId = '${providerUserId}'""").headOption
