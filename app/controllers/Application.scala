@@ -33,7 +33,7 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
   }
 
   def training = UserAwareAction { implicit request =>
-    Ok("Here comes the training center")
+    Ok(views.html.training(request.user.orNull))
   }
 
 }
