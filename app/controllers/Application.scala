@@ -12,10 +12,12 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
   def index = UserAwareAction { implicit request =>
     def redirectToWorkspace(username: String) = Redirect(controllers.workspace.routes.Workspace.user(username))
     def showHomepage() = Ok(views.html.index())
+    def showHomepageForUser(user: User) = Ok(views.html.index(user))
 
     request.user match {
-      case Some(u) => redirectToWorkspace(u.usernameOption.get)
-      case None    => showHomepage()
+      case Some(u) if u.usernameOption.isDefined  => redirectToWorkspace(u.usernameOption.get)
+      case Some(u) if !u.usernameOption.isDefined => showHomepageForUser(u)
+      case _                                      => showHomepage()
     }
   }
 

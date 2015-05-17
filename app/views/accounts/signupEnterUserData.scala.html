@@ -1,7 +1,7 @@
 @(user: User, userForm: Form[_])(implicit flash: Flash)
 
 
-@main(user, doNotShowLoginButton = true) {
+@main(user, doNotShowLoginButton = true, showSetupNotice = false) {
 
     <div class="row">
         <h4>This is the first time you use Physalis. Please enter some information so that we can setup your account.</h4>

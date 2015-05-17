@@ -42,6 +42,7 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
     }
 
     request.user match {
+      case Some(u) if !u.usernameOption.isDefined      => showPublicAccount(username)
       case Some(u) if u.usernameOption.get == username => showMyAccount(u)
       case Some(u)                                     => showPublicAccount(username)
       case None                                        => showPublicAccount(username)
