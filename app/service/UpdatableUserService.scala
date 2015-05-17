@@ -10,7 +10,5 @@ trait UpdatableUserService extends UserService[User] {
 
   def findUserByUsername(username: String): Future[Option[User]]
 
-  def update(user: User): User
-
   def projects: List[Project]
 }

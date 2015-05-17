@@ -28,15 +28,13 @@ class UserService extends UpdatableUserService {
 
   def projects: List[Project] = Repository.findProjects().toList
 
-  def update(user: User): User = user.save()
-
   def find(providerId: String, profileId: String): Future[Option[BasicProfile]] = Future.successful {
     logger.info(s"Find '$providerId' '$profileId")
     PhysalisProfile.find(providerId, profileId).map(_.basicProfile)
   }
 
   def save(profile: BasicProfile, mode: SaveMode): Future[User] = {
-    logger.info(s"SecureSocial - save profile ${profile.providerId} ${profile.userId}")
+    logger.info(s"SecureSocial - save profile ${profile.providerId} ${profile.userId} $mode")
     Future.successful(saveProfileAndSearchUser(profile, mode));
   }
 
