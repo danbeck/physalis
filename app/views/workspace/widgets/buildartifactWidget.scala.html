@@ -2,19 +2,37 @@
           		
 @if(buildTask.isDefined) {
 	@if(buildTask.get.state=="NEW") {
-	    <p data-state="NEW" data-platform="@buildTask.get.platform">@buildTask.get.platform: build queued</p>  		
+	   <div class="row">
+	    	<div class="col-md-8" data-state="NEW" data-platform="@buildTask.get.platform">
+			    @buildTask.get.platform: build queued  		
+			</div>
+	    </div>  
     }
     
     @if(buildTask.get.state=="IN_PROGRESS") {
-	    <p data-state="IN_PROGRESS" data-platform="@buildTask.get.platform">@buildTask.get.platform: build in progress</p>  		
+	    <div class="row" data-state="IN_PROGRESS" data-platform="@buildTask.get.platform">
+		 @buildTask.get.platform: build in progress
+		</div>
     }
-       
     @if(buildTask.get.state=="DONE") {
-	   <p data-state="DONE" data-platform="@buildTask.get.platform"><a class="btn" href="@buildTask.get.s3Url"> Download App for <br> @buildTask.get.platform <a></p>  		
+	    <div class="row">
+	     	<div class="col-md-9">
+ 	   			<p data-state="DONE" data-platform="@buildTask.get.platform">
+	   				<a class="btn btn-primary btn-build btn-block" role="button"  href="@buildTask.get.s3Url">
+	   					<span class="glyphicon glyphicon-download" aria-hidden="true"></span> @buildTask.get.platform
+					</a>
+				</p>  		 
+			</div>
+				<div class="col-md-3">
+	   				<a class="btn btn-primary btn-build btn-block" role="button"  href="@buildTask.get.s3Url">Logs</a>  		
+			</div>
+		</div>
     }
     
      @if(buildTask.get.state=="ERROR") {
-	    <p data-state="ERROR" data-platform="@buildTask.get.platform">@buildTask.get.platform: build failed</p>  		
+	    <div class="row" data-state="ERROR" data-platform="@buildTask.get.platform">
+	 	   <span>@buildTask.get.platform: build failed</span>  		
+	 	</div>
     }
     
 }
