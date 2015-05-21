@@ -10,5 +10,8 @@
             	<p></p>
             	<div data-role="downloadProjects"
             		data-project="@project.name"
-            		data-user="@project.username"></div>
+            		data-user="@project.username">
+	            		@buildartifactWidget(isMyAccount,lastUbuntuBuildTask)
+	            		@buildartifactWidget(isMyAccount,lastAndroidBuildTask)
+            		</div>
             }

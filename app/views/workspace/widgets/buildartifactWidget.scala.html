@@ -1,0 +1,20 @@
+@(isMyAccount:Boolean, buildTask:Option[BuildTask] = None)
+          		
+@if(buildTask.isDefined) {
+	@if(buildTask.get.state=="NEW") {
+	    <p data-state="NEW" data-platform="@buildTask.get.platform">@buildTask.get.platform: build queued</p>  		
+    }
+    
+    @if(buildTask.get.state=="IN_PROGRESS") {
+	    <p data-state="IN_PROGRESS" data-platform="@buildTask.get.platform">@buildTask.get.platform: build in progress</p>  		
+    }
+       
+    @if(buildTask.get.state=="DONE") {
+	   <p data-state="DONE" data-platform="@buildTask.get.platform"><a class="btn" href="@buildTask.get.s3Url"> Download App for <br> @buildTask.get.platform <a></p>  		
+    }
+    
+     @if(buildTask.get.state=="ERROR") {
+	    <p data-state="ERROR" data-platform="@buildTask.get.platform">@buildTask.get.platform: build failed</p>  		
+    }
+    
+}

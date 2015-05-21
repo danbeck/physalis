@@ -68,10 +68,15 @@ case class BuildTask(
       None
     else {
       logger.info(s"checkoutDir was: $checkoutDir")
-      recursiveListFiles(checkoutDir)
-        .filter(_.isDirectory())
-        .filter(_.getName == "www")
+
+      val allFiles = recursiveListFiles(checkoutDir)
+
+      allFiles
+        .filter(d => d.isDirectory() && d.getName == "www")
         .filter(_.listFiles.exists { _.getName == "config.xml" })
+        .union(allFiles
+          .filter(f => !f.isDirectory() && f.getName == "config.xml")
+          .filter(_.getParentFile.listFiles.exists { d => d.getName == "www" && d.isDirectory }))
         .sortWith(_.getName.count(_ == '/') < _.getName.count(_ == '/'))
         .map(_.getParentFile)
         .headOption
@@ -125,6 +130,11 @@ case class BuildTask(
     if (platform == "ubuntu")
       execute("/usr/bin/docker", "run", "--rm", "--privileged", "-v", s"${dir}:/data",
         "danielbeck/cordova-ubuntu", "build", platform)
+        
+        
+    if (platform == "firefoxos")
+      execute("/usr/bin/docker", "run", "--rm", "--privileged", "-v", s"${dir}:/data",
+        "danielbeck/cordova-firefoxos", "build", platform)
 
   }
 
@@ -146,6 +156,23 @@ case class BuildTask(
   private def getAndroidBuildArtifact(dir: String) = {
     logger.info(s"search android build artifact $dir/platforms/$platform/ant-build/MainActivity-debug.apk")
     val outputFile = new File(s"$dir/platforms/$platform/ant-build/MainActivity-debug.apk")
+    if (outputFile.exists) {
+      logger.info("file exists")
+      Right(outputFile)
+    } else
+      Left("Building failed!")
+  }
+  
+  private def getUbuntuBuildArtifact(dir: String) = {
+    logger.info(s"search android build artifact $dir/platforms/$platform/ant-build/MainActivity-debug.apk")
+//    val outputDir  = new File(s"$dir/platforms/ubuntu/ubuntu-sdk-14.10/armhf/prefix/")
+//    
+//    if (outputDir.exists)
+//    {
+//      outputDir.listFiles.filter { _.getName.matches(""".*\.click""")}.headOption.fl
+//    }
+//    else 
+    val outputFile = new File(s"$dir/platforms/ubuntu/ubuntu-sdk-14.10/armhf/prefix/MainActivity-debug.apk")
     if (outputFile.exists) {
       logger.info("file exists")
       Right(outputFile)
