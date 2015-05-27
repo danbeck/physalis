@@ -18,6 +18,7 @@
 @base-green: #11b400;
 @base-primary: @base-green;
 @base-primary-border: #22cc00;
+@base-danger-font-color: #922222;
 
 .physalislabel{
 	color: @base-grey-foreground;
@@ -60,6 +61,18 @@ a.btn-primary.btn-build{
   border: 1px solid #29691d;
 }
 
+.projectArtifacts{
+	div.bg-danger {
+		font-weight: 600;
+		border: 1px solid @base-danger-font-color;
+		border-radius: 3px;
+		color:@base-danger-font-color;
+	}
+	> div {
+		padding: 8px 8px;
+		margin: 8px 0;
+	}
+}
 
 .jumbotron.jumbotronMainPage {
 	border-radius:6px;

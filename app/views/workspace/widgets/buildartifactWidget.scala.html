@@ -30,7 +30,7 @@
     }
     
      @if(buildTask.get.state=="ERROR") {
-	    <div class="row" data-state="ERROR" data-platform="@buildTask.get.platform">
+	    <div class="bg-danger" data-state="ERROR" data-platform="@buildTask.get.platform">
 	 	   <span>@buildTask.get.platform: build failed</span>  		
 	 	</div>
     }
