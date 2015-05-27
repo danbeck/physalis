@@ -10,7 +10,7 @@
     }
     
     @if(buildTask.get.state=="IN_PROGRESS") {
-	    <div class="row" data-state="IN_PROGRESS" data-platform="@buildTask.get.platform">
+	    <div class="bg-info" data-state="IN_PROGRESS" data-platform="@buildTask.get.platform">
 		 @buildTask.get.platform: build in progress
 		</div>
     }
