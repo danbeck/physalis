@@ -193,7 +193,7 @@ case class BuildTask(
 }
 
 object BuildTask {
-  def findNew(platform: String) = Repository.findNewBuildTasks(platform)
+  def findNew(platforms: Seq[String]) = Repository.findNewBuildTasks(platforms)
   val validGitUrlRegex = """https?://.*/(.*)\.git""".r
   val validGitUrlPattern = validGitUrlRegex.pattern
   //  def createNew(project: Project, user: User) = {

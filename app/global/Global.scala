@@ -1,6 +1,5 @@
 package global
 
-
 /**
  * Original work: SecureSocial (https://github.com/jaliss/securesocial)
  * Copyright 2014 Jorge Aliss (jaliss at gmail dot com) - twitter: @jaliss
@@ -25,7 +24,7 @@ package global
 import java.lang.reflect.Constructor
 
 import controllers.CustomRoutesService
-import models.{PhysalisProfile, User}
+import models.{ PhysalisProfile, User }
 import play.Play
 import play.api.Logger
 import play.api.Application
@@ -34,15 +33,14 @@ import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
 import securesocial.views.html.Registration
 import play.twirl.api.Html
-import securesocial.controllers.{ChangeInfo, RegistrationInfo, ViewTemplates}
+import securesocial.controllers.{ ChangeInfo, RegistrationInfo, ViewTemplates }
 import securesocial.core.RuntimeEnvironment
 import securesocial.core.providers.GitHubProvider
 import securesocial.core.services.UserService
-import service.{PhysalisBuildService, InMemoryUserService, SecureSocialEventListener}
-import service.simpledb.{UserService => SimpleDBUserService}
+import service.{ PhysalisBuildService, InMemoryUserService, SecureSocialEventListener }
+import service.simpledb.{ UserService => SimpleDBUserService }
 
 import scala.collection.immutable.ListMap
-
 
 object Global extends play.api.GlobalSettings {
 
@@ -56,7 +54,7 @@ object Global extends play.api.GlobalSettings {
 
     logger.info(s"Configured build platforms ${platforms}")
     if (platforms.isDefined) {
-      platforms.get.foreach { platform => new PhysalisBuildService(platform).start }
+      new PhysalisBuildService(platforms.get).start
     }
   }
 

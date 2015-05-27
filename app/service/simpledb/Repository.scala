@@ -49,17 +49,28 @@ object Repository {
     }).headOption
   }
 
-  def findNewBuildTasks(platform: String): Seq[BuildTask] = {
+  def findNewBuildTasks(platforms: Seq[String]): Seq[BuildTask] = {
+
+    logger.info(s"""select projectId,
+      userId,
+      s3Url,
+      platform
+      from BuildTask 
+      where state = 'NEW' 
+      and platform in ${platforms.mkString("('", "','", "')")}""")
     val items = buildTasks.select(s"""select projectId,
       userId,
-      s3Url
+      s3Url,
+      platform
       from BuildTask 
-      where state = 'NEW' and platform = '$platform'""")
+      where state = 'NEW' 
+      and platform in ${platforms.mkString("('", "','", "')")}""")
 
     items.map(item => {
       val projectId = attrValue(item, "projectId")
       val userId = attrValue(item, "userId")
       val s3Url = attrOption(item, "s3Url")
+      val platform = attrValue(item, "platform")
       val project = findProjectById(projectId).get
       val user = findUser(userId).get
 
