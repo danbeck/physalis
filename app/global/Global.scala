@@ -50,16 +50,16 @@ object Global extends play.api.GlobalSettings {
     logger.info("Starting services...")
     val platformsToBuildFor: Option[String] = app.configuration.getString("PLATFORMS_TO_BUILD_FOR")
 
-    val platforms: Option[Array[String]] = platformsToBuildFor.map(string => string.split(","))
+    val platforms: Option[List[String]] = platformsToBuildFor.map(string => string.split(",").toList)
 
     logger.info(s"Configured build platforms ${platforms}")
-    if (platforms.isDefined) {
-      new PhysalisBuildService(platforms.get).start
-    }
+    PhysalisBuildService.start(platforms)
+
   }
 
   override def onStop(app: Application) = {
-    logger.info("Physalis shutdown...")
+    logger.info("stopping phys alis")
+    PhysalisBuildService.stop()
   }
 
   /**

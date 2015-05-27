@@ -9,22 +9,32 @@ import scala.concurrent.Future
  * This is the build service, which builds apps using Apache Cordova.
  * Created by daniel on 23.04.15.
  */
-class PhysalisBuildService(platforms: Seq[String]) {
+object PhysalisBuildService {
 
   val logger: Logger = Logger(this.getClass())
-  var thread: Thread = null
-  def start() = {
-    logger.info(s"Start build service for ${platforms}")
-    thread = new Thread(() => {
-      while (true) {
-        newBuildTasks(platforms).foreach(processAndHandleExceptions _)
-        Thread.sleep(2000)
-      }
-    })
-    thread.start()
+  var thread: Option[Thread] = None
+  var running = true;
+
+  def start(platforms: Option[List[String]]) = {
+    logger.info(s"----------START BUILDSERVICE----------!")
+    logger.info(s"Supported platforms: ${platforms}")
+    if (platforms.isDefined) {
+      running = true;
+      thread = Some(new Thread(() => {
+        while (running) {
+          newBuildTasks(platforms.get).foreach(processAndHandleExceptions _)
+          Thread.sleep(2000)
+        }
+      }))
+      thread.get.start()
+    }
   }
+
   def stop() = {
-    thread.join
+    logger.info("----------STOPPING BUILDSERVICE--------!")
+    //    if (thread.isDefined)
+    running = false;
+    thread.get.join()
   }
 
   private def newBuildTasks(platforms: Seq[String]) = {
