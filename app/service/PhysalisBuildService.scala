@@ -32,9 +32,10 @@ object PhysalisBuildService {
 
   def stop() = {
     logger.info("----------STOPPING BUILDSERVICE--------!")
-    //    if (thread.isDefined)
-    running = false;
-    thread.get.join()
+    if (thread.isDefined) {
+      running = false;
+      thread.get.join()
+    }
   }
 
   private def newBuildTasks(platforms: Seq[String]) = {
