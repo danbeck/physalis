@@ -1,6 +1,6 @@
 @(user: User=null)(implicit flash: Flash, request: Request[AnyContent])
 @main(user) {
-    <div class="jumbotron jumbotron-no-bottom">
+    <div class="jumbotron jumbotronMainPage">
         <h1>Physalis builds HTML5 apps with Apache Cordova</h1>
         <ul><li><p>It's free</p></li>
             <li><p>It's opensource (commercial friendly MIT license)</p></li>
@@ -8,9 +8,9 @@
         </ul>
     </div>
     <div class="registerbox" >
-        <h4><span style="margin-right : 10 px ;" >Register now with your github account: </span>
-            <a href="/signup" class="btn btn btn-lg btn-primary ">Join now</a>
-        </h4>
+        <h4 style="margin-right : 10 px ;">Register now with your github account:     
+        	 <a href="/signup" class="btn btn-lg btn-primary ">Join now</a>
+     	</h4>
     </div>
 
 
