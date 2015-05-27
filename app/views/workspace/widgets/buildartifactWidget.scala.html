@@ -11,7 +11,7 @@
     
     @if(buildTask.get.state=="IN_PROGRESS") {
 	    <div class="bg-info" data-state="IN_PROGRESS" data-platform="@buildTask.get.platform">
-		 @buildTask.get.platform: build in progress
+		 <span class="glyphicon glyphicon-info-sign"></span>&nbsp;<span> @buildTask.get.platform: build in progress
 		</div>
     }
     @if(buildTask.get.state=="DONE") {
@@ -31,7 +31,7 @@
     
      @if(buildTask.get.state=="ERROR") {
 	    <div class="bg-danger" data-state="ERROR" data-platform="@buildTask.get.platform">
-	 	   <span>@buildTask.get.platform: build failed</span>  		
+	 	   <span class="glyphicon glyphicon-info-sign"></span>&nbsp;<span>@buildTask.get.platform: build failed</span>  		
 	 	</div>
     }
     
