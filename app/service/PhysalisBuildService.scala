@@ -18,7 +18,7 @@ class PhysalisBuildService(platforms: Seq[String]) {
     thread = new Thread(() => {
       while (true) {
         newBuildTasks(platforms).foreach(processAndHandleExceptions _)
-        Thread.sleep(1500)
+        Thread.sleep(2000)
       }
     })
     thread.start()
