@@ -15,7 +15,6 @@
 		</div>
     }
     @if(buildTask.get.state=="DONE") {
-	    <div class="row">
 	     	<div class="col-md-9">
  	   			<p data-state="DONE" data-platform="@buildTask.get.platform">
 	   				<a class="btn btn-primary btn-build btn-block" role="button"  href="@buildTask.get.s3Url">
@@ -26,13 +25,17 @@
 				<div class="col-md-3">
 	   				<a class="btn btn-primary btn-build btn-block" role="button"  href="@buildTask.get.s3Url">Logs</a>  		
 			</div>
-		</div>
     }
     
      @if(buildTask.get.state=="ERROR") {
-	    <div class="bg-danger" data-state="ERROR" data-platform="@buildTask.get.platform">
-	 	   <span class="glyphicon glyphicon-info-sign"></span>&nbsp;<span>@buildTask.get.platform: build failed</span>  		
+<!-- 	    <div> -->	 
+	    <div class="bg-danger col-md-9" data-state="ERROR" data-platform="@buildTask.get.platform">
+	 	   <span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;<span>@buildTask.get.platform: build failed</span>  		
 	 	</div>
+			<div class="col-md-3">
+	   				<a class="btn btn-primary btn-build btn-block" role="button"  href="@buildTask.get.s3Url">Logs</a>  		
+			</div>
+<!--    </div> -->	 
     }
     
 }
