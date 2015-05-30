@@ -17,14 +17,14 @@ import java.time.Instant
  * Created by daniel on 23.04.15.
  */
 case class BuildTask(
-  id: String = UUID.randomUUID().toString(),
-  project: Project,
-  user: User,
-  state: String = "NEW",
-  s3Url: Option[String] = None,
-  platform: String,
-  created: Instant = Instant.now,
-  updated: Instant = Instant.now) {
+    id: String = UUID.randomUUID().toString(),
+    project: Project,
+    user: User,
+    state: String = "NEW",
+    s3Url: Option[String] = None,
+    platform: String,
+    created: Instant = Instant.now,
+    updated: Instant = Instant.now) {
 
   private val projectPath = s"${user.id}/${project.id}/$platform"
   private val logger: Logger = Logger(this.getClass)
@@ -118,20 +118,18 @@ case class BuildTask(
   private def addCordovaPlatform(dir: String) = {
     logger.info("addCordovaPlatform")
     execute("/usr/bin/docker", "run", "--rm", "-v", s"${dir}:/data",
-      "danielbeck/cordova-android", "platform", "add", platform)
+      "danielbeck/cordova-android:5.0.0", "platform", "add", platform)
   }
 
   private def buildWithCordova(dir: String) = {
     logger.info("buildWithCordova")
     if (platform == "android")
       execute("/usr/bin/docker", "run", "--rm", "-v", s"${dir}:/data",
-        "danielbeck/cordova-android", "build", platform)
+        "danielbeck/cordova-android:5.0.0", "build", platform)
 
     if (platform == "ubuntu")
-      execute("/usr/bin/docker", "run", "--rm", "--privileged", "-v", s"${dir}:/data",
-        "danielbeck/cordova-ubuntu", "build", platform)
-        
-        
+      execute("cordova", "build", platform)
+
     if (platform == "firefoxos")
       execute("/usr/bin/docker", "run", "--rm", "--privileged", "-v", s"${dir}:/data",
         "danielbeck/cordova-firefoxos", "build", platform)
@@ -154,24 +152,26 @@ case class BuildTask(
   }
 
   private def getAndroidBuildArtifact(dir: String) = {
-    logger.info(s"search android build artifact $dir/platforms/$platform/ant-build/MainActivity-debug.apk")
-    val outputFile = new File(s"$dir/platforms/$platform/ant-build/MainActivity-debug.apk")
+    val path = s"$dir/platforms/$platform/build/outputs/apk/android-debug.apk"
+    logger.info(s"search android build artifact $path")
+    //    val outputFile = new File(s"$dir/platforms/$platform/ant-build/MainActivity-debug.apk")
+    val outputFile = new File(path)
     if (outputFile.exists) {
       logger.info("file exists")
       Right(outputFile)
     } else
       Left("Building failed!")
   }
-  
+
   private def getUbuntuBuildArtifact(dir: String) = {
     logger.info(s"search android build artifact $dir/platforms/$platform/ant-build/MainActivity-debug.apk")
-//    val outputDir  = new File(s"$dir/platforms/ubuntu/ubuntu-sdk-14.10/armhf/prefix/")
-//    
-//    if (outputDir.exists)
-//    {
-//      outputDir.listFiles.filter { _.getName.matches(""".*\.click""")}.headOption.fl
-//    }
-//    else 
+    //    val outputDir  = new File(s"$dir/platforms/ubuntu/ubuntu-sdk-14.10/armhf/prefix/")
+    //    
+    //    if (outputDir.exists)
+    //    {
+    //      outputDir.listFiles.filter { _.getName.matches(""".*\.click""")}.headOption.fl
+    //    }
+    //    else 
     val outputFile = new File(s"$dir/platforms/ubuntu/ubuntu-sdk-14.10/armhf/prefix/MainActivity-debug.apk")
     if (outputFile.exists) {
       logger.info("file exists")
