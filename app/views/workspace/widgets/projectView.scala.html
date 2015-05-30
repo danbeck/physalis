@@ -1,6 +1,5 @@
 @(project: Project, isMyAccount:Boolean, lastUbuntuBuildTask:Option[BuildTask] = None, lastAndroidBuildTask:Option[BuildTask]=None)
             <h3><a href="@controllers.workspace.routes.ProjectPage.show(project.username, project.name)">@project.name</a></h3>
-            <p>Last build: n.a.</p>
             @if(isMyAccount){            	
             	@if(!lastUbuntuBuildTask.isDefined || !lastAndroidBuildTask.isDefined || lastUbuntuBuildTask.get.state!="IN_PROGRESS" ||  lastAndroidBuildTask.get.state!="IN_PROGRESS"){
 	            	<p><a href="@controllers.workspace.routes.Build.build(project.username, project.name)" 
