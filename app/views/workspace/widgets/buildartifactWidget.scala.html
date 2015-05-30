@@ -2,40 +2,34 @@
           		
 @if(buildTask.isDefined) {
 	@if(buildTask.get.state=="NEW") {
-	   <div class="row">
-	    	<div class="col-md-8" data-state="NEW" data-platform="@buildTask.get.platform">
-			    @buildTask.get.platform: build queued  		
-			</div>
-	    </div>  
-    }
+		<div class="col-md-8 bg-info" data-state="NEW" data-platform="@buildTask.get.platform">
+		    @buildTask.get.platform: build queued  		
+		</div>
+	 }
     
     @if(buildTask.get.state=="IN_PROGRESS") {
-	    <div class="bg-info" data-state="IN_PROGRESS" data-platform="@buildTask.get.platform">
-		 <span class="glyphicon glyphicon-info-sign"></span>&nbsp;<span> @buildTask.get.platform: build in progress
+	    <div class="bg-info col-md-8" data-state="IN_PROGRESS" data-platform="@buildTask.get.platform">
+		 <i class="fa fa-circle-o-notch fa-spin"></i> <span>@buildTask.get.platform: build in progress</span>
 		</div>
     }
     @if(buildTask.get.state=="DONE") {
-	     	<div class="col-md-9">
- 	   			<p data-state="DONE" data-platform="@buildTask.get.platform">
-	   				<a class="btn btn-primary btn-build btn-block" role="button"  href="@buildTask.get.s3Url">
-	   					<span class="glyphicon glyphicon-download" aria-hidden="true"></span> @buildTask.get.platform
-					</a>
-				</p>  		 
-			</div>
-				<div class="col-md-3">
-	   				<a class="btn btn-primary btn-build btn-block" role="button"  href="@buildTask.get.s3Url">Logs</a>  		
-			</div>
+ 	   	<div class="col-md-8"  data-state="DONE" data-platform="@buildTask.get.platform">
+	   		<a class="btn btn-primary btn-block" role="button"  href="@buildTask.get.s3Url">
+	   			<i class="fa fa-download"></i>  @buildTask.get.platform
+			</a>
+		</div>
+		<div class="col-md-4">
+	   		<a class="btn btn-build btn-block" role="button"  href="@buildTask.get.s3Url"><i class="fa fa-file-text"></i> Logs</a>
+		</div>
     }
     
      @if(buildTask.get.state=="ERROR") {
-<!-- 	    <div> -->	 
-	    <div class="bg-danger col-md-9" data-state="ERROR" data-platform="@buildTask.get.platform">
+	    <div class="bg-danger col-md-8" data-state="ERROR" data-platform="@buildTask.get.platform">
 	 	   <span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;<span>@buildTask.get.platform: build failed</span>  		
 	 	</div>
-			<div class="col-md-3">
-	   				<a class="btn btn-primary btn-build btn-block" role="button"  href="@buildTask.get.s3Url">Logs</a>  		
-			</div>
-<!--    </div> -->	 
+		<div class="col-md-4">
+	   		<a class="btn btn-build btn-block" role="button"  href="@buildTask.get.s3Url"><i class="fa fa-file-text"></i> Logs</a>  		
+		</div>
     }
     
 }

@@ -3,7 +3,7 @@
             @if(isMyAccount){            	
             	@if(!lastUbuntuBuildTask.isDefined || !lastAndroidBuildTask.isDefined || lastUbuntuBuildTask.get.state!="IN_PROGRESS" ||  lastAndroidBuildTask.get.state!="IN_PROGRESS"){
 	            	<p><a href="@controllers.workspace.routes.Build.build(project.username, project.name)" 
-	            		class="btn btn-primary btn-build btn-lg btn-block" role="button">Pull & Build</a>
+	            		class="btn btn-build btn-lg btn-block" role="button">Pull & Build</a>
             	}
             	
             	<hr>

@@ -28,12 +28,6 @@
 	margin-left:15px;
 }
 
-a.btn-primary.btn-build{
-	background-color: @base-grey-background;
-	color: @base-black;
-	border: none;
-}
-
 //@base-box-background: #ffffff;
 .registerbox {
   background-color: @base-black;
@@ -50,7 +44,11 @@ a.btn-primary.btn-build{
 	margin-top: 30px;
 }
 .projectview {
-
+	a.btn-build{
+		background-color: @base-grey-background;
+		color: @base-black;
+		border: none;
+	}
 	.col-md-4{
 		margin: 2px 0;
 	}
@@ -65,11 +63,14 @@ a.btn-primary.btn-build{
 	    text-decoration: underline;
 	  }
 	}
-}
-.btn-primary {
-  border: 1px solid #29691d;
+	
+	div[data-state=DONE] {
+		margin-top: 0;
+/*		padding: 8px 0; */
+	}		
 }
 
+	
 .projectArtifacts{
 	> div {
 		font-weight: 600;
@@ -80,7 +81,11 @@ a.btn-primary.btn-build{
 
 	> div.bg-danger {
 		color:@base-danger-font-color;
-	}
+	}			
+}
+
+.btn-primary {
+  border: 1px solid #29691d;
 }
 
 .jumbotron.jumbotronMainPage {
