@@ -1,7 +1,7 @@
 @(projectForm: Option[Form[(String, String)]] = None)(implicit flash: Flash)
 
 @if(!projectForm.isDefined) {
-    <div class="row">
+    <div class="row newProject">
         <div class="col-sm-4">
             <div class="btn-group createProjectDropdown">
                 <a href="@controllers.workspace.routes.Workspace.newProjectPage"

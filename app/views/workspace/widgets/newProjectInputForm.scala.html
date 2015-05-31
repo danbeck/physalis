@@ -1,7 +1,7 @@
 @(projectForm: Option[Form[(String, String)]] = None)(implicit flash: Flash)
 
 @if(projectForm.isDefined) {
-    <div class="row">
+    <div class="row newProject">
     @helper.form(action = controllers.workspace.routes.Workspace.createNewProject, 'class -> "form-inline") {
         <input class="col-md-6 form-control" type="text" name="appName" placeholder="App name"></input>
 
