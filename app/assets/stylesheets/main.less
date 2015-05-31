@@ -48,12 +48,7 @@
 		background-color: @base-grey-background;
 		color: @base-black;
 		border: none;
-	}
-	.col-md-4{
-		margin: 2px 0;
-	}
-	.thumbnail{
-		height: 450px;
+		text-decoration:none;
 	}
 	
 	a {
@@ -64,14 +59,25 @@
 	  }
 	}
 	
+	div[data-state] {
+		margin-top: 14px;
+//		margin-left: 8px;
+	}
+	
 	div[data-state=DONE] {
 		margin-top: 0;
 /*		padding: 8px 0; */
+	}
+	
+	.projectArtifacts {
+		padding: 8px;
 	}		
 }
 
 	
 .projectArtifacts{
+	padding: 0;
+	
 	> div {
 		font-weight: 600;
 		padding: 8px 8px;

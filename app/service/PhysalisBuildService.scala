@@ -23,7 +23,7 @@ object PhysalisBuildService {
       thread = Some(new Thread(() => {
         while (running) {
           newBuildTasks(platforms.get).foreach(processAndHandleExceptions _)
-          Thread.sleep(2000)
+          Thread.sleep(12000)
         }
       }))
       thread.get.start()
