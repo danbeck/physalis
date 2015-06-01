@@ -27,6 +27,8 @@ import controllers.PhysalisSecureSocial
 import securesocial.core.BasicProfile
 import securesocial.core.services.SaveMode
 import views.html.workspace
+import java.net.{ URL, HttpURLConnection }
+import java.io.IOException
 
 class Workspace(override implicit val env: RuntimeEnvironment[User]) extends PhysalisSecureSocial {
 
@@ -63,26 +65,51 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
   def createNewProject = SecuredAction.async {
     implicit request =>
       projectForm.bindFromRequest.fold(
-        formWithErrors => redirectAndFlashError(),
+        formWithErrors => redirectAndFlashError("""The URL must end with ".git". """),
         validInputData => updateUserAndRedirect(validInputData._2, validInputData._1, request))
   }
 
-  private def redirectAndFlashError() = {
+  private def redirectAndFlashError(message: String) = {
     Future.successful(Redirect(routes.Workspace.newProjectPage())
-      .flashing("error" -> """The URL must end with ".git". """))
+      .flashing("error" -> message))
   }
 
-  private def updateUserAndRedirect(projectname: String, gitUrl: String, request: SecuredRequest[AnyContent]) = {
-    val project = models.Project(name = projectname,
-      icon = None,
-      gitUrl = gitUrl,
-      userId = request.user.id,
-      username = request.user.usernameOption.get)
-    project.save()
+  private def updateUserAndRedirect(projectname: String, gitUrl: String, request: SecuredRequest[AnyContent]): Future[Result] = {
+    fileSize(new URL(gitUrl)) match {
+      case Left(error)                   => redirectAndFlashError(error)
+      case Right(i) if i >= 50000000 * 8 => redirectAndFlashError("""The .git file should not be bigger than 50 MB.""")
+      case Right(i) =>
+        val project = models.Project(name = projectname,
+          icon = None,
+          gitUrl = gitUrl,
+          userId = request.user.id,
+          username = request.user.usernameOption.get)
+        project.save()
+        updateUserAndRedirect(project, request)
+    }
+  }
 
+  private def updateUserAndRedirect(project: models.Project, request: SecuredRequest[AnyContent]): Future[Result] = {
     val updatedUser = request.user.copy(projects = project :: request.user.projects)
     request.authenticator.updateUser(updatedUser).flatMap { authenticator =>
       Redirect(routes.Workspace.user(request.user.usernameOption.get)).touchingAuthenticator(authenticator)
+    }
+  }
+
+  private def fileSize(url: URL): Either[String, Long] = {
+    var conn: HttpURLConnection = null
+    try {
+      conn = url.openConnection().asInstanceOf[HttpURLConnection]
+      conn.setRequestMethod("HEAD")
+      conn.getInputStream()
+      conn.getContentLengthLong match {
+        case -1 => Left("Could not compute the size of the .git repository")
+        case m  => Right(m)
+      }
+    } catch {
+      case e: IOException => Left("Could not compute the size of the .git repository")
+    } finally {
+      conn.disconnect()
     }
   }
 }
