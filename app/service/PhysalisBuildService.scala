@@ -2,8 +2,8 @@ package service
 
 import models.BuildTask
 import play.api.Logger
-
 import scala.concurrent.Future
+import java.util.concurrent.Executors
 
 /**
  * This is the build service, which builds apps using Apache Cordova.
@@ -14,6 +14,7 @@ object PhysalisBuildService {
   val logger: Logger = Logger(this.getClass())
   var thread: Option[Thread] = None
   var running = true;
+  val threadPool = Executors.newFixedThreadPool(10);
 
   def start(platforms: Option[List[String]]) = {
     logger.info(s"----------START BUILDSERVICE----------!")
@@ -32,6 +33,7 @@ object PhysalisBuildService {
 
   def stop() = {
     logger.info("----------STOPPING BUILDSERVICE--------!")
+    threadPool.shutdown()
     if (thread.isDefined) {
       running = false;
       thread.get.join()
@@ -48,10 +50,9 @@ object PhysalisBuildService {
 
   def processAndHandleExceptions(buildTask: BuildTask) = {
     try {
-      logger.info("processing buildtask: " + buildTask.id)
-      val buildTaskInprogress = buildTask.inProgress().save()
-      buildTaskInprogress.gitClone()
-      buildTaskInprogress.build().save()
+      threadPool.submit(new Runnable() {
+        def run() = buildTask.execute()
+      })
     } catch {
       case t: Throwable => logger.error(s"Got error in Build-Service: ${t.getMessage}", t);
     }

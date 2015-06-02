@@ -40,6 +40,12 @@ case class BuildTask(
 
   private def updateState(state: String) = this.copy(state = state, updated = Instant.now)
 
+  def execute(): BuildTask = {
+    logger.info("Processing buildtask: " + id)
+    val buildTaskInprogress = this.inProgress().save()
+    buildTaskInprogress.gitClone()
+    buildTaskInprogress.build().save()
+  }
   def inProgress() = this.updateState("IN_PROGRESS")
 
   def done(s3Url: String) = this.updateState("DONE").copy(s3Url = Some(s3Url))
