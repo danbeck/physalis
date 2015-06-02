@@ -13,6 +13,11 @@ import java.io.InputStream
 import service.S3BucketService
 import java.net.URL
 import java.time.Instant
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.OpenOption
+import java.nio.file.StandardOpenOption
+import java.nio.charset.StandardCharsets
 /**
  * Created by daniel on 23.04.15.
  */
@@ -22,11 +27,15 @@ case class BuildTask(
     user: User,
     state: String = "NEW",
     s3Url: Option[String] = None,
+    logS3Url: Option[String] = None,
     platform: String,
     created: Instant = Instant.now,
     updated: Instant = Instant.now) {
 
-  private val projectPath = s"${user.id}/${project.id}/$platform"
+  private val projectPathRelative = s"${user.id}/${project.id}/$platform"
+  private val projectPath = new File(s"${System.getProperty("user.dir")}/$projectPathRelative/")
+  private val logFile = s"$projectPath/log.txt"
+
   private val logger: Logger = Logger(this.getClass)
 
   private val projectName = project.gitUrl match {
@@ -48,9 +57,9 @@ case class BuildTask(
   }
   def inProgress() = this.updateState("IN_PROGRESS")
 
-  def done(s3Url: String) = this.updateState("DONE").copy(s3Url = Some(s3Url))
+  def done(s3Url: String, logS3Url: String) = this.updateState("DONE").copy(s3Url = Some(s3Url), logS3Url = Some(logS3Url))
 
-  def error(): BuildTask = this.updateState("ERROR")
+  def error(logS3Url: String): BuildTask = this.updateState("ERROR").copy(logS3Url = Some(logS3Url))
 
   def gitClone(): BuildTask = {
     val command = s"rm -rf ${projectPath}"
@@ -68,14 +77,12 @@ case class BuildTask(
       these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
     }
 
-    val checkoutDir = new File(s"${System.getProperty("user.dir")}/$projectPath/")
-
-    if (!checkoutDir.exists)
+    if (!projectPath.exists)
       None
     else {
-      logger.info(s"checkoutDir was: $checkoutDir")
+      logger.info(s"checkoutDir was: $projectPath")
 
-      val allFiles = recursiveListFiles(checkoutDir)
+      val allFiles = recursiveListFiles(projectPath)
 
       allFiles
         .filter(d => d.isDirectory() && d.getName == "www")
@@ -91,33 +98,42 @@ case class BuildTask(
 
   def build(): BuildTask = {
     buildAndUploadToS3 match {
-      case Left(error) => {
+      case Left((error, log)) => {
         logger.error(error)
-        this.error
+        this.error(log)
       }
-      case Right(s3Url) => this.done(s3Url)
+      case Right((log, s3Url)) => this.done(s3Url = s3Url, logS3Url = log)
     }
   }
-  private def buildAndUploadToS3(): Either[String, String] = {
+  private def buildAndUploadToS3(): Either[(String, String), (String, String)] = {
     logger.info(s"Building ${projectName} (gitURL was: ${project.gitUrl}) for platform $platform")
 
     if (platform == "android" || platform == "ubuntu") {
       cordovaDir match {
         case Some(dir) => buildAndUploadToS3(dir.getAbsolutePath)
-        case _         => Left("Couldn't found a Apache Cordova project!")
+        case _         => Left("Couldn't found a Apache Cordova project!", null)
       }
-    } else Left(s"$platform ist not defined")
+    } else Left(s"$platform ist not defined", "")
   }
 
-  def buildAndUploadToS3(dir: String): Either[String, String] = {
+  def buildAndUploadToS3(dir: String): Either[(String, String), (String, String)] = {
     logger.info(s"Building. CWD set to $dir")
     addCordovaPlatform(dir)
     buildWithCordova(dir)
-    getBuildArtifact(dir).right.map { file =>
-      logger.info("Uploading file to S3")
-      val urlString = S3BucketService.putFile(task = this, file = file).toString
-      logger.info(s"S3 URL $urlString")
-      urlString
+    getBuildArtifact(dir) match {
+      case Left((error, file)) =>
+        logger.info("Uploading log to S3")
+        val urlString = S3BucketService.putLog(task = this, file = file).toString
+        logger.info(s"S3 URL $urlString")
+        Left(error, urlString)
+      case Right((log, artifact)) =>
+        logger.info("Uploading log to S3")
+        val logString = S3BucketService.putLog(task = this, file = log).toString
+        logger.info(s"S3 URL $logString")
+        logger.info("Uploading file to S3")
+        val urlString = S3BucketService.putArtifact(task = this, file = artifact).toString
+        logger.info(s"S3 URL $urlString")
+        Right(logString, urlString)
     }
   }
 
@@ -148,25 +164,26 @@ case class BuildTask(
     process
   }
 
-  private def getBuildArtifact(dir: String): Either[String, File] = {
+  private def getBuildArtifact(dir: String): Either[(String, File), (File, File)] = {
     if (platform == "android") {
       getAndroidBuildArtifact(dir)
     } else {
       logger.info("That was not android " + platform)
-      Left("platform not defined")
+      Left("platform not defined", new File(logFile))
     }
   }
 
-  private def getAndroidBuildArtifact(dir: String) = {
+  private def getAndroidBuildArtifact(dir: String): Either[(String, File), (File, File)] = {
     val path = s"$dir/platforms/$platform/build/outputs/apk/android-debug.apk"
     logger.info(s"search android build artifact $path")
     //    val outputFile = new File(s"$dir/platforms/$platform/ant-build/MainActivity-debug.apk")
     val outputFile = new File(path)
+    val log = new File(logFile)
     if (outputFile.exists) {
       logger.info("file exists")
-      Right(outputFile)
+      Right(log, outputFile)
     } else
-      Left("Building failed!")
+      Left("Building failed!", log)
   }
 
   private def getUbuntuBuildArtifact(dir: String) = {
@@ -193,7 +210,8 @@ case class BuildTask(
 
   def logStream(stream: InputStream) = {
     val br = new BufferedReader(new InputStreamReader(stream))
-    val str = Stream.continually(br.readLine()).takeWhile(_ != null).mkString("\n")
+    val str: String = Stream.continually(br.readLine()).takeWhile(_ != null).mkString("\n")
+    Files.write(Paths.get(logFile), str.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND)
     logger.info(str)
   }
 }

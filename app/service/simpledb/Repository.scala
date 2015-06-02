@@ -23,6 +23,7 @@ object Repository {
   def findBuildTasks(id: String): Option[BuildTask] = {
     val items = buildTasks.select(s"""select projectId,
         userId,
+        logS3Url,
         s3Url,
         state,
         platform,
@@ -35,6 +36,7 @@ object Repository {
       val projectId = attrValue(item, "projectId")
       val userId = attrValue(item, "userId")
       val s3Url = attrOption(item, "s3Url")
+      val logS3Url = attrOption(item, "logS3Url")
       val project = findProjectById(projectId, true).get
       val user = findUser(userId).get
       val platform = attrValue(item, "platform")
@@ -44,6 +46,7 @@ object Repository {
         project = project,
         user = user,
         state = state,
+        logS3Url = logS3Url,
         s3Url = s3Url,
         platform = platform)
     }).headOption
@@ -53,6 +56,7 @@ object Repository {
 
     logger.info(s"""select projectId,
       userId,
+      logS3Url,
       s3Url,
       platform
       from BuildTask 
@@ -60,6 +64,7 @@ object Repository {
       and platform in ${platforms.mkString("('", "','", "')")}""")
     val items = buildTasks.select(s"""select projectId,
       userId,
+      logS3Url,
       s3Url,
       platform
       from BuildTask 
@@ -70,6 +75,7 @@ object Repository {
       val projectId = attrValue(item, "projectId")
       val userId = attrValue(item, "userId")
       val s3Url = attrOption(item, "s3Url")
+      val logS3Url = attrOption(item, "logS3Url")
       val platform = attrValue(item, "platform")
       val project = findProjectById(projectId).get
       val user = findUser(userId).get
@@ -78,6 +84,7 @@ object Repository {
         project = project,
         user = user,
         state = "NEW",
+        logS3Url = logS3Url,
         s3Url = s3Url,
         platform = platform)
     })
@@ -86,6 +93,7 @@ object Repository {
   def findLastBuildTask(project: Project, platform: String): Option[BuildTask] = {
     val items = buildTasks.select(s"""select userId,
       s3Url,
+      logS3Url,
       state,
       created,
       updated
@@ -103,12 +111,14 @@ object Repository {
         val updated = Instant.parse(attrValue(item, "updated"))
         val state = attrValue(item, "state")
         val s3Url = attrOption(item, "s3Url")
+        val logS3Url = attrOption(item, "logS3Url")
         val user = findUser(userId).get
 
         BuildTask(id = item.name,
           project = project,
           user = user,
           state = state,
+          logS3Url = logS3Url,
           s3Url = s3Url,
           platform = platform,
           created = created,
@@ -124,6 +134,7 @@ object Repository {
       "created" -> task.created.toString(),
       "updated" -> task.updated.toString())
     if (task.s3Url.isDefined) data += "s3Url" -> task.s3Url.get
+    if (task.logS3Url.isDefined) data += "logS3Url" -> task.s3Url.get
     buildTasks.replaceIfExists(task.id, data: _*)
     task
   }

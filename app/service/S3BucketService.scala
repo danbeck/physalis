@@ -11,7 +11,7 @@ object S3BucketService {
   val bucket: Bucket = s3.bucket(BUCKET_NAME).get
   val logger: Logger = Logger(this.getClass)
 
-  def key(task: BuildTask, version: String) = {
+  def artifactKey(task: BuildTask, version: String) = {
     val fileEnding = task.platform match {
       case "android" => "apk"
       case "ubuntu"  => "click"
@@ -19,16 +19,42 @@ object S3BucketService {
     s"${task.project.userId}/${task.project.id}/$version/${task.project.name}.$fileEnding"
   }
 
-  def putFile(task: BuildTask, version: String = "latest", file: File): URL = {
-    val k = key(task, version)
-    bucket.delete(k)
-    bucket.put(k, file)
-    bucket.getObject(k).get.generatePresignedUrl(new DateTime().plusWeeks(1))
+  def logKey(task: BuildTask, version: String) = {
+    val fileEnding = task.platform match {
+      case "android" => "apk"
+      case "ubuntu"  => "click"
+    }
+    s"${task.project.userId}/${task.project.id}/$version/${task.project.name}/${task.platform}/log.txt"
   }
 
-  def getBucketURL(task: BuildTask, version: String = "latest"): URL = {
-    val k = key(task, version)
-    val s3obj: Option[S3Object] = bucket.getObject(k)
+  def putArtifact(task: BuildTask, version: String = "latest", file: File): URL = {
+    val k = artifactKey(task, version)
+    put(k, file)
+  }
+  
+  def putLog(task: BuildTask, version: String = "latest", file: File): URL = {
+    val k = logKey(task, version)
+    put(k, file)
+  }
+
+  private def put(key: String, file: File): URL = {
+    bucket.delete(key)
+    bucket.put(key, file)
+    bucket.getObject(key).get.generatePresignedUrl(new DateTime().plusWeeks(1))
+  }
+
+  def getArtifactURL(task: BuildTask, version: String = "latest"): URL = {
+    val k = artifactKey(task, version)
+    get(k)
+  }
+
+  def getLogURL(task: BuildTask, version: String = "latest"): URL = {
+    val k = logKey(task, version)
+    get(k)
+  }
+
+  private def get(key: String): URL = {
+    val s3obj: Option[S3Object] = bucket.getObject(key)
     s3obj.get.generatePresignedUrl(new DateTime().plusWeeks(1))
   }
 }
