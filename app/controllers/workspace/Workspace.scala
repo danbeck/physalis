@@ -75,18 +75,26 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
   }
 
   private def updateUserAndRedirect(projectname: String, gitUrl: String, request: SecuredRequest[AnyContent]): Future[Result] = {
-    fileSize(new URL(gitUrl)) match {
-      case Left(error)                   => redirectAndFlashError(error)
-      case Right(i) if i >= 50000000 * 8 => redirectAndFlashError("""The .git file should not be bigger than 50 MB.""")
-      case Right(i) =>
-        val project = models.Project(name = projectname,
-          icon = None,
-          gitUrl = gitUrl,
-          userId = request.user.id,
-          username = request.user.usernameOption.get)
-        project.save()
-        updateUserAndRedirect(project, request)
-    }
+    //    fileSize(new URL(gitUrl)) match {
+    //      case Left(error)                   => redirectAndFlashError(error)
+    //      case Right(i) if i >= 50000000 * 8 => redirectAndFlashError("""The .git file should not be bigger than 50 MB.""")
+    //      case Right(i) =>
+    //        val project = models.Project(name = projectname,
+    //          icon = None,
+    //          gitUrl = gitUrl,
+    //          userId = request.user.id,
+    //          username = request.user.usernameOption.get)
+    //        project.save()
+    //        updateUserAndRedirect(project, request)
+    //    }
+    val project = models.Project(name = projectname,
+      icon = None,
+      gitUrl = gitUrl,
+      userId = request.user.id,
+      username = request.user.usernameOption.get)
+    project.save()
+    updateUserAndRedirect(project, request)
+
   }
 
   private def updateUserAndRedirect(project: models.Project, request: SecuredRequest[AnyContent]): Future[Result] = {
@@ -100,7 +108,7 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
     var conn: HttpURLConnection = null
     try {
       conn = url.openConnection().asInstanceOf[HttpURLConnection]
-      conn.setRequestMethod("HEAD")
+      conn.setRequestMethod("GET")
       conn.getInputStream()
       conn.getContentLengthLong match {
         case -1 => Left("Could not compute the size of the .git repository")
