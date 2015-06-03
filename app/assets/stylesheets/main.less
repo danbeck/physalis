@@ -3,8 +3,11 @@
 .createProjectDropdown{
 	margin-bottom: 20px;
 }
-.physalis-infobox {
-  margin: 30px 0;
+.thumbnail.physalis-infobox {
+  padding: 30px;
+  border: none;
+  background-color: inherit;
+  height: 340px;
   /*	 border:1px solid #ccc;	*/
 }
 
@@ -20,6 +23,46 @@
 @base-primary-border: #22cc00;
 @base-danger-font-color: #922222;
 
+.navbar-default {
+	background-color: @base-black;
+	border: none;
+	border-radius: 0px;
+	border-bottom: 3px solid @base-orange;
+	h1, h2,h3,p {
+		color: white;
+	}
+  p, h4 {
+    margin-top: 26px;
+  }
+}
+
+section.infoboxes {
+	background-color: @base-black;
+	color: white;
+	.container{
+		margin-top: 70px;
+		h4 {
+			color: white;
+		}
+	}
+	i.fa {
+		color:black;
+	}
+	i.fa-circle {
+//		color:#FF802B;
+		color:#CC904B;
+	}
+}
+
+/* section.infoboxes .container .row .col-sm-4{
+	float: right;
+}*/
+
+
+div.footer {
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
 .physalislabel{
 	color: @base-grey-foreground;
 }
@@ -30,18 +73,6 @@
 
 .newProject{
 	padding-bottom: 12px,
-}
-
-//@base-box-background: #ffffff;
-.registerbox {
-  background-color: @base-black;
-  color: white;
-  padding: 7px 60px;
-  margin: 0px;
-  a.btn {
-    vertical-align: middle;
-    /*	 	color: black; */
-  }
 }
 
 .sslLogo{
@@ -100,7 +131,9 @@
 
 .jumbotron.jumbotronMainPage {
 	border-radius:6px;
-	margin-bottom: -10px;
+	background-color: inherit;
+	margin-bottom: 0px;
+	padding: 20px;
 	
 	h1 {
 		  font-size: 32px;
@@ -118,6 +151,15 @@ body, .navbar-default .navbar-nav > li > a {
 body {
   font-family:"Open Sans",Helvetica,Arial,sans-serif;
   font-size: 16px;
+}
+
+.registerbox div.row {
+	padding-top: 70px;
+	padding-bottom: 30px;
+}
+
+.jumboboxWrapper{
+	background-color: white
 }
 
 .alert.withPadding{
@@ -173,18 +215,6 @@ a.btn-primary:hover, a.btn-primary:active {
   background-color: @base-primary-border;
 }
 
-section {
-  padding-top: 20px;
-}
-
-.navbar-default {
-  /*  background: transparent;*/
-  border-bottom: 0;
-  margin-bottom: 0;
-  p, h4 {
-    margin-top: 26px;
-  }
-}
 
 .titleButton {
   margin-top: 10px;

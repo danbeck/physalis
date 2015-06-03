@@ -1,0 +1,7 @@
+@(user: User = null, scripts: Html = Html(""), doNotShowLoginButton: Boolean = false, showSetupNotice:Boolean=true)(content: Html)
+
+@main(user, scripts, doNotShowLoginButton, showSetupNotice){
+        <div class="container">
+       		@content
+        </div>
+}

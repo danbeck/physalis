@@ -1,6 +1,6 @@
 @(user: User, projects: List[Project])
 
-@main(user = user) {
+@mainContainer(user = user) {
 
     <div class="list-group">
     @for(project <- projects) {

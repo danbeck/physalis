@@ -37,17 +37,16 @@
                     </div>
 
                     <div class="col-sm-3 col-sm-offset-4 titleButton">
-
                         <div class="row">
                         @if(!doNotShowLoginButton) {
                             @if(user == null) {
                                 <div class="col-sm-offset-6 col-sm-6 text-center col-with-little-padding">
-                                    <a href="@routes.CustomLoginController.login()" class="btn  btn-primary  btn-block btn-lg" >
+                                    <a href="@routes.CustomLoginController.login()" class="btn  btn-primary  btn-block btn-lg navbar-btn" >
                                         Login</a>
                                 </div>
                         } else {
                         <div class="col-sm-offset-6 col-sm-6 text-center col-with-little-padding">
-                            <a href="/logout" class="btn btn-primary btn-lg btn-block">Logout</a>
+                            <a href="/logout" class="btn btn-primary btn-lg btn-block navbar-btn">Logout</a>
                         </div>
                     }
                         }
@@ -57,8 +56,6 @@
             </div>
         </nav>
 
-        <hr class="nomargin"/>
-        <div class="container">
         @if(showSetupNotice && user != null && !user.usernameOption.isDefined){
         	<div class="alert alert-warning withPadding" role="alert">
 	  			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -68,11 +65,9 @@
 			</div>
         
         }
+        
         @content
-        </div>
 
-
-        <hr>
         <div class="footer text-center">
             <div>
                 <small>

@@ -3,7 +3,7 @@
 @scripts = {
     <script src="@routes.Assets.at("javascripts/physalis.js")" type="text/javascript"></script>
 }
-@main(user=loggedInUser,scripts = scripts) {
+@mainContainer(user=loggedInUser,scripts = scripts) {
 
     @widgets.createNewProjectButton(projectForm)
     @widgets.newProjectInputForm(projectForm)

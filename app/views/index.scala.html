@@ -1,67 +1,91 @@
 @(user: User=null)(implicit flash: Flash, request: Request[AnyContent])
 @main(user) {
-    <div class="jumbotron jumbotronMainPage">
-        <h1>Physalis builds HTML5 apps with Apache Cordova</h1>
-        <ul><li><p>It's free</p></li>
-            <li><p>It's opensource (commercial friendly MIT license)</p></li>
-            <li><p>It's for FirefoxOS, Ubuntu and Android!</p></li>
-        </ul>
-    </div>
-    <div class="registerbox" >
-        <h4 style="margin-right : 10 px ;">Register now with your github account:     
-        	 <a href="/signup" class="btn btn-lg btn-primary ">Join now</a>
-     	</h4>
-    </div>
+	<section class="jumboboxWrapper">
+		<div class="container">
+		    <div class="jumbotron jumbotronMainPage">
+		        <h1>Physalis builds HTML5 apps with Apache Cordova</h1>
+		        <ul><li><p>It's free</p></li>
+		            <li><p>It's opensource (commercial friendly MIT license)</p></li>
+		            <li><p>It's for FirefoxOS, Ubuntu and Android!</p></li>
+		        </ul>
+		    </div>
+		    <div class="row" >
+			    <div class="col-sm-offset-3 col-sm-6" >
+			        <a href="/signup" class=" btn btn-lg btn-block btn-primary ">Sign up for free</a>
+			    </div>
+		    </div>
+		</div>
+	</section>
 
-    <div class="row">
-        <div class="infobox physalis-infobox col-sm-4" >
-            <div class="text-center">
-                <i class="fa fa-paper-plane fa-4x"></i>
-            </div>
-            <div>
-                <h4>Easily build cross platform HTML5 apps</h4>
-                <p>Login with your github account and click "build". Physalis can build
-                 your app for the following platforms: Android, ubuntu touch, Firefox OS</p>
-            </div>
-        </div>
-        <div class="infobox physalis-infobox col-sm-4">
-            <div class="text-center">
-                <i class="fa fa-github fa-4x"></i>
-            </div>
-            <h4>Completely Opensource</h4>
-            <p>
-                Physalis is licensed under the MIT license and thus open source. Simply <a href="https://github.com/danbeck/physalis">
-                fork me on GitHub.</a>
-            </p>
-        </div>
+	<section class="infoboxes">
+		<div class="container ">
+		    <div class="row">
+		        <div class="thumbnail physalis-infobox col-xs-12 col-sm-6 col-md-4" >
+		            <div class="text-center">
+		             <span class="fa-stack fa-lg fa-3x">
+						  <i class="fa fa-circle fa-stack-2x"></i>
+						  <i class="fa fa-paper-plane fa-stack-1x"></i>
+					 </span>
 
-
-        <div class="infobox physalis-infobox col-sm-4">
-            <div class="text-center">
-                <i class="fa fa-html5 fa-4x"></i>
-            </div>
-            <h4>Embrace HTML5 standards!</h4>
-            <p>
-                Use HTML5 standards or existing HTML UI frameworks like jquery mobile or Ubuntu HTML5.
-            </p>
-        </div>
-        <div class="infobox physalis-infobox col-sm-4">
-            <div class="text-center">
-               <i class="fa fa-tablet fa-4x"></i>
-               </div>
-            <h4>Native mobile application</h4>
-            <p>Access the camera, read and write files, access the user's contacts or geolocation data.</p>
-        </div>
-
-        <div class="infobox physalis-infobox col-sm-4">
-            <div class="text-center">
-                <i class="fa fa-globe fa-4x"></i>
-            </div>
-            <h4>Many platforms</h4>
-            <p>
-                For FirefoxOS, Ubuntu Touch and Android
-           </p>
-
-        </div>
-    </div>
+		            </div>
+		            <div>
+		                <h4>Easily build cross platform HTML5 apps</h4>
+		                <p>Login with your github account and click "build". Physalis can build
+		                 your app for the following platforms: Android, ubuntu touch, Firefox OS</p>
+		            </div>
+		        </div>
+		        <div class="thumbnail physalis-infobox col-xs-12 col-sm-6 col-md-4">
+		            <div class="text-center">
+		               <span class="fa-stack fa-lg fa-3x">
+						  <i class="fa fa-circle fa-stack-2x"></i>
+						  <i class="fa fa-github fa-stack-1x"></i>
+						</span>
+		            </div>
+		            <h4>Completely Opensource</h4>
+		            <p>
+		                Physalis is licensed under the MIT license and thus open source. Simply <a href="https://github.com/danbeck/physalis">
+		                fork me on GitHub.</a>
+		            </p>
+		        </div>
+		
+		
+		        <div class="thumbnail physalis-infobox col-xs-12 col-sm-6 col-md-4">
+		            <div class="text-center">
+		            <span class="fa-stack fa-lg fa-3x">
+						  <i class="fa fa-circle fa-stack-2x"></i>
+						  <i class="fa fa-html5 fa-stack-1x"></i>
+					</span>
+		            </div>
+		            <h4>Embrace HTML5 standards!</h4>
+		            <p>
+		                Use HTML5 standards or existing HTML UI frameworks like jquery mobile or Ubuntu HTML5.
+		            </p>
+		        </div>
+		        <div class="thumbnail physalis-infobox col-xs-12 col-sm-6 col-md-4">
+		            <div class="text-center">
+		            <span class="fa-stack fa-lg fa-3x">
+						  <i class="fa fa-circle fa-stack-2x"></i>
+						  <i class="fa fa-tablet fa-stack-1x"></i>
+					</span>
+		            </div>
+		            <h4>Native mobile application</h4>
+		            <p>Access the camera, read and write files, access the user's contacts or geolocation data.</p>
+		        </div>
+		
+		        <div class="thumbnail physalis-infobox col-xs-12 col-sm-6 col-md-4">
+		            <div class="text-center">
+		           <span class="fa-stack fa-lg fa-3x">
+						  <i class="fa fa-circle fa-stack-2x"></i>
+						  <i class="fa fa-globe fa-stack-1x"></i>
+					</span>
+		             </div>
+		            <h4>Many platforms</h4>
+		            <p>
+		                For FirefoxOS, Ubuntu Touch and Android
+		           </p>
+		
+		        </div>
+	    	</div>
+	   	</div>
+	</section>
 }
