@@ -1,10 +1,8 @@
 @(project: Project, isMyAccount:Boolean, lastUbuntuBuildTask:Option[BuildTask] = None, lastAndroidBuildTask:Option[BuildTask]=None)
             <h3><a href="@controllers.workspace.routes.ProjectPage.show(project.username, project.name)">@project.name</a></h3>
             @if(isMyAccount){            	
-            	@if(!lastUbuntuBuildTask.isDefined || !lastAndroidBuildTask.isDefined || lastUbuntuBuildTask.get.state!="IN_PROGRESS" ||  lastAndroidBuildTask.get.state!="IN_PROGRESS"){
-	            	<p><a href="@controllers.workspace.routes.Build.build(project.username, project.name)" 
+	            <a href="@controllers.workspace.routes.Build.build(project.username, project.name)" 
 	            		class="btn btn-build btn-lg btn-block" role="button">Pull & Build</a>
-            	}
             	
             	<hr>
             	<h4>Platform binaries</h4>
