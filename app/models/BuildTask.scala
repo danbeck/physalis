@@ -63,11 +63,10 @@ case class BuildTask(
 
   def gitClone(): BuildTask = {
     val command = s"rm -rf ${projectPath}"
-    Logger.info(s">> ${command}")
+    logger.info(s">> ${command}")
     command.!
-    val cloneCommand = s"git clone ${project.gitUrl} --depth=1 ${projectPath}"
-    Logger.info(s">> ${cloneCommand}")
-    cloneCommand.!
+    logger.info(s"git clone ${project.gitUrl} --depth=1 ${projectPath}")
+    execute("git", "clone", project.gitUrl, "--depth=1", projectPath.toString)
     this
   }
 
