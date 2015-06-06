@@ -211,8 +211,14 @@ case class BuildTask(
   def logStream(stream: InputStream) = {
     val br = new BufferedReader(new InputStreamReader(stream))
     val str: String = Stream.continually(br.readLine()).takeWhile(_ != null).mkString("\n")
-    Files.write(Paths.get(logFile), str.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND)
     logger.info(str)
+    logger.info("Append logging to file: " + logFile)
+    try {
+      Files.write(Paths.get(logFile), str.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND)
+    } catch {
+      case e: Exception => logger.error("There was an exception", e)
+    }
+    logger.info("Done writing file")
   }
 }
 
