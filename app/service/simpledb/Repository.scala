@@ -134,7 +134,7 @@ object Repository {
       "created" -> task.created.toString(),
       "updated" -> task.updated.toString())
     if (task.s3Url.isDefined) data += "s3Url" -> task.s3Url.get
-    if (task.logS3Url.isDefined) data += "logS3Url" -> task.s3Url.get
+    if (task.logS3Url.isDefined) data += "logS3Url" -> task.logS3Url.get
     buildTasks.replaceIfExists(task.id, data: _*)
     task
   }

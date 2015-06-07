@@ -65,7 +65,6 @@ case class BuildTask(
     val command = s"rm -rf ${projectPath}"
     logger.info(s">> ${command}")
     command.!
-    logger.info(s"git clone ${project.gitUrl} --depth=1 ${projectPath}")
     execute("git", "clone", project.gitUrl, "--depth=1", projectPath.toString)
     this
   }
@@ -99,9 +98,9 @@ case class BuildTask(
     buildAndUploadToS3 match {
       case Left((error, log)) => {
         logger.error(error)
-        this.error(log)
+        this.error(log).save()
       }
-      case Right((log, s3Url)) => this.done(s3Url = s3Url, logS3Url = log)
+      case Right((logFileUrl, s3Url)) => this.done(s3Url = s3Url, logS3Url = logFileUrl)
     }
   }
   private def buildAndUploadToS3(): Either[(String, String), (String, String)] = {
@@ -126,13 +125,11 @@ case class BuildTask(
         logger.info(s"S3 URL $urlString")
         Left(error, urlString)
       case Right((log, artifact)) =>
-        logger.info("Uploading log to S3")
-        val logString = S3BucketService.putLog(task = this, file = log).toString
-        logger.info(s"S3 URL $logString")
-        logger.info("Uploading file to S3")
-        val urlString = S3BucketService.putArtifact(task = this, file = artifact).toString
-        logger.info(s"S3 URL $urlString")
-        Right(logString, urlString)
+        val logFileUrl = S3BucketService.putLog(task = this, file = log).toString
+        logger.info(s"S3 URL $logFileUrl")
+        val artifactUrl = S3BucketService.putArtifact(task = this, file = artifact).toString
+        logger.info(s"S3 URL $artifactUrl")
+        Right(logFileUrl, artifactUrl)
     }
   }
 
@@ -158,6 +155,7 @@ case class BuildTask(
   }
 
   private def execute(command: String*): java.lang.Process = {
+    writeToLogfile(s""">> ${command.mkString(" ")}""")
     val process = new ProcessBuilder(command: _*).start
     logProcess(process)
     process
@@ -210,14 +208,16 @@ case class BuildTask(
   def logStream(stream: InputStream) = {
     val br = new BufferedReader(new InputStreamReader(stream))
     val str: String = Stream.continually(br.readLine()).takeWhile(_ != null).mkString("\n")
-    logger.info(str)
-    logger.info("Append logging to file: " + logFile)
+    writeToLogfile(str)
+  }
+
+  def writeToLogfile(string: String) = {
     try {
-      Files.write(Paths.get(logFile), str.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND)
+      logger.info(string)
+      Files.write(Paths.get(logFile), string.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND)
     } catch {
       case e: Exception => logger.error("There was an exception", e)
     }
-    logger.info("Done writing file")
   }
 }
 

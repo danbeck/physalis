@@ -29,11 +29,13 @@ object S3BucketService {
 
   def putArtifact(task: BuildTask, version: String = "latest", file: File): URL = {
     val k = artifactKey(task, version)
+    logger.info(s"Uploading build to S3: $k")
     put(k, file)
   }
-  
+
   def putLog(task: BuildTask, version: String = "latest", file: File): URL = {
     val k = logKey(task, version)
+    logger.info(s"Uploading log file to S3: $k")
     put(k, file)
   }
 
