@@ -1,18 +1,26 @@
 @(isMyAccount:Boolean, buildTask:Option[BuildTask] = None)
           		
 @if(buildTask.isDefined) {
-	@if(buildTask.get.state=="NEW") {
+	@if(!isMyAccount && buildTask.get.state=="DONE"){
+ 	   	<div class="col-xs-12"  data-state="DONE" data-platform="@buildTask.get.platform">
+	   		<a class="btn btn-primary btn-block" role="button"  href="@buildTask.get.s3Url">
+	   			<i class="fa fa-download"></i>  @buildTask.get.platform
+			</a>
+		</div>
+	}
+	
+	@if(isMyAccount && buildTask.get.state=="NEW") {
 		<div class="col-xs-8 bg-info" data-state="NEW" data-platform="@buildTask.get.platform">
 		    @buildTask.get.platform: build queued  		
 		</div>
 	 }
     
-    @if(buildTask.get.state=="IN_PROGRESS") {
+    @if(isMyAccount && buildTask.get.state=="IN_PROGRESS") {
 	    <div class="bg-info col-xs-8" data-state="IN_PROGRESS" data-platform="@buildTask.get.platform">
 		 <i class="fa fa-circle-o-notch fa-spin"></i> <span>@buildTask.get.platform: build in progress</span>
 		</div>
     }
-    @if(buildTask.get.state=="DONE") {
+    @if(isMyAccount && buildTask.get.state=="DONE") {
  	   	<div class="col-xs-8"  data-state="DONE" data-platform="@buildTask.get.platform">
 	   		<a class="btn btn-primary btn-block" role="button"  href="@buildTask.get.s3Url">
 	   			<i class="fa fa-download"></i>  @buildTask.get.platform
@@ -23,7 +31,7 @@
 		</div>
     }
     
-     @if(buildTask.get.state=="ERROR") {
+     @if(isMyAccount && buildTask.get.state=="ERROR") {
 	    <div class="bg-danger col-xs-8" data-state="ERROR" data-platform="@buildTask.get.platform">
 	 	   <span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;<span>@buildTask.get.platform: build failed</span>  		
 	 	</div>

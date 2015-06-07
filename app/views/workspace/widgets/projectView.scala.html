@@ -3,14 +3,14 @@
             @if(isMyAccount){            	
 	            <a href="@controllers.workspace.routes.Build.build(project.username, project.name)" 
 	            		class="btn btn-build btn-lg btn-block" role="button">Pull & Build</a>
-            	
-            	<hr>
-            	<h4>Platform binaries</h4>
-            	<div data-role="downloadProjects"
-            		data-project="@project.name"
-            		class="projectArtifacts row"
-            		data-user="@project.username">
-	            		@buildartifactWidget(isMyAccount,lastUbuntuBuildTask)
-	            		@buildartifactWidget(isMyAccount,lastAndroidBuildTask)
-            		</div>
             }
+            	
+           	<hr>
+           	<h4>Platform binaries</h4>
+           	<div data-role="downloadProjects"
+           		data-project="@project.name"
+           		class="projectArtifacts row"
+           		data-user="@project.username">
+	           		@buildartifactWidget(isMyAccount,lastUbuntuBuildTask)
+	           		@buildartifactWidget(isMyAccount,lastAndroidBuildTask)
+          	</div>
