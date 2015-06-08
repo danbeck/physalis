@@ -23,11 +23,19 @@ object PhysalisBuildService {
       running = true;
       thread = Some(new Thread(() => {
         while (running) {
-          newBuildTasks(platforms.get).foreach(processAndHandleExceptions _)
-          Thread.sleep(12000)
+          processNewBuildTasks(platforms.get)
         }
       }))
       thread.get.start()
+    }
+  }
+
+  def processNewBuildTasks(platforms: List[String]) {
+    try {
+      newBuildTasks(platforms).foreach(processAndHandleExceptions _)
+      Thread.sleep(12000)
+    } catch {
+      case e: Exception => logger.error("there was an exception in the main build loop. Continuing.", e)
     }
   }
 

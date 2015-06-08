@@ -107,7 +107,9 @@ case class BuildTask(
     logger.info(s"Building ${projectName} (gitURL was: ${project.gitUrl}) for platform $platform")
 
     if (platform == "android" || platform == "ubuntu") {
-      cordovaDir match {
+      val dir = cordovaDir 
+      logger.info(s"Project dir: $dir")
+      dir match {
         case Some(dir) => buildAndUploadToS3(dir.getAbsolutePath)
         case _         => Left("Couldn't found a Apache Cordova project!", null)
       }
@@ -135,8 +137,13 @@ case class BuildTask(
 
   private def addCordovaPlatform(dir: String) = {
     logger.info("addCordovaPlatform")
-    execute("/usr/bin/docker", "run", "--rm", "-v", s"${dir}:/data",
-      "danielbeck/cordova-android:5.0.0", "platform", "add", platform)
+    platform match {
+      case "ubuntu" =>
+        execute("cordova", "platform", "add", "ubuntu")
+      case _ =>
+        execute("/usr/bin/docker", "run", "--rm", "-v", s"${dir}:/data",
+          "danielbeck/cordova-android:5.0.0", "platform", "add", platform)
+    }
   }
 
   private def buildWithCordova(dir: String) = {
@@ -146,7 +153,7 @@ case class BuildTask(
         "danielbeck/cordova-android:5.0.0", "build", platform)
 
     if (platform == "ubuntu")
-      execute("cordova", "build", platform)
+      execute("cordova", "build", platform, "--device")
 
     if (platform == "firefoxos")
       execute("/usr/bin/docker", "run", "--rm", "--privileged", "-v", s"${dir}:/data",
