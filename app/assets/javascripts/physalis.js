@@ -11,60 +11,126 @@ function retrieveAndAddBuildDataToDom(node$) {
 function updateDom(node$, data) {
 	if (!data.error) {
 
-		var android$ = $("[data-platform='android']");
-		var ubuntu$ = $("[data-platform='ubuntu']");
+		var android$ = $("[data-platform='android'][data-type='artifact']");
+		var androidLog$ = $("[data-platform-log='android']");
+		var ubuntu$ = $("[data-platform='ubuntu'][data-type='artifact']");
+		var ubuntuLog$ = $("[data-platform-log='ubuntu']");
 		var androidState = android$.attr("data-state");
 		var ubuntuState = ubuntu$.attr("data-state");
-	
-		if (data.android.state !== androidState) {
-			updateAndroidDom(node$, data.android);
-		}
-		if (data.ubuntu.state !== ubuntuState) {
-			updateUbuntuDom(node$, data.ubuntu);
-		}
+
+		node$.empty();
+		updateUbuntuDom(node$,data.ubuntu);
+		updateAndroidDom(node$,data.android);
+//		if (data.android.state !== androidState
+//				|| ) {
+//			updateAndroidDom(android$, androidLog$, data.android);
+//		}
+//		if (data.ubuntu.state !== ubuntuState) {
+//			updateUbuntuDom(ubuntu$, ubuntuLog$, data.ubuntu);
+//		}
 	}
 }
 
-function updateAndroidDom(node$, data) {
-	node$.attr("data-state", data.state);
-	node$.empty();
+function updateAndroidDom(node$,  data) {
+	var html ="";
+	var htmlLog = "";
 	
 	if (data.state === "NEW") {
-		node$.append("Android: build queued");
+		html = template_newArtifact("android");
+//		nodeLog$.replaceWith("");
 	}
+	
 	if (data.state === "IN_PROGRESS") {
-		node$.append("Android build in progress");
+		html = template_artifactInProgress("android");
+//		nodeLog$.replaceWith("");
 	}
+	
 	if (data.state === "DONE") {
-		var html= "<a class='btn' href='"+ data.url + "'>Download Android APK</a>";
-		node$.append(html);
+			html = template_artifactDone("android",data);
+			htmlLog = template_logDone("android", data);
 	}
+	
+	if (data.state === "ERROR") {
+    html = template_artifactError("android");
+		htmlLog = template_logError("android",data);
+	}
+	node$.append(html + htmlLog);
 }
 
 function updateUbuntuDom(node$, data) {
-	node$.attr("data-state", data.state);
-	node$.empty();
-
+	var html ="";
+	var htmlLog = "";
+	
 	if (data.state === "NEW") {
-		node$.append("Ubuntu: build queued");
+		html = template_newArtifact("ubuntu");
+		node$.append(html);
+//		nodeLog$.replaceWith("");
 	}
 	
 	if (data.state === "IN_PROGRESS") {
-		node$.append("Ubuntu build in progress");
-	}
-	if (data.state === "DONE") {
-		var html= "<a class='btn' href='"+ data.url + "'>Download Ubuntu binary</a>";
+		html = template_artifactInProgress("ubuntu");
 		node$.append(html);
+//		nodeLog$.replaceWith("");
+	}
+	
+	if (data.state === "DONE") {
+			html = template_artifactDone("ubuntu",data);
+			node$.append(html);
+			htmlLog = template_logDone("ubuntu",data);
+			node$.append(htmlLog);
+	}
+	
+	if (data.state === "ERROR") {
+    html = template_artifactError("ubuntu");
+		node$.append(html);
+		htmlLog = template_logError("ubuntu",data);
+		node$.append(htmlLog);
 	}
 }
 
+function template_newArtifact(platform) {
+	return "<div class='col-xs-8 bg-info' data-type='artifact' data-state='NEW' data-platform='" + platform + "'>"+
+         platform + ": build queued" +
+         "</div>";
+}
+
+function template_artifactInProgress(platform) {
+	return " <div class='bg-info col-xs-8' data-type='artifact' data-state='IN_PROGRESS' data-platform='"+ platform + "'>"+
+  "<i class='fa fa-circle-o-notch fa-spin'></i> <span>" + platform +": build in progress</span></div>";
+}
+
+function template_artifactDone(platform, data) {
+	return "<div class='col-xs-8'  data-type='artifact' data-state='DONE' data-platform='" + platform +"'>"+
+  "<a class='btn btn-primary btn-block' role='button'  href='" + data.url + "'>" +
+  "<i class='fa fa-download'></i> " + platform + 
+  "</a></div>";
+
+}
+
+function template_artifactError(platform){
+	return "<div class='bg-danger col-xs-8' data-type='artifact' data-state='ERROR' data-platform='" + platform  + "'>" +
+  "<span class='glyphicon glyphicon-exclamation-sign'></span>&nbsp;<span>" + platform + ": build failed</span>"+
+  "</div>";
+}
+
+function template_logError(platform,data){
+   return "<div class='col-xs-4' data-platform-log='" + platform + "'>" +
+  "<a target='_blank' class='btn btn-build btn-block' role='button'  href='" + data.logurl + "'><i class='fa fa-file-text'></i> Logs</a>" +
+  "</div>";
+}
+
+function template_logDone(platform,data){
+	return "<div class='col-xs-4' data-platform-log='"+ platform +"'>" +
+  "<a target='_blank' class='btn btn-build btn-block' role='button'  href='" + data.logurl + "'><i class='fa fa-file-text'></i> Logs</a>" +
+  "</div>";
+}
 $(document).ready(function() {
 	function updateTheBuildState() {
-		setTimeout(updateTheBuildState, 1000);
+		setTimeout(updateTheBuildState, 3500);
 		$("div[data-role='downloadProjects']").each(function() {
 			retrieveAndAddBuildDataToDom($(this));
 		});
 	}
 
-//	updateTheBuildState();
+	updateTheBuildState();
 });
