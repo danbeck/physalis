@@ -11,12 +11,11 @@ object S3BucketService {
   val bucket: Bucket = s3.bucket(BUCKET_NAME).get
   val logger: Logger = Logger(this.getClass)
 
-  def artifactKey(task: BuildTask, version: String) = {
-    val fileEnding = task.platform match {
-      case "android" => "apk"
-      case "ubuntu"  => "click"
+  def artifactKey(task: BuildTask, version: String, file: File) = {
+     task.platform match {
+      case "android" => s"${task.project.userId}/${task.project.id}/$version/${task.project.name}.apk"
+      case "ubuntu"  =>  s"${task.project.userId}/${task.project.id}/$version/${file.getName}"
     }
-    s"${task.project.userId}/${task.project.id}/$version/${task.project.name}.$fileEnding"
   }
 
   def logKey(task: BuildTask, version: String) = {
@@ -28,7 +27,7 @@ object S3BucketService {
   }
 
   def putArtifact(task: BuildTask, version: String = "latest", file: File): URL = {
-    val k = artifactKey(task, version)
+    val k = artifactKey(task, version, file)
     logger.info(s"Uploading build to S3: $k")
     put(k, file)
   }
@@ -45,10 +44,7 @@ object S3BucketService {
     bucket.getObject(key).get.generatePresignedUrl(new DateTime().plusWeeks(1))
   }
 
-  def getArtifactURL(task: BuildTask, version: String = "latest"): URL = {
-    val k = artifactKey(task, version)
-    get(k)
-  }
+  
 
   def getLogURL(task: BuildTask, version: String = "latest"): URL = {
     val k = logKey(task, version)

@@ -175,42 +175,39 @@ case class BuildTask(
   }
 
   private def getBuildArtifact(dir: String): Either[(String, File), (File, File)] = {
-    if (platform == "android") {
-      getAndroidBuildArtifact(dir)
-    } else {
-      logger.info("That was not android " + platform)
-      Left("platform not defined", new File(logFile))
+    platform match {
+      case "android" => getAndroidBuildArtifact(dir)
+      case "ubuntu"  => getUbuntuBuildArtifact(dir)
+      case _ =>
+        Left("platform not defined", new File(logFile))
     }
   }
 
   private def getAndroidBuildArtifact(dir: String): Either[(String, File), (File, File)] = {
     val path = s"$dir/platforms/$platform/build/outputs/apk/android-debug.apk"
-    logger.info(s"search android build artifact $path")
-    //    val outputFile = new File(s"$dir/platforms/$platform/ant-build/MainActivity-debug.apk")
-    val outputFile = new File(path)
-    val log = new File(logFile)
-    if (outputFile.exists) {
-      logger.info("file exists")
-      Right(log, outputFile)
-    } else
-      Left("Building failed!", log)
+    buildArtifact(Some(path))
   }
 
   private def getUbuntuBuildArtifact(dir: String) = {
-    logger.info(s"search android build artifact $dir/platforms/$platform/ant-build/MainActivity-debug.apk")
-    //    val outputDir  = new File(s"$dir/platforms/ubuntu/ubuntu-sdk-14.10/armhf/prefix/")
-    //    
-    //    if (outputDir.exists)
-    //    {
-    //      outputDir.listFiles.filter { _.getName.matches(""".*\.click""")}.headOption.fl
-    //    }
-    //    else 
-    val outputFile = new File(s"$dir/platforms/ubuntu/ubuntu-sdk-14.10/armhf/prefix/MainActivity-debug.apk")
-    if (outputFile.exists) {
-      logger.info("file exists")
-      Right(outputFile)
-    } else
-      Left("Building failed!")
+    val outputDir = s"$dir/platforms/ubuntu/ubuntu-sdk-14.10/armhf/prefix/"
+    val outputFile = new File(outputDir).listFiles().map(_.getAbsolutePath).filter { _.endsWith(".click") }.headOption
+    buildArtifact(outputFile)
+  }
+
+  private def buildArtifact(pathToArtifact: Option[String]): Either[(String, File), (File, File)] = {
+    logger.info(s"search $platform build artifact $pathToArtifact")
+    //    val outputFile = new File(s"$dir/platforms/$platform/ant-build/MainActivity-debug.apk")
+    val log = new File(logFile)
+    pathToArtifact match {
+      case None => Left(s"Building failed - the build artifact was not found!", log)
+
+      case Some(file) if (new File(file) exists) =>
+        logger.info(s"file $pathToArtifact exists")
+        Right(log, new File(file))
+
+      case Some(file) => Left(s"Building failed - the build artifact at location $pathToArtifact was not found!", log)
+
+    }
   }
 
   def logProcess(p: java.lang.Process) = {
