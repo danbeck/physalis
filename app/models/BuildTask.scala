@@ -45,6 +45,8 @@ case class BuildTask(
   def save(): BuildTask = {
     logger.info(s"Save BuildTask ${this.id}:${this.state}")
     Repository.saveBuildTask(this)
+    logger.info(s"Saved BuildTask  ${this.id}:${this.state}")
+    this
   }
 
   private def updateState(state: String) = this.copy(state = state, updated = Instant.now)
@@ -95,7 +97,7 @@ case class BuildTask(
   }
 
   def build(): BuildTask = {
-    buildAndUploadToS3 match {
+    buildAndUploadToS3() match {
       case Left((error, log)) => {
         logger.error(error)
         this.error(log).save()
@@ -110,7 +112,7 @@ case class BuildTask(
       logger.info(s"Project dir: $cordovaDir")
       cordovaDir match {
         case Some(dir) => buildAndUploadToS3(dir.getAbsolutePath)
-        case _         => Left("Couldn't found a Apache Cordova project!", null)
+        case _         => Left("Couldn't found a Apache Cordova project!", logFile)
       }
     } else Left(s"$platform ist not defined", "")
   }

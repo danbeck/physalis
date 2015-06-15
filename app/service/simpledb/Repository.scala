@@ -15,10 +15,17 @@ object Repository {
   val logger: Logger = Logger(this.getClass())
 
   implicit val simpleDB = new SimpleDBClient()
-  private val userDomain: Domain = simpleDB.createDomain("User")
-  private val projectsDomain: Domain = simpleDB.createDomain("Project")
-  private val profileDomain: Domain = simpleDB.createDomain("Profile")
-  private val buildTasks: Domain = simpleDB.createDomain("BuildTask")
+  private val isProd = play.api.Play.isProd(play.api.Play.current)
+  
+  private val userDomainName: String = if (isProd) "User" else "Dev_User"
+  private val projectsDomainName: String = if (isProd) "Project" else "Dev_Project"
+  private val profileDomainName: String =if (isProd) "Profile" else "Dev_Profile"
+  private val buildTasksDomainName: String = if (isProd) "BuildTask" else "Dev_BuildTask"
+  
+  private val userDomain: Domain = simpleDB.createDomain(userDomainName)
+  private val projectsDomain: Domain = simpleDB.createDomain(projectsDomainName)
+  private val profileDomain: Domain = simpleDB.createDomain(profileDomainName)
+  private val buildTasks: Domain = simpleDB.createDomain(buildTasksDomainName)
 
   def findBuildTasks(id: String): Option[BuildTask] = {
     val items = buildTasks.select(s"""select projectId,
@@ -29,7 +36,7 @@ object Repository {
         platform,
         created,
         updated
-      from BuildTask 
+      from $buildTasksDomainName
       where itemname() = '$id'""")
 
     items.map(item => {
@@ -54,12 +61,12 @@ object Repository {
 
   def findNewBuildTasks(platforms: Seq[String]): Seq[BuildTask] = {
 
-    logger.info(s"""select projectId,
+    logger.debug(s"""select projectId,
       userId,
       logS3Url,
       s3Url,
       platform
-      from BuildTask 
+      from $buildTasksDomainName
       where state = 'NEW' 
       and platform in ${platforms.mkString("('", "','", "')")}""")
     val items = buildTasks.select(s"""select projectId,
@@ -67,7 +74,7 @@ object Repository {
       logS3Url,
       s3Url,
       platform
-      from BuildTask 
+      from $buildTasksDomainName
       where state = 'NEW' 
       and platform in ${platforms.mkString("('", "','", "')")}""")
 
@@ -97,7 +104,7 @@ object Repository {
       state,
       created,
       updated
-      from BuildTask 
+      from $buildTasksDomainName
       where platform = '$platform'
       and projectId = '${project.id}'
       and created is not null
@@ -155,7 +162,7 @@ object Repository {
       email,
       wantsnewsletter,
       accountPlan
-      from User
+      from $userDomainName
       where username = '${username}'""").headOption
     awsUser.map(_.name) match {
       case Some(itemId) => findUser(itemId)
@@ -169,7 +176,7 @@ object Repository {
       email,
       wantsnewsletter,
       accountPlan
-      from User
+      from $userDomainName
       where email = '${email}'""").headOption
     awsUser.map(_.name) match {
       case Some(itemId) => findUser(itemId)
@@ -187,7 +194,7 @@ object Repository {
       email,
       wantsnewsletter,
       accountPlan
-      from User
+      from $userDomainName
       where itemName() = '${userId}'""").headOption
 
     awsItems.map(user(_, projects, profiles(0), profiles))
@@ -211,7 +218,7 @@ object Repository {
                   gitUrl, 
                   username, 
                   visible
-                from Project
+                from $projectsDomainName
                 where visible = 'true'""")
     projectsItems.map(item => project(item, false))
   }
@@ -239,7 +246,7 @@ object Repository {
           visible,
           userId,
           username
-        from Project
+        from $projectsDomainName
         where userId = '${userId}'""")
     val projects = projectsItems.map(item => project(item, false))
     projects
@@ -254,7 +261,7 @@ object Repository {
           visible,
           userId,
           username
-        from Project
+        from $projectsDomainName
         where userId = '${userId}' and name = '${projectName}'""")
     projectsItems.map(item => project(item, false)).headOption
   }
@@ -267,7 +274,7 @@ object Repository {
           visible,
           userId,
           username
-        from Project
+        from $projectsDomainName
 			  where itemName() = '${projectId}'""").headOption
     projectsItems.map(item => project(item, shallow)).headOption
   }
@@ -284,7 +291,7 @@ object Repository {
             email,
             avatarUrl,
             userId
-          from Profile
+          from $profileDomainName
           where userId = '${userId}'""")
     profilesItems.map(physalisProfile _)
   }
@@ -300,7 +307,7 @@ object Repository {
             fullName, 
             email, 
             avatarUrl,
-            userId from Profile 
+            userId from $profileDomainName
           where 
           providerId = '${providerId}' and providerUserId = '${providerUserId}'""").headOption
 
