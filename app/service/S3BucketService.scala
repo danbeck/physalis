@@ -6,7 +6,7 @@ import play.api.Logger
 
 object S3BucketService {
   implicit val s3 = S3()
-  private val BUCKET_NAME = "io.physalis"
+  private val BUCKET_NAME = "physalis"
   val buckets: Seq[Bucket] = s3.buckets
   val bucket: Bucket = s3.bucket(BUCKET_NAME).get
   val logger: Logger = Logger(this.getClass)
