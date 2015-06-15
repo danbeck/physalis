@@ -6,15 +6,17 @@ import play.api.Logger
 
 object S3BucketService {
   implicit val s3 = S3()
-  private val BUCKET_NAME = "physalis"
+
+  private val isProd = play.api.Play.isProd(play.api.Play.current)
+  private val BUCKET_NAME = if (isProd) "physalis" else "physalisdev"
   val buckets: Seq[Bucket] = s3.buckets
   val bucket: Bucket = s3.bucket(BUCKET_NAME).get
   val logger: Logger = Logger(this.getClass)
 
   def artifactKey(task: BuildTask, version: String, file: File) = {
-     task.platform match {
+    task.platform match {
       case "android" => s"${task.project.userId}/${task.project.id}/$version/${task.project.name}.apk"
-      case "ubuntu"  =>  s"${task.project.userId}/${task.project.id}/$version/${file.getName}"
+      case "ubuntu"  => s"${task.project.userId}/${task.project.id}/$version/${file.getName}"
     }
   }
 
@@ -43,8 +45,6 @@ object S3BucketService {
     bucket.put(key, file)
     bucket.getObject(key).get.generatePresignedUrl(new DateTime().plusWeeks(1))
   }
-
-  
 
   def getLogURL(task: BuildTask, version: String = "latest"): URL = {
     val k = logKey(task, version)
