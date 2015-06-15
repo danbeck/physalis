@@ -33,7 +33,7 @@ object PhysalisBuildService {
   def processNewBuildTasks(platforms: List[String]) {
     try {
       newBuildTasks(platforms).foreach(processAndHandleExceptions _)
-      Thread.sleep(12000)
+      Thread.sleep(3500)
     } catch {
       case e: Exception => logger.error("there was an exception in the main build loop. Continuing.", e)
     }
