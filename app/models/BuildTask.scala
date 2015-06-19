@@ -32,9 +32,9 @@ case class BuildTask(
     created: Instant = Instant.now,
     updated: Instant = Instant.now) {
 
-  private val projectPathRelative = s"${user.id}/${project.id}/$platform"
-  private val projectPath = new File(s"${System.getProperty("user.dir")}/$projectPathRelative/")
-  private val logFile = s"$projectPath/log.txt"
+  private val projectPath = s"${System.getProperty("user.dir")}/${user.id}/${project.id}/$platform"
+	private val logFile = s"$projectPath/log-physalis.txt"
+  private val workspace= s"$projectPath/workspace/"
 
   private val logger: Logger = Logger(this.getClass)
 
@@ -67,7 +67,7 @@ case class BuildTask(
     val command = s"rm -rf ${projectPath}"
     logger.info(s">> ${command}")
     command.!
-    execute("git", "clone", project.gitUrl, "--depth=1", projectPath.toString)
+    execute("git", "clone", project.gitUrl, "--depth=1", workspace)
     this
   }
 
@@ -77,12 +77,12 @@ case class BuildTask(
       these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
     }
 
-    if (!projectPath.exists)
+    if (!new File(workspace).exists)
       None
     else {
       logger.info(s"checkoutDir was: $projectPath")
 
-      val allFiles = recursiveListFiles(projectPath)
+      val allFiles = recursiveListFiles(new File(workspace))
 
       allFiles
         .filter(d => d.isDirectory() && d.getName == "www")
@@ -112,7 +112,11 @@ case class BuildTask(
       logger.info(s"Project dir: $cordovaDir")
       cordovaDir match {
         case Some(dir) => buildAndUploadToS3(dir.getAbsolutePath)
-        case _         => Left("Couldn't found a Apache Cordova project!", logFile)
+        case _ =>
+          writeToLogfile("\nPhysalis Error: Couldn't found a Apache Cordova project!" +
+            " Make sure that a \"config.xml\" file and a \"www\" directory exist.\n")
+          val urlString = S3BucketService.putLog(task = this, file = new File(logFile)).toString
+          Left("Couldn't found a Apache Cordova project!", urlString)
       }
     } else Left(s"$platform ist not defined", "")
   }
@@ -226,6 +230,12 @@ case class BuildTask(
   def writeToLogfile(string: String) = {
     try {
       logger.info(string)
+      if (!new File(logFile).exists) {
+        logger.info("creating file " + logFile)
+        new File(logFile).getParentFile.mkdirs()
+        new File(logFile).createNewFile()
+      }
+
       Files.write(Paths.get(logFile), string.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND)
     } catch {
       case e: Exception => logger.error("There was an exception", e)
@@ -237,8 +247,5 @@ object BuildTask {
   def findNew(platforms: Seq[String]) = Repository.findNewBuildTasks(platforms)
   val validGitUrlRegex = """https?://.*/(.*)\.git""".r
   val validGitUrlPattern = validGitUrlRegex.pattern
-  //  def createNew(project: Project, user: User) = {
-  //    //    BuildTask()
-  //  }
 
 }

@@ -62,7 +62,7 @@ class Build(override implicit val env: RuntimeEnvironment[User]) extends Physali
           "ubuntu" -> Json.obj(
             "state" -> ubuntu.map(_.state),
             "url" -> ubuntu.map(_.s3Url),
-            "logurl" -> android.map(_.logS3Url))))
+            "logurl" -> ubuntu.map(_.logS3Url))))
       }
     }
   }
