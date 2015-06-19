@@ -10,6 +10,7 @@ GET    /loginredirecturi                       @controllers.accounts.Login.login
 # Explore pages 
 GET    /projects                               @controllers.Application.projects
 GET    /training                               @controllers.Application.training
+GET    /training/helloworld                    @controllers.training.Training.helloworld
 
 # Signup pages
 GET    /signup                                 @controllers.accounts.Login.signup
