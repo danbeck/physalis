@@ -5,7 +5,7 @@ import com.typesafe.sbt.SbtNativePackager._
 
 name := """physalis"""
 
-version := "0.0.1"
+version := "0.2.1"
 
 lazy val root = (project in file(".")).enablePlugins(play.PlayScala)
 
