@@ -25,7 +25,7 @@ object S3BucketService {
       case "android" => "apk"
       case "ubuntu"  => "click"
     }
-    s"${task.project.userId}/${task.project.id}/$version/${task.project.name}/${task.platform}/log.txt"
+    s"${task.project.userId}/${task.project.id}/$version/${task.project.name}/${task.platform}/log-physalis.txt"
   }
 
   def putArtifact(task: BuildTask, version: String = "latest", file: File): URL = {
