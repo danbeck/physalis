@@ -33,9 +33,9 @@ case class BuildTask(
     updated: Instant = Instant.now) {
 
   private val projectPath = s"${System.getProperty("user.dir")}/${user.id}/${project.id}/$platform"
-	private val logFile = s"$projectPath/log-physalis.txt"
-  private val workspace= s"$projectPath/workspace/"
-
+  private val logFile = s"$projectPath/log-physalis.txt"
+  private val workspace = s"$projectPath/workspace/"
+  private val PROMPT = "\nphysalis:~/$"
   private val logger: Logger = Logger(this.getClass)
 
   private val projectName = project.gitUrl match {
@@ -167,14 +167,14 @@ case class BuildTask(
   }
 
   private def execute(command: String*): java.lang.Process = {
-    writeToLogfile(s""">> ${command.mkString(" ")}""")
+    writeToLogfile(s"""$PROMPT ${command.mkString(" ")}""" + "\n")
     val process = new ProcessBuilder(command: _*).start
     logProcess(process)
     process
   }
 
   private def executeInDir(dir: String, command: String*): java.lang.Process = {
-    writeToLogfile(s""">> ${command.mkString(" ")}""")
+    writeToLogfile(s"""$PROMPT ${command.mkString(" ")}""" + "\n")
     val process = new ProcessBuilder(command: _*).directory(new File(dir)).start
     logProcess(process)
     process
@@ -196,8 +196,12 @@ case class BuildTask(
 
   private def getUbuntuBuildArtifact(dir: String) = {
     val outputDir = s"$dir/platforms/ubuntu/ubuntu-sdk-14.10/armhf/prefix/"
-    val outputFile = new File(outputDir).listFiles().map(_.getAbsolutePath).filter { _.endsWith(".click") }.headOption
-    buildArtifact(outputFile)
+    new File(outputDir) match {
+      case file if file.exists() =>
+        val outputFile = file.listFiles().map(_.getAbsolutePath).filter { _.endsWith(".click") }.headOption
+        buildArtifact(outputFile)
+      case _ => buildArtifact(None)
+    }
   }
 
   private def buildArtifact(pathToArtifact: Option[String]): Either[(String, File), (File, File)] = {
