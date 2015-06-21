@@ -8,10 +8,10 @@ import play.api.mvc.Action
  * @author daniel
  */
 class Training(override implicit val env: RuntimeEnvironment[User]) extends securesocial.core.SecureSocial[User] {
-  def helloworld = UserAwareAction { implicit request =>
+  def ubuntuHelloWorld = UserAwareAction { implicit request =>
     request.user match {
-      case Some(u) => Ok(views.html.training.helloworld(u))
-      case None    => Ok(views.html.training.helloworld(null))
+      case Some(u) => Ok(views.html.training.ubuntuHelloWorld(u))
+      case None    => Ok(views.html.training.ubuntuHelloWorld(null))
     }
   }
 }

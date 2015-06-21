@@ -10,7 +10,8 @@ GET    /loginredirecturi                       @controllers.accounts.Login.login
 # Explore pages 
 GET    /projects                               @controllers.Application.projects
 GET    /training                               @controllers.Application.training
-GET    /training/helloworld                    @controllers.training.Training.helloworld
+GET    /training/ubuntu-helloworld             @controllers.training.Training.ubuntuHelloWorld
+GET    /training/*file                         @controllers.AmazonS3StaticController.html(file)
 
 # Signup pages
 GET    /signup                                 @controllers.accounts.Login.signup

@@ -1,8 +1,8 @@
-@(user: User = null, scripts: Html = Html(""), doNotShowLoginButton: Boolean = false, showSetupNotice:Boolean=true)(content: Html)
+@(user: User = null, scripts: Html = Html(""), doNotShowLoginButton: Boolean = false, showSetupNotice:Boolean=true, title:String="Physalis Build Cloud for Apache Cordova")(content: Html)
 <!DOCTYPE html>
 <html>
     <head>
-        <title>@Messages("title")</title>
+        <title>@title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
