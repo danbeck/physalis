@@ -15,16 +15,13 @@ object S3BucketService {
 
   def artifactKey(task: BuildTask, version: String, file: File) = {
     task.platform match {
-      case "android" => s"${task.project.userId}/${task.project.id}/$version/${task.project.name}.apk"
-      case "ubuntu"  => s"${task.project.userId}/${task.project.id}/$version/${file.getName}"
+      case "android"   => s"${task.project.userId}/${task.project.id}/$version/${task.project.name}.apk"
+      case "ubuntu"    => s"${task.project.userId}/${task.project.id}/$version/${file.getName}"
+      case "firefoxos" => s"${task.project.userId}/${task.project.id}/$version/${file.getName}"
     }
   }
 
   def logKey(task: BuildTask, version: String) = {
-    val fileEnding = task.platform match {
-      case "android" => "apk"
-      case "ubuntu"  => "click"
-    }
     s"${task.project.userId}/${task.project.id}/$version/${task.project.name}/${task.platform}/log-physalis.txt"
   }
 

@@ -11,81 +11,35 @@ function retrieveAndAddBuildDataToDom(node$) {
 function updateDom(node$, data) {
 	if (!data.error) {
 
-		var android$ = $("[data-platform='android'][data-type='artifact']");
-		var androidLog$ = $("[data-platform-log='android']");
-		var ubuntu$ = $("[data-platform='ubuntu'][data-type='artifact']");
-		var ubuntuLog$ = $("[data-platform-log='ubuntu']");
-		var androidState = android$.attr("data-state");
-		var ubuntuState = ubuntu$.attr("data-state");
-
 		node$.empty();
-		updateUbuntuDom(node$,data.ubuntu);
-		updateAndroidDom(node$,data.android);
-//		if (data.android.state !== androidState
-//				|| ) {
-//			updateAndroidDom(android$, androidLog$, data.android);
-//		}
-//		if (data.ubuntu.state !== ubuntuState) {
-//			updateUbuntuDom(ubuntu$, ubuntuLog$, data.ubuntu);
-//		}
+		updateDomForPlatform(node$,data.ubuntu, "ubuntu");
+		updateDomForPlatform(node$,data.android, "android");
+		updateDomForPlatform(node$,data.firefoxos, "firefoxos");
 	}
 }
 
-function updateAndroidDom(node$,  data) {
+function updateDomForPlatform(node$,  data, platform) {
 	var html ="";
 	var htmlLog = "";
 	
 	if (data.state === "NEW") {
-		html = template_newArtifact("android");
-//		nodeLog$.replaceWith("");
+		html = template_newArtifact(platform);
 	}
 	
 	if (data.state === "IN_PROGRESS") {
-		html = template_artifactInProgress("android");
-//		nodeLog$.replaceWith("");
+		html = template_artifactInProgress(platform);
 	}
 	
 	if (data.state === "DONE") {
-			html = template_artifactDone("android",data);
-			htmlLog = template_logDone("android", data);
+			html = template_artifactDone(platform,data);
+			htmlLog = template_logDone(platform, data);
 	}
 	
 	if (data.state === "ERROR") {
-    html = template_artifactError("android");
-		htmlLog = template_logError("android",data);
+    html = template_artifactError(platform);
+		htmlLog = template_logError(platform,data);
 	}
 	node$.append(html + htmlLog);
-}
-
-function updateUbuntuDom(node$, data) {
-	var html ="";
-	var htmlLog = "";
-	
-	if (data.state === "NEW") {
-		html = template_newArtifact("ubuntu");
-		node$.append(html);
-//		nodeLog$.replaceWith("");
-	}
-	
-	if (data.state === "IN_PROGRESS") {
-		html = template_artifactInProgress("ubuntu");
-		node$.append(html);
-//		nodeLog$.replaceWith("");
-	}
-	
-	if (data.state === "DONE") {
-			html = template_artifactDone("ubuntu",data);
-			node$.append(html);
-			htmlLog = template_logDone("ubuntu",data);
-			node$.append(htmlLog);
-	}
-	
-	if (data.state === "ERROR") {
-    html = template_artifactError("ubuntu");
-		node$.append(html);
-		htmlLog = template_logError("ubuntu",data);
-		node$.append(htmlLog);
-	}
 }
 
 function template_newArtifact(platform) {
@@ -124,6 +78,7 @@ function template_logDone(platform,data){
   "<a target='_blank' class='btn btn-build btn-block' role='button'  href='" + data.logurl + "'><i class='fa fa-file-text'></i> Logs</a>" +
   "</div>";
 }
+
 $(document).ready(function() {
 	function updateTheBuildState() {
 		setTimeout(updateTheBuildState, 3500);

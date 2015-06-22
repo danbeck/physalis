@@ -45,20 +45,21 @@ import scala.collection.immutable.ListMap
 object Global extends play.api.GlobalSettings {
 
   val logger: Logger = Logger.apply(this.getClass)
+  var application: Application = null
+
+  def platforms: Option[List[String]] = {
+    val platformsToBuildFor: Option[String] = application.configuration.getString("PLATFORMS_TO_BUILD_FOR")
+    platformsToBuildFor.map(string => string.split(",").toList)
+  }
 
   override def onStart(app: Application) = {
-    logger.info("Starting services...")
-    val platformsToBuildFor: Option[String] = app.configuration.getString("PLATFORMS_TO_BUILD_FOR")
-
-    val platforms: Option[List[String]] = platformsToBuildFor.map(string => string.split(",").toList)
-
-    logger.info(s"Configured build platforms ${platforms}")
+    application = app
+    logger.info(s"Starting services. Configured build platforms ${platforms}")
     PhysalisBuildService.start(platforms)
-
   }
 
   override def onStop(app: Application) = {
-    logger.info("stopping phys alis")
+    logger.info("stopping Physalis")
     PhysalisBuildService.stop()
   }
 

@@ -54,6 +54,7 @@ class Build(override implicit val env: RuntimeEnvironment[User]) extends Physali
       case (Some(u), _, Some(proj)) => {
         val android = proj.lastBuildTask("android")
         val ubuntu = proj.lastBuildTask("ubuntu")
+        val firefoxos = proj.lastBuildTask("firefoxos")
         Ok(Json.obj(
           "android" -> Json.obj(
             "state" -> android.map(_.state),
@@ -62,7 +63,11 @@ class Build(override implicit val env: RuntimeEnvironment[User]) extends Physali
           "ubuntu" -> Json.obj(
             "state" -> ubuntu.map(_.state),
             "url" -> ubuntu.map(_.s3Url),
-            "logurl" -> ubuntu.map(_.logS3Url))))
+            "logurl" -> ubuntu.map(_.logS3Url)),
+          "firefoxos" -> Json.obj(
+            "state" -> firefoxos.map(_.state),
+            "url" -> firefoxos.map(_.s3Url),
+            "logurl" -> firefoxos.map(_.logS3Url))))
       }
     }
   }
@@ -70,6 +75,7 @@ class Build(override implicit val env: RuntimeEnvironment[User]) extends Physali
   def persistBuildRequest(user: User, project: Project)(implicit request: SecuredRequest[AnyContent]) = {
     BuildTask(project = project, user = user, platform = "android").save()
     BuildTask(project = project, user = user, platform = "ubuntu").save()
+    BuildTask(project = project, user = user, platform = "firefoxos").save()
     Redirect(controllers.workspace.routes.ProjectPage.show(user.usernameOption.get, project.name))
   }
 }

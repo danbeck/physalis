@@ -59,16 +59,26 @@ case class BuildTask(
   }
   def inProgress() = this.updateState("IN_PROGRESS")
 
-  def done(s3Url: String, logS3Url: String) = this.updateState("DONE").copy(s3Url = Some(s3Url), logS3Url = Some(logS3Url))
+  def done(s3Url: String, logS3Url: String) = {
+    deleteProjectDir()
+    this.updateState("DONE").copy(s3Url = Some(s3Url), logS3Url = Some(logS3Url))
+  }
 
-  def error(logS3Url: String): BuildTask = this.updateState("ERROR").copy(logS3Url = Some(logS3Url))
+  def error(logS3Url: String): BuildTask = {
+    deleteProjectDir()
+    this.updateState("ERROR").copy(logS3Url = Some(logS3Url))
+  }
 
   def gitClone(): BuildTask = {
+    deleteProjectDir()
+    execute("git", "clone", project.gitUrl, "--depth=1", workspace)
+    this
+  }
+
+  private def deleteProjectDir() = {
     val command = s"rm -rf ${projectPath}"
     logger.info(s">> ${command}")
     command.!
-    execute("git", "clone", project.gitUrl, "--depth=1", workspace)
-    this
   }
 
   private def cordovaDir(): Option[File] = {
@@ -108,7 +118,7 @@ case class BuildTask(
   private def buildAndUploadToS3(): Either[(String, String), (String, String)] = {
     logger.info(s"Building ${projectName} (gitURL was: ${project.gitUrl}) for platform $platform")
 
-    if (platform == "android" || platform == "ubuntu") {
+    if (platform == "android" || platform == "ubuntu" || platform == "firefoxos") {
       logger.info(s"Project dir: $cordovaDir")
       cordovaDir match {
         case Some(dir) => buildAndUploadToS3(dir.getAbsolutePath)
@@ -118,7 +128,7 @@ case class BuildTask(
           val urlString = S3BucketService.putLog(task = this, file = new File(logFile)).toString
           Left("Couldn't found a Apache Cordova project!", urlString)
       }
-    } else Left(s"$platform ist not defined", "")
+    } else Left(s"$platform is not defined", "")
   }
 
   def buildAndUploadToS3(dir: String): Either[(String, String), (String, String)] = {
@@ -127,13 +137,15 @@ case class BuildTask(
     buildWithCordova(dir)
     getBuildArtifact(dir) match {
       case Left((error, file)) =>
-        logger.info("Uploading log to S3")
+        logger.info("Found an error. uploading log to S3")
         val urlString = S3BucketService.putLog(task = this, file = file).toString
         logger.info(s"S3 URL $urlString")
         Left(error, urlString)
       case Right((log, artifact)) =>
+        logger.info("Build terminated successully. Uploading log to S3")
         val logFileUrl = S3BucketService.putLog(task = this, file = log).toString
         logger.info(s"S3 URL $logFileUrl")
+        logger.info("Uploading build artifact to S3")
         val artifactUrl = S3BucketService.putArtifact(task = this, file = artifact).toString
         logger.info(s"S3 URL $artifactUrl")
         Right(logFileUrl, artifactUrl)
@@ -182,8 +194,9 @@ case class BuildTask(
 
   private def getBuildArtifact(dir: String): Either[(String, File), (File, File)] = {
     platform match {
-      case "android" => getAndroidBuildArtifact(dir)
-      case "ubuntu"  => getUbuntuBuildArtifact(dir)
+      case "android"   => getAndroidBuildArtifact(dir)
+      case "ubuntu"    => getUbuntuBuildArtifact(dir)
+      case "firefoxos" => getFirefoxosBuildArtifact(dir)
       case _ =>
         Left("platform not defined", new File(logFile))
     }
@@ -202,6 +215,11 @@ case class BuildTask(
         buildArtifact(outputFile)
       case _ => buildArtifact(None)
     }
+  }
+
+  private def getFirefoxosBuildArtifact(dir: String) = {
+    val path = s"$dir/platforms/firefoxos/build/package.zip"
+    buildArtifact(Some(path))
   }
 
   private def buildArtifact(pathToArtifact: Option[String]): Either[(String, File), (File, File)] = {
