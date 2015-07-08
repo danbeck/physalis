@@ -52,4 +52,9 @@ object S3BucketService {
     val s3obj: Option[S3Object] = bucket.getObject(key)
     s3obj.get.generatePresignedUrl(new DateTime().plusWeeks(1))
   }
+
+  def getCMS(key: String): Option[URL] = {
+    val s3obj: Option[S3Object] = bucket.getObject(key)
+    s3obj.map(_.publicUrl)
+  }
 }
