@@ -16,9 +16,9 @@ class AmazonS3StaticController(override implicit val env: RuntimeEnvironment[Use
     urlOption match {
       case Some(url) =>
         val string = scala.io.Source.fromURL(url).mkString
-        Ok(views.html.training.training(request.user)(Html("dsfasd")))
-      case None if request.user.isDefined =>
-        Ok(views.html.training.training(request.user)(Html("Could not find key " + file)))
+        Ok(views.html.training.training(request.user)(Html(s"dsfasd: $file")))
+      case None =>
+        Ok(views.html.training.training(request.user)(Html("Could'nt found the file: " + file)))
     }
   }
 }
