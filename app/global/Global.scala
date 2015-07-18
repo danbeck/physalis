@@ -93,7 +93,7 @@ object Global extends play.api.GlobalSettings {
 
       override def getLoginPage(form: Form[(String, String)],
                                 msg: Option[String] = None)(implicit request: RequestHeader, lang: Lang): Html =
-        views.html.login(null)
+        views.html.login(None)
 
       override def getSignUpPage(form: Form[RegistrationInfo], token: String)(implicit request: RequestHeader, lang: Lang): Html =
         Registration.signUp(form, token)
