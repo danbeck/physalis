@@ -1,4 +1,4 @@
-@(user: User = null, scripts: Html = Html(""), doNotShowLoginButton: Boolean = false, showSetupNotice:Boolean=true, title:String="Physalis Build Cloud for Apache Cordova")(content: Html)
+@(user: Option[User] = None, scripts: Html = Html(""), doNotShowLoginButton: Boolean = false, showSetupNotice:Boolean=true, title:String="Physalis Build Cloud for Apache Cordova")(content: Html)
 <!DOCTYPE html>
 <html>
     <head>
@@ -39,7 +39,7 @@
                     <div class="col-sm-3 col-md-offset-4 col-md-3 titleButton">
                         <div class="row">
                         @if(!doNotShowLoginButton) {
-                            @if(user == null) {
+                            @if(!user.isDefined) {
                                 <div class="col-sm-offset-6 col-sm-6 text-center col-with-little-padding">
                                     <a href="@routes.CustomLoginController.login()" class="btn  btn-primary  btn-block btn-lg navbar-btn" >
                                         Login</a>
@@ -56,7 +56,7 @@
             </div>
         </nav>
 
-        @if(showSetupNotice && user != null && !user.usernameOption.isDefined){
+        @if(showSetupNotice && user.isDefined  && !(user.get.usernameOption.isDefined)){
         	<div class="alert alert-warning withPadding" role="alert">
 	  			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 	  			<span class="sr-only">Notice:</span>

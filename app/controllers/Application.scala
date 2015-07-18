@@ -11,21 +11,16 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
 
   def index = UserAwareAction { implicit request =>
     def redirectToWorkspace(username: String) = Redirect(controllers.workspace.routes.Workspace.user(username))
-    def showHomepage() = Ok(views.html.index())
-    def showHomepageForUser(user: User) = Ok(views.html.index(user))
+    def showHomepage(user: Option[User]) = Ok(views.html.index(user))
 
     request.user match {
-      case Some(u) if u.usernameOption.isDefined  => redirectToWorkspace(u.usernameOption.get)
-      case Some(u) if !u.usernameOption.isDefined => showHomepageForUser(u)
-      case _                                      => showHomepage()
+      case Some(u) if u.usernameOption.isDefined => redirectToWorkspace(u.usernameOption.get)
+      case u                                     => showHomepage(u)
     }
   }
 
   def projects = UserAwareAction { implicit request =>
-    request.user match {
-      case Some(u) => Ok(views.html.projects(u, userService.projects))
-      case None    => Ok(views.html.projects(null, userService.projects))
-    }
+    Ok(views.html.projects(request.user, userService.projects))
   }
 
   def untrail(path: String) = Action {
@@ -33,7 +28,7 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends s
   }
 
   def training = UserAwareAction { implicit request =>
-    Ok(views.html.training.index(request.user.orNull))
+    Ok(views.html.training.index(request.user))
   }
 
 }

@@ -1,4 +1,4 @@
-@(user: User = null, scripts: Html = Html(""), doNotShowLoginButton: Boolean = false, showSetupNotice:Boolean=true, title:String="Physalis Build Cloud for Apache Cordova")(content: Html)
+@(user: Option[User] = None, scripts: Html = Html(""), doNotShowLoginButton: Boolean = false, showSetupNotice:Boolean=true, title:String="Physalis Build Cloud for Apache Cordova")(content: Html)
 
 @main(user, scripts, doNotShowLoginButton, showSetupNotice, title =title){
         <div class="container">

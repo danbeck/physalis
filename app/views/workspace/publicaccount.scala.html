@@ -1,15 +1,15 @@
-@(user: User)
+@(user: Option[User], displayedUser:User)
 
 @mainContainer() {
 	<div class="row">
 	    <div class="col-sm-4">
 	        <h2>
-	            <span class="physalislabel">User: </span>@user.usernameOption
+	            <span class="physalislabel">User: </span>@displayedUser.usernameOption
 	        </h2>
 	    </div>
 	</div>
 
 	<hr/>
 
-    @widgets.usersProjects(user,isMyAccount=false)
+    @widgets.usersProjects(displayedUser,isMyAccount=false)
 }

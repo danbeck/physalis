@@ -1,4 +1,4 @@
-@(user: User)(implicit flash: Flash)
+@(user: Option[User])(implicit flash: Flash)
 
 @mainContainer(user) {
     <p>This user doesn't exist</p>

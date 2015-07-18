@@ -53,7 +53,7 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
     }))
 
   def showEnterUserDataForm = SecuredAction { implicit request =>
-    Ok(signupEnterUserData(request.user, userForm))
+    Ok(signupEnterUserData(Some(request.user), userForm))
   }
 
   private def updateUser(data: UserData, user: User): User = {
@@ -68,7 +68,7 @@ class Login(override implicit val env: RuntimeEnvironment[User]) extends secures
         request.authenticator.updateUser(request.user).flatMap { authenticator =>
 
           //          Redirect(controllers.workspace.routes.Workspace.user(value.username)).touchingAuthenticator(authenticator)
-          BadRequest(signupEnterUserData(request.user, formWithErrors)).touchingAuthenticator(authenticator)
+          BadRequest(signupEnterUserData(Some(request.user), formWithErrors)).touchingAuthenticator(authenticator)
         }
         //        Redirect(controllers.accounts.routes.Login.showEnterUserDataForm).flashing("error" -> s"""${formWithErrors.errors}""")
       },

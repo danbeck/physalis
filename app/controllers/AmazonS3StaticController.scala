@@ -14,16 +14,11 @@ class AmazonS3StaticController(override implicit val env: RuntimeEnvironment[Use
     val urlOption: Option[URL] = S3BucketService.getCMS(file)
 
     urlOption match {
-      case Some(url) if request.user.isDefined =>
-        val string = scala.io.Source.fromURL(url).mkString
-        Ok(views.html.training.training(request.user.get)(Html("dsfasd")))
       case Some(url) =>
         val string = scala.io.Source.fromURL(url).mkString
-        Ok(views.html.training.training()(Html("dsfasd")))
+        Ok(views.html.training.training(request.user)(Html("dsfasd")))
       case None if request.user.isDefined =>
-        Ok(views.html.training.training(request.user.get)(Html("Could not find key " + file)))
-      case None =>
-        Ok(views.html.training.training(null)(Html("Could not find key " + file)))
+        Ok(views.html.training.training(request.user)(Html("Could not find key " + file)))
     }
   }
 }

@@ -38,16 +38,14 @@ class Workspace(override implicit val env: RuntimeEnvironment[User]) extends Phy
     def showMyAccount(user: User) = Future(Ok(workspace.myaccount(user)))
     def showPublicAccount(username: String) = Future.successful {
       User.findByUsername(username) match {
-        case Some(user) => Ok(workspace.publicaccount(user))
-        case None       => Ok(workspace.notExistingUser(null))
+        case Some(user) => Ok(workspace.publicaccount(request.user, user))
+        case None       => Ok(workspace.notExistingUser(request.user))
       }
     }
 
     request.user match {
-      case Some(u) if !u.usernameOption.isDefined      => showPublicAccount(username)
       case Some(u) if u.usernameOption.get == username => showMyAccount(u)
-      case Some(u)                                     => showPublicAccount(username)
-      case None                                        => showPublicAccount(username)
+      case _ => showPublicAccount(username)
     }
   }
 

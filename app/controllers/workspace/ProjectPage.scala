@@ -19,15 +19,14 @@ class ProjectPage(override implicit val env: RuntimeEnvironment[User]) extends P
     val shownUser = User.findByUsername(username)
     val user = request.user
 
-    (project, user) match {
-      case (Some(proj), None) => Ok(workspace.project(null, false, proj))
-      case (Some(proj), Some(u)) if u.id == shownUser.get.id => Ok(workspace.project(u, true, proj))
-      case (Some(proj), Some(u)) => Ok(workspace.project(u, false, proj))
-      case _ => Redirect(routes.ProjectPage.nonExistingProj())
+    project match {
+      case Some(proj) if request.user.isDefined && request.user.get.id == shownUser.get.id => Ok(workspace.project(request.user, true, proj))
+      case Some(proj) => Ok(workspace.project(request.user, false, proj))
+      case _ => Redirect(routes.ProjectPage.nonExistingProj)
     }
   }
 
   def nonExistingProj() = UserAwareAction { implicit request =>
-    Ok(workspace.nonExistingProject(request.user.orNull))
+    Ok(workspace.nonExistingProject(request.user))
   }
 }

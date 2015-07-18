@@ -1,4 +1,4 @@
-@(user: User=null)(implicit flash: Flash, request: Request[AnyContent])
+@(user: Option[User]=None)(implicit flash: Flash, request: Request[AnyContent])
 @main(user) {
 	<section class="jumboboxWrapper">
 		<div class="container">

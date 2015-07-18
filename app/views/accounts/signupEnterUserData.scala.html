@@ -1,4 +1,4 @@
-@(user: User, userForm: Form[_])(implicit flash: Flash)
+@(user: Option[User], userForm: Form[_])(implicit flash: Flash)
 
 
 @mainContainer(user, doNotShowLoginButton = true, showSetupNotice = false) {
