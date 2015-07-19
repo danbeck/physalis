@@ -9,10 +9,12 @@ object S3BucketService {
 
   private val isProd = play.api.Play.isProd(play.api.Play.current)
   private val BUCKET_NAME = if (isProd) "physalis" else "physalisdev"
+  private val CMS_BUCKET_NAME = "physalis-cms" 
+  private val logger: Logger = Logger(this.getClass)
   val buckets: Seq[Bucket] = s3.buckets
   val bucket: Bucket = s3.bucket(BUCKET_NAME).get
-  val logger: Logger = Logger(this.getClass)
-
+  val cmsbucket: Bucket = s3.bucket(CMS_BUCKET_NAME).get
+  
   def artifactKey(task: BuildTask, version: String, file: File) = {
     task.platform match {
       case "android"   => s"${task.project.userId}/${task.project.id}/$version/${task.project.name}.apk"
@@ -54,7 +56,7 @@ object S3BucketService {
   }
 
   def getCMS(key: String): Option[URL] = {
-    val s3obj: Option[S3Object] = bucket.getObject(key)
+    val s3obj: Option[S3Object] = cmsbucket.getObject(key)
     s3obj.map(_.publicUrl)
   }
 }
