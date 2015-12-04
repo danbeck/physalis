@@ -13,7 +13,9 @@ scalaVersion := "2.11.5"
 
 libraryDependencies ++= Seq(
    "ws.securesocial" %% "securesocial" % "3.0-M3",
-   "com.github.seratch" %% "awscala" % "0.5.+"
+   "com.github.seratch" %% "awscala" % "0.5.+",
+  "org.scalatest" %% "scalatest" % "2.2.1" % "test",
+  "org.scalatestplus" %% "play" % "1.2.0" % "test"
 )
 
 resolvers ++= Seq(
